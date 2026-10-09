@@ -1,0 +1,21 @@
+{
+  "name": "hackathon-starter",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "node --test",
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "better-sqlite3": "^13.0.3",
+    "cors": "^2.8.6",
+    "csv-parse": "^7.0.3",
+    "express": "^4.22.3",
+    "multer": "^2.4.0"
+  }
+}
