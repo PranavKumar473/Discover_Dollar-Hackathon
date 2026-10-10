@@ -245,6 +245,38 @@
       left: 138px; top: 10px; width: 26px; height: 20px; border-radius: 60% 12% 60% 12%;
       background: #4C8C53; transform: rotate(-38deg);
     }
+
+    /* 3D Simulation Clock Widget */
+    .clock-3d-card {
+      background: linear-gradient(145deg, #182026, #0D1115);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 
+        0 14px 28px -6px rgba(0, 0, 0, 0.5),
+        0 8px 12px -6px rgba(0, 0, 0, 0.4),
+        inset 0 1px 1px rgba(255, 255, 255, 0.25),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.7);
+      border-radius: 18px;
+    }
+    .clock-3d-display {
+      background: #06090B;
+      box-shadow: inset 0 3px 8px rgba(0,0,0,0.85), 0 1px 0 rgba(255,255,255,0.08);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      border-radius: 12px;
+    }
+    .btn-3d {
+      background: linear-gradient(180deg, #2E3A44 0%, #1B242B 100%);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 3px 0 #0E1317, 0 4px 6px rgba(0,0,0,0.3);
+      transition: all 0.1s ease;
+    }
+    .btn-3d:active {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 #0E1317, 0 2px 3px rgba(0,0,0,0.3);
+    }
+    .pie-3d-group {
+      transform-origin: center center;
+      transition: transform 0.25s ease;
+    }
   </style>
 
   <!-- Tailwind CDN -->
@@ -527,104 +559,267 @@
     </div>
   </header>
 
+  <!-- Role-Specific Top Navigation Tab Bar -->
+  <nav id="donorTabBar" class="bg-[var(--surface)] border-b border-[var(--border)] px-4 sm:px-6 flex space-x-1 sm:space-x-4 overflow-x-auto text-sm font-semibold select-none">
+    <button id="tabNavPost" type="button" class="py-3 px-3 border-b-2 border-[var(--accent)] text-[var(--accent)] flex items-center space-x-2 whitespace-nowrap transition cursor-pointer">
+      <span>📦</span>
+      <span>Post Surplus Food</span>
+    </button>
+    <button id="tabNavManage" type="button" class="py-3 px-3 border-b-2 border-transparent text-[var(--text-muted)] hover:text-[var(--text)] flex items-center space-x-2 whitespace-nowrap transition cursor-pointer">
+      <span>📋</span>
+      <span>My Posted Donations</span>
+    </button>
+    <button id="tabNavBalance" type="button" class="py-3 px-3 border-b-2 border-transparent text-[var(--text-muted)] hover:text-[var(--text)] flex items-center space-x-2 whitespace-nowrap transition cursor-pointer">
+      <span>📊</span>
+      <span>Food Balance (3D Pie)</span>
+    </button>
+    <button id="tabNavVolunteers" type="button" class="py-3 px-3 border-b-2 border-transparent text-[var(--text-muted)] hover:text-[var(--text)] flex items-center space-x-2 whitespace-nowrap transition cursor-pointer">
+      <span>🚗</span>
+      <span>Volunteer History (3D Pie)</span>
+    </button>
+  </nav>
+
+  <nav id="volTabBar" class="bg-[var(--surface)] border-b border-[var(--border)] px-4 sm:px-6 flex space-x-1 sm:space-x-4 overflow-x-auto text-sm font-semibold select-none hidden">
+    <button id="tabNavVolBrowse" type="button" class="py-3 px-3 border-b-2 border-[var(--accent)] text-[var(--accent)] flex items-center space-x-2 whitespace-nowrap transition cursor-pointer">
+      <span>🔍</span>
+      <span>Browse &amp; Claim Surplus</span>
+    </button>
+    <button id="tabNavVolPickups" type="button" class="py-3 px-3 border-b-2 border-transparent text-[var(--text-muted)] hover:text-[var(--text)] flex items-center space-x-2 whitespace-nowrap transition cursor-pointer">
+      <span>🚗</span>
+      <span>My Claimed Pickups</span>
+    </button>
+  </nav>
+
   <!-- Main Grid Layout -->
   <div class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-    <!-- Left Rail: Identity, Clock, Dashboard (4 cols on lg) -->
+    <!-- Left Rail: Active Identity Card & Fixed 3D Simulation Clock -->
     <aside class="lg:col-span-4 space-y-6">
 
-      <!-- 1. Logged-in Identity -->
-      <section class="surface p-4 space-y-3">
-        <div class="flex items-center justify-between">
-          <h2 class="text-sm font-semibold uppercase tracking-wider text-[var(--text-muted)]">Active Identity</h2>
-          <button id="railSwitchBtn" type="button" class="text-xs text-[var(--accent)] hover:underline font-semibold">
-            ↩ Switch Account
-          </button>
-        </div>
-        <div class="p-3 rounded-lg bg-[var(--surface-alt)] border border-[var(--border)] space-y-1.5">
+      <!-- 1. Logged-in Identity (NO switch button inside card) -->
+      <section class="surface p-4 space-y-2">
+        <h2 class="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]">Active Identity</h2>
+        <div class="p-3.5 rounded-xl bg-[var(--surface-alt)] border border-[var(--border)] space-y-1.5">
           <div class="flex items-center justify-between">
-            <span id="railActorName" class="font-bold text-sm text-[var(--text)]">Loading...</span>
-            <span id="railActorIdBadge" class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-[var(--accent)] text-white">--</span>
+            <span id="railActorName" class="font-bold text-base text-[var(--text)]">Loading...</span>
+            <span id="railActorIdBadge" class="text-xs font-mono font-bold px-2.5 py-1 rounded-md bg-[var(--accent)] text-white shadow-sm">--</span>
           </div>
-          <div id="actorDetails" class="text-xs text-[var(--text-muted)] pt-0.5 border-t border-[var(--border)]"></div>
+          <div id="actorDetails" class="text-xs text-[var(--text-muted)] pt-1 border-t border-[var(--border)]"></div>
         </div>
       </section>
 
-      <!-- 2. Simulated Clock Control -->
-      <section class="surface p-4 space-y-3">
+      <!-- 2. Fixed 3D Simulation Clock Widget -->
+      <section class="clock-3d-card p-5 space-y-4 text-white relative overflow-hidden">
+        <!-- 3D Header -->
         <div class="flex items-center justify-between">
-          <h2 class="text-sm font-semibold uppercase tracking-wider text-[var(--text-muted)]">Simulated Clock</h2>
-          <span class="text-xs px-2 py-0.5 rounded bg-[var(--surface-alt)] border border-[var(--border)] font-mono text-[var(--text-muted)]">System Clock Off</span>
-        </div>
-        <div>
-          <div class="text-xs text-[var(--text-muted)]">Current Simulation Time:</div>
-          <div id="clockDisplay" class="text-xl font-bold font-mono tabular py-1 text-[var(--accent)]">--:--</div>
-        </div>
-
-        <form id="clockForm" class="space-y-2 pt-2 border-t border-[var(--border)]">
-          <label for="clockInput" class="block text-xs font-medium text-[var(--text-muted)]">Advance Clock</label>
-          <input type="datetime-local" id="clockInput" required class="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-md px-3 py-1.5 text-sm tabular">
-          <button type="submit" class="btn btn-accent w-full text-sm py-1.5">
-            Advance Clock
-          </button>
-          <div id="clockMessage" class="text-xs min-h-[1.2rem]" role="alert"></div>
-        </form>
-      </section>
-
-      <!-- 3. Dashboard Totals & Identity -->
-      <section class="surface p-4 space-y-4">
-        <div class="flex items-center justify-between">
-          <h2 class="text-sm font-semibold uppercase tracking-wider text-[var(--text-muted)]">Food Balance</h2>
-          <span id="identityBadge" class="text-xs font-semibold px-2 py-0.5 rounded">Checking...</span>
+          <div class="flex items-center space-x-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_#22d3ee]"></span>
+            <span class="text-xs font-bold uppercase tracking-widest text-slate-300">3D Simulation Clock</span>
+          </div>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-cyan-300 border border-slate-700">App Clock</span>
         </div>
 
-        <!-- 6 Metrics List with Visual Div Bars -->
-        <div id="metricsList" class="space-y-2.5 text-xs">
-          <!-- Dynamically populated -->
+        <!-- 3D Digital LED Display -->
+        <div class="clock-3d-display p-4 text-center space-y-1">
+          <div id="clockDateDisplay" class="text-xs font-mono tracking-widest text-slate-400 font-semibold">2026-03-10</div>
+          <div id="clockTimeDisplay" class="text-3xl font-extrabold font-mono tracking-wider text-cyan-300 drop-shadow-[0_0_12px_rgba(6,182,212,0.4)]">12:00</div>
+          <div class="text-[10px] text-slate-500 uppercase font-mono tracking-widest">Simulated City Dispatch Time</div>
         </div>
 
-        <!-- Donor Summary Table -->
-        <div class="pt-3 border-t border-[var(--border)]">
-          <h3 class="text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)] mb-2">Collected by Donor</h3>
-          <div class="table-container max-h-36 overflow-y-auto">
-            <table class="text-xs">
-              <thead>
-                <tr>
-                  <th>Donor</th>
-                  <th class="text-right">Collected (kg)</th>
-                </tr>
-              </thead>
-              <tbody id="donorStatsBody"></tbody>
-            </table>
+        <!-- Quick 1-Tap Advance Steps (Clean, instant, non-cluttered) -->
+        <div class="space-y-1.5 pt-1">
+          <div class="text-[11px] font-semibold text-slate-400 flex justify-between">
+            <span>Quick Advance Time</span>
+            <span class="text-[10px] text-slate-500">Test Expiries</span>
+          </div>
+          <div class="grid grid-cols-4 gap-1.5">
+            <button id="quickClock30m" type="button" class="btn-3d text-[11px] font-mono py-1.5 text-cyan-200 rounded-lg">
+              +30m
+            </button>
+            <button id="quickClock1h" type="button" class="btn-3d text-[11px] font-mono py-1.5 text-cyan-200 rounded-lg">
+              +1h
+            </button>
+            <button id="quickClock2h" type="button" class="btn-3d text-[11px] font-mono py-1.5 text-cyan-200 rounded-lg">
+              +2h
+            </button>
+            <button id="quickClock1d" type="button" class="btn-3d text-[11px] font-mono py-1.5 text-cyan-200 rounded-lg">
+              +1d
+            </button>
           </div>
         </div>
 
-        <!-- Volunteer Summary Table -->
-        <div class="pt-3 border-t border-[var(--border)]">
-          <h3 class="text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)] mb-2">Volunteer Activity</h3>
-          <div class="table-container max-h-36 overflow-y-auto">
-            <table class="text-xs">
-              <thead>
-                <tr>
-                  <th>Volunteer</th>
-                  <th class="text-right">Collected</th>
-                  <th class="text-right">Missed</th>
-                </tr>
-              </thead>
-              <tbody id="volunteerStatsBody"></tbody>
-            </table>
-          </div>
-        </div>
+        <!-- Expandable Custom Clock Form -->
+        <details class="text-xs text-slate-400 pt-2 border-t border-slate-700/60">
+          <summary class="cursor-pointer hover:text-slate-200 select-none py-1">Set Custom Simulation Time</summary>
+          <form id="clockForm" class="space-y-2 pt-2">
+            <input type="datetime-local" id="clockInput" required class="w-full bg-slate-900 border border-slate-700 text-white rounded-lg px-2.5 py-1.5 text-xs font-mono tabular focus:outline-none focus:border-cyan-400">
+            <button type="submit" class="w-full btn-3d text-cyan-300 font-semibold py-1.5 rounded-lg text-xs">
+              Set Timestamp
+            </button>
+            <div id="clockMessage" class="text-[11px] min-h-[1rem]"></div>
+          </form>
+        </details>
       </section>
 
     </aside>
 
-    <!-- Main Working Area (8 cols on lg) -->
+    <!-- Main Working Area (8 cols on lg): Dynamic Role & Tab Panes -->
     <main class="lg:col-span-8 space-y-6">
 
-      <!-- Dynamic Role Panel Container -->
-      <div id="rolePanel" class="space-y-6">
-        <!-- Will be dynamically populated for Donor or Volunteer -->
+      <!-- ======================================================= -->
+      <!-- RESTAURANT OWNER TAB PANES                             -->
+      <!-- ======================================================= -->
+      <div id="donorTabsContainer" class="space-y-6">
+
+        <!-- Tab Pane 1: Post Surplus Food -->
+        <section id="paneDonorPost" class="surface p-6 space-y-5">
+          <div class="flex items-center justify-between pb-3 border-b border-[var(--border)]">
+            <div>
+              <h2 class="text-lg font-bold text-[var(--text)]">Post Cooked Surplus Food</h2>
+              <p class="text-xs text-[var(--text-muted)]">Allot food weight and accept window before deadline expiry</p>
+            </div>
+            <span class="text-xs px-2.5 py-1 rounded-full bg-[var(--surface-alt)] font-semibold text-[var(--accent)] border border-[var(--border)]">
+              Donor Dispatch
+            </span>
+          </div>
+
+          <form id="postDonationForm" class="space-y-4">
+            <div>
+              <label for="postDesc" class="block text-xs font-semibold text-[var(--text-muted)] mb-1">Food Description</label>
+              <input type="text" id="postDesc" required placeholder="e.g. 15 Trays of hot vegetable biryani and bread" class="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-3.5 py-2.5 text-sm text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label for="postKg" class="block text-xs font-semibold text-[var(--text-muted)] mb-1">Total Quantity (kg)</label>
+                <input type="number" id="postKg" min="1" step="1" required placeholder="15" class="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-3.5 py-2.5 text-sm tabular text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
+              </div>
+              <div>
+                <label for="postFrom" class="block text-xs font-semibold text-[var(--text-muted)] mb-1">Pickup Window Start</label>
+                <input type="datetime-local" id="postFrom" required class="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-3 py-2 text-xs tabular text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
+              </div>
+              <div>
+                <label for="postUntil" class="block text-xs font-semibold text-[var(--text-muted)] mb-1">Accept Window Deadline</label>
+                <input type="datetime-local" id="postUntil" required class="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-3 py-2 text-xs tabular text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
+              </div>
+            </div>
+
+            <div class="p-3 bg-[var(--surface-alt)] rounded-xl border border-[var(--border)] text-xs text-[var(--text-muted)] flex items-start space-x-2">
+              <span class="text-base leading-none">⏱️</span>
+              <p>
+                <strong>Accept Window Guarantee:</strong> Volunteers can only claim and pick up food strictly between the start time and the deadline. Once the deadline passes, any uncollected food expires and queued claims turn to MISSED.
+              </p>
+            </div>
+
+            <div id="postErrorBox" class="space-y-1 text-xs text-[var(--danger)]"></div>
+
+            <button type="submit" id="postSubmitBtn" class="w-full bg-[#0F2942] hover:bg-[#1A3D5E] text-white py-3 rounded-full text-sm font-semibold shadow-md transition active:scale-[0.98]">
+              Allot Food &amp; Post Donation →
+            </button>
+          </form>
+        </section>
+
+        <!-- Tab Pane 2: My Posted Donations -->
+        <section id="paneDonorManage" class="space-y-4 hidden">
+          <div class="flex items-center justify-between pb-2 border-b border-[var(--border)]">
+            <div>
+              <h2 class="text-lg font-bold text-[var(--text)]">My Posted Donations</h2>
+              <p class="text-xs text-[var(--text-muted)]">Track capacity, active pickups, claim queue, and cancel open donations</p>
+            </div>
+            <button id="refreshManageBtn" type="button" class="btn btn-outline text-xs px-2.5 py-1">
+              🔄 Refresh List
+            </button>
+          </div>
+          <div id="donorDonationsContainer" class="space-y-4">
+            <!-- Dynamically populated donation cards -->
+          </div>
+        </section>
+
+        <!-- Tab Pane 3: Food Balance & Analytics (3D Pie Chart) -->
+        <section id="paneDonorBalance" class="surface p-6 space-y-6 hidden">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[var(--border)]">
+            <div>
+              <h2 class="text-lg font-bold text-[var(--text)]">Food Recovery Balance &amp; Identity</h2>
+              <p class="text-xs text-[var(--text-muted)]">Mathematical verification: Listed = Collected + In Progress + Still Open + Wasted + Missed</p>
+            </div>
+            <span id="identityBadge" class="text-xs font-semibold px-3 py-1 rounded-full border self-start sm:self-auto">
+              Checking Identity...
+            </span>
+          </div>
+
+          <!-- 3D Pie Chart & Visual Legend Container -->
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+            <!-- 3D SVG Chart -->
+            <div id="balancePieChartBox" class="md:col-span-7 flex justify-center py-2">
+              <!-- Rendered via JS -->
+            </div>
+            <!-- Legend & Percentages -->
+            <div id="balanceLegendBox" class="md:col-span-5 space-y-2 text-xs">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <!-- 6 Key Balance Metric Cards -->
+          <div class="pt-4 border-t border-[var(--border)]">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] mb-3">Balance Metric Breakdown (kg)</h3>
+            <div id="metricsList" class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              <!-- Populated via JS -->
+            </div>
+          </div>
+        </section>
+
+        <!-- Tab Pane 4: Volunteer Rescue History (3D Pie Chart) -->
+        <section id="paneDonorVolunteers" class="surface p-6 space-y-6 hidden">
+          <div class="flex items-center justify-between pb-3 border-b border-[var(--border)]">
+            <div>
+              <h2 class="text-lg font-bold text-[var(--text)]">Volunteer Rescue Activity &amp; Reliability</h2>
+              <p class="text-xs text-[var(--text-muted)]">Track who picked up how much food, who missed deadlines, and driver rescue share</p>
+            </div>
+            <span class="text-xs px-2.5 py-1 rounded-full bg-[var(--surface-alt)] font-semibold text-[var(--accent)] border border-[var(--border)]">
+              Volunteer Analytics
+            </span>
+          </div>
+
+          <!-- 3D Volunteer Capacity Pie Chart -->
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+            <div id="volunteerPieChartBox" class="md:col-span-7 flex justify-center py-2">
+              <!-- Rendered via JS -->
+            </div>
+            <div id="volunteerLegendBox" class="md:col-span-5 space-y-2 text-xs">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <!-- Volunteer Performance Table -->
+          <div class="pt-4 border-t border-[var(--border)]">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] mb-3">Driver Reliability &amp; Fulfillment Log</h3>
+            <div class="table-container">
+              <table class="text-xs">
+                <thead>
+                  <tr>
+                    <th>Driver Name</th>
+                    <th class="text-right">Vehicle Cap</th>
+                    <th class="text-right">Collected</th>
+                    <th class="text-right">Missed / No-Show</th>
+                    <th class="text-right">Reliability Rate</th>
+                  </tr>
+                </thead>
+                <tbody id="volunteerStatsBody">
+                  <!-- Populated via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- ======================================================= -->
+      <!-- VOLUNTEER WORK PANEL (When logged in as Volunteer)      -->
+      <!-- ======================================================= -->
+      <div id="volunteerTabsContainer" class="space-y-6 hidden">
+        <!-- Will be populated if logged in as volunteer driver -->
+        <div id="volunteerWorkArea" class="space-y-6"></div>
       </div>
 
     </main>
@@ -731,9 +926,51 @@
     async function loadClock() {
       const data = await apiRequest('/api/clock');
       clockNow = data.now;
-      document.getElementById('clockDisplay').textContent = clockNow;
-      document.getElementById('clockInput').value = clockNow;
-      document.getElementById('clockInput').min = clockNow;
+      const dateEl = document.getElementById('clockDateDisplay');
+      const timeEl = document.getElementById('clockTimeDisplay');
+      if (clockNow) {
+        const parts = clockNow.split('T');
+        if (dateEl) dateEl.textContent = parts[0] || clockNow;
+        if (timeEl) timeEl.textContent = parts[1] ? parts[1].substring(0, 5) : clockNow;
+      }
+      const legacyEl = document.getElementById('clockDisplay');
+      if (legacyEl) legacyEl.textContent = clockNow;
+      const clockInp = document.getElementById('clockInput');
+      if (clockInp) {
+        clockInp.value = clockNow;
+        clockInp.min = clockNow;
+      }
+      const postFrom = document.getElementById('postFrom');
+      if (postFrom && !postFrom.value) {
+        postFrom.value = clockNow;
+      }
+    }
+
+    async function advanceClock(minutes) {
+      if (!clockNow) return;
+      try {
+        const d = new Date(clockNow);
+        d.setMinutes(d.getMinutes() + minutes);
+        // Format to local ISO string YYYY-MM-DDTHH:mm
+        const pad = (n) => String(n).padStart(2, '0');
+        const nextNow = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+        const res = await apiRequest('/api/clock', {
+          method: 'POST',
+          body: JSON.stringify({ now: nextNow }),
+        });
+        const durationStr = minutes >= 1440
+          ? `${Math.round(minutes / 1440)}d`
+          : minutes >= 60
+            ? `${Math.round(minutes / 60)}h`
+            : `${minutes}m`;
+        const msg = res.missed > 0
+          ? `Clock advanced +${durationStr} (${res.missed} uncollected claims passed deadline and marked MISSED)`
+          : `Clock advanced +${durationStr} to ${res.now}`;
+        showToast(msg);
+        await refreshAll();
+      } catch (err) {
+        showToast(err.message, true);
+      }
     }
 
     async function loadDashboard() {
@@ -806,75 +1043,180 @@
       renderRoleWork();
     }
 
-    // Render Dashboard
-    function renderDashboard() {
-      if (!dashboardData) return;
+    // -------------------------------------------------------------
+    // PURE SVG 3D PIE CHART GENERATOR (Zero External Dependencies)
+    // -------------------------------------------------------------
+    function render3DPieChartSVG(containerId, legendId, slices, options = {}) {
+      const container = document.getElementById(containerId);
+      const legendBox = document.getElementById(legendId);
+      if (!container) return;
+      clearChildren(container);
+      if (legendBox) clearChildren(legendBox);
 
-      const { totals, identityHolds, byDonor, byVolunteer } = dashboardData;
-
-      // Identity badge
-      const badge = document.getElementById('identityBadge');
-      if (identityHolds) {
-        badge.textContent = `Listed ${totals.listed} = ${totals.listed} OK`;
-        badge.className = 'text-xs font-semibold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30';
-      } else {
-        badge.textContent = `Mismatch! Listed ${totals.listed} != ${dashboardData.accounted}`;
-        badge.className = 'text-xs font-semibold px-2 py-0.5 rounded bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/30';
+      const total = slices.reduce((sum, s) => sum + (s.value || 0), 0);
+      if (total <= 0) {
+        const emptyBox = el('div', 'h-48 flex flex-col items-center justify-center text-center p-4 surface-alt rounded-2xl border border-[var(--border)]');
+        emptyBox.appendChild(el('div', 'text-2xl mb-1.5', '📊'));
+        emptyBox.appendChild(el('span', 'text-xs text-[var(--text-muted)] font-medium', 'No data points recorded yet.'));
+        container.appendChild(emptyBox);
+        if (legendBox) {
+          legendBox.appendChild(el('p', 'text-xs text-[var(--text-muted)] italic', 'Metrics will calculate once actions occur.'));
+        }
+        return;
       }
 
-      // Metrics with horizontal div bars
-      const list = document.getElementById('metricsList');
-      clearChildren(list);
+      const width = options.width || 320;
+      const height = options.height || 210;
+      const cx = width / 2;
+      const cy = (height / 2) - 8;
+      const rx = options.rx || 110;
+      const ry = options.ry || 60;
+      const depth = options.depth || 22;
 
-      const items = [
-        { label: 'Listed (Total posted)', value: totals.listed, color: 'var(--text-muted)' },
-        { label: 'Collected (Successful)', value: totals.collected, color: 'var(--chip-collected)' },
-        { label: 'In Progress (Active claims)', value: totals.inProgress, color: 'var(--accent)' },
-        { label: 'Still Open (Available)', value: totals.stillOpen, color: 'var(--chip-open)' },
-        { label: 'Wasted (Expired food)', value: totals.wasted, color: 'var(--danger)' },
-        { label: 'Missed (Unfulfilled claims)', value: totals.missed, color: 'var(--danger)' },
-      ];
-
-      const maxVal = totals.listed || 1;
-
-      items.forEach((item) => {
-        const row = el('div', 'space-y-1');
-        const header = el('div', 'flex justify-between items-center text-xs');
-        header.appendChild(el('span', 'text-[var(--text-muted)]', item.label));
-        header.appendChild(el('span', 'font-bold font-mono tabular', `${item.value} kg`));
-        row.appendChild(header);
-
-        const barBg = el('div', 'bar-bg');
-        const barFill = el('div', 'bar-fill');
-        barFill.style.backgroundColor = item.color;
-        const pct = Math.min(100, Math.round((item.value / maxVal) * 100));
-        barFill.style.width = `${pct}%`;
-        barBg.appendChild(barFill);
-        row.appendChild(barBg);
-
-        list.appendChild(row);
+      let currentAngle = -Math.PI / 2; // Start from 12 o'clock
+      const sliceData = slices.map((s) => {
+        const val = Math.max(0, s.value || 0);
+        const fraction = total > 0 ? val / total : 0;
+        const angleSpan = fraction * 2 * Math.PI;
+        const startA = currentAngle;
+        const endA = currentAngle + angleSpan;
+        currentAngle = endA;
+        return {
+          ...s,
+          value: val,
+          fraction,
+          startA,
+          endA,
+          percentage: (fraction * 100).toFixed(1),
+        };
       });
 
-      // Donor summary table
-      const donorBody = document.getElementById('donorStatsBody');
-      clearChildren(donorBody);
-      byDonor.forEach((d) => {
-        const tr = document.createElement('tr');
-        tr.appendChild(el('td', '', d.name));
-        tr.appendChild(el('td', 'text-right font-mono tabular', `${d.collectedKg} kg`));
-        donorBody.appendChild(tr);
+      const svgNS = 'http://www.w3.org/2000/svg';
+      const svg = document.createElementNS(svgNS, 'svg');
+      svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+      svg.setAttribute('class', 'w-full max-w-[320px] h-auto drop-shadow-lg select-none');
+
+      function darkenColor(hex, factor = 0.35) {
+        if (!hex || !hex.startsWith('#')) return 'rgba(0,0,0,0.4)';
+        let c = hex.substring(1);
+        if (c.length === 3) c = c.split('').map((x) => x + x).join('');
+        const num = parseInt(c, 16);
+        let r = (num >> 16);
+        let g = ((num >> 8) & 0x00ff);
+        let b = (num & 0x0000ff);
+        r = Math.max(0, Math.floor(r * (1 - factor)));
+        g = Math.max(0, Math.floor(g * (1 - factor)));
+        b = Math.max(0, Math.floor(b * (1 - factor)));
+        return `rgb(${r}, ${g}, ${b})`;
+      }
+
+      // 1. Drop Shadow Base
+      const shadow = document.createElementNS(svgNS, 'ellipse');
+      shadow.setAttribute('cx', cx);
+      shadow.setAttribute('cy', cy + depth + 6);
+      shadow.setAttribute('rx', rx + 6);
+      shadow.setAttribute('ry', ry + 4);
+      shadow.setAttribute('fill', 'rgba(0, 0, 0, 0.14)');
+      svg.appendChild(shadow);
+
+      // 2. Extrusion Side Walls for the front-facing arc
+      sliceData.forEach((slice) => {
+        if (slice.value <= 0) return;
+        const stepCount = 24;
+        const dTheta = (slice.endA - slice.startA) / stepCount;
+        const pointsTop = [];
+        const pointsBottom = [];
+
+        for (let i = 0; i <= stepCount; i++) {
+          const a = slice.startA + i * dTheta;
+          let normA = a % (2 * Math.PI);
+          if (normA < 0) normA += 2 * Math.PI;
+
+          // Semicircle facing user (y > cy, screen sin(normA) >= 0)
+          if (normA >= 0 && normA <= Math.PI) {
+            const px = cx + rx * Math.cos(a);
+            const py = cy + ry * Math.sin(a);
+            pointsTop.push({ x: px, y: py });
+            pointsBottom.push({ x: px, y: py + depth });
+          }
+        }
+
+        if (pointsTop.length > 1) {
+          let pathD = `M ${pointsTop[0].x} ${pointsTop[0].y}`;
+          for (let i = 1; i < pointsTop.length; i++) {
+            pathD += ` L ${pointsTop[i].x} ${pointsTop[i].y}`;
+          }
+          for (let i = pointsBottom.length - 1; i >= 0; i--) {
+            pathD += ` L ${pointsBottom[i].x} ${pointsBottom[i].y}`;
+          }
+          pathD += ' Z';
+
+          const sidePath = document.createElementNS(svgNS, 'path');
+          sidePath.setAttribute('d', pathD);
+          sidePath.setAttribute('fill', darkenColor(slice.color, 0.38));
+          sidePath.setAttribute('stroke', darkenColor(slice.color, 0.5));
+          sidePath.setAttribute('stroke-width', '0.5');
+          svg.appendChild(sidePath);
+        }
       });
 
-      // Volunteer summary table
-      const volBody = document.getElementById('volunteerStatsBody');
-      clearChildren(volBody);
-      byVolunteer.forEach((v) => {
-        const tr = document.createElement('tr');
-        tr.appendChild(el('td', '', v.name));
-        tr.appendChild(el('td', 'text-right font-mono tabular', `${v.collectedKg} kg`));
-        tr.appendChild(el('td', 'text-right font-mono tabular', String(v.missedClaims)));
-        volBody.appendChild(tr);
+      // 3. Top Faces for each slice
+      sliceData.forEach((slice) => {
+        if (slice.value <= 0) return;
+        const x1 = cx + rx * Math.cos(slice.startA);
+        const y1 = cy + ry * Math.sin(slice.startA);
+        const x2 = cx + rx * Math.cos(slice.endA);
+        const y2 = cy + ry * Math.sin(slice.endA);
+        const largeArc = (slice.endA - slice.startA) > Math.PI ? 1 : 0;
+
+        if (slice.fraction >= 0.9999) {
+          const topEl = document.createElementNS(svgNS, 'ellipse');
+          topEl.setAttribute('cx', cx);
+          topEl.setAttribute('cy', cy);
+          topEl.setAttribute('rx', rx);
+          topEl.setAttribute('ry', ry);
+          topEl.setAttribute('fill', slice.color);
+          topEl.setAttribute('stroke', 'rgba(255,255,255,0.4)');
+          topEl.setAttribute('stroke-width', '1.5');
+          svg.appendChild(topEl);
+        } else {
+          const d = `M ${cx} ${cy} L ${x1} ${y1} A ${rx} ${ry} 0 ${largeArc} 1 ${x2} ${y2} Z`;
+          const topPath = document.createElementNS(svgNS, 'path');
+          topPath.setAttribute('d', d);
+          topPath.setAttribute('fill', slice.color);
+          topPath.setAttribute('stroke', 'rgba(255,255,255,0.5)');
+          topPath.setAttribute('stroke-width', '1.5');
+          topPath.setAttribute('class', 'transition-opacity duration-150 hover:opacity-90 cursor-pointer');
+
+          const title = document.createElementNS(svgNS, 'title');
+          title.textContent = `${slice.label}: ${slice.value} kg (${slice.percentage}%)`;
+          topPath.appendChild(title);
+
+          svg.appendChild(topPath);
+        }
       });
+
+      container.appendChild(svg);
+
+      // 4. Render Visual Legend
+      if (legendBox) {
+        sliceData.forEach((s) => {
+          const row = el('div', 'flex items-center justify-between p-2 rounded-xl bg-[var(--surface-alt)] border border-[var(--border)]');
+          const left = el('div', 'flex items-center space-x-2');
+          const dot = el('span', 'w-3 h-3 rounded-full shrink-0 shadow-sm');
+          dot.style.backgroundColor = s.color;
+          left.appendChild(dot);
+          left.appendChild(el('span', 'font-medium text-[var(--text)]', s.label));
+          row.appendChild(left);
+
+          const right = el('div', 'text-right font-mono tabular font-semibold');
+          right.appendChild(el('span', 'text-[var(--text)]', `${s.value} kg `));
+          right.appendChild(el('span', 'text-[var(--text-muted)] text-[11px]', `(${s.percentage}%)`));
+          row.appendChild(right);
+
+          legendBox.appendChild(row);
+        });
+      }
     }
 
     // Status Chip Helper
@@ -910,259 +1252,350 @@
       return chip;
     }
 
-    // Role-Specific Work View Rendering
-    function renderRoleWork() {
-      const panel = document.getElementById('rolePanel');
-      clearChildren(panel);
-
-      if (!activeActor) {
-        const empty = el('div', 'surface p-8 text-center text-[var(--text-muted)] space-y-3');
-        empty.appendChild(el('h2', 'text-lg font-bold', 'Welcome to SurplusLink'));
-        empty.appendChild(el('p', 'text-sm', 'Please select or sign up as a restaurant or volunteer to begin.'));
-        const chooseBtn = el('button', 'btn btn-accent rounded-full px-5 py-2 text-sm', 'Choose Persona');
-        chooseBtn.type = 'button';
-        chooseBtn.onclick = () => showLaunchModal(false);
-        empty.appendChild(chooseBtn);
-        panel.appendChild(empty);
-        return;
-      }
-
-      if (activeActor.role === 'donor') {
-        renderDonorWork(panel);
-      } else {
-        renderVolunteerWork(panel);
-      }
-    }
-
     // -------------------------------------------------------------
-    // DONOR VIEW
+    // RESTAURANT OWNER (DONOR) TABS MANAGEMENT
     // -------------------------------------------------------------
-    async function renderDonorWork(container) {
-      // 1. Post Donation Form
-      const formCard = el('section', 'surface p-5 space-y-4');
-      const formHeader = el('div', 'flex justify-between items-center');
-      formHeader.appendChild(el('h2', 'text-base font-semibold', 'Post Surplus Food'));
-      formHeader.appendChild(el('span', 'text-xs text-[var(--text-muted)]', `Posting for ${activeActor.name} (${activeActor.zone})`));
-      formCard.appendChild(formHeader);
+    let activeDonorTab = 'tabNavPost';
 
-      const form = el('form', 'space-y-4');
-      form.id = 'postDonationForm';
+    function switchDonorTab(tabId) {
+      activeDonorTab = tabId;
+      const tabMap = [
+        { id: 'tabNavPost', pane: 'paneDonorPost' },
+        { id: 'tabNavManage', pane: 'paneDonorManage' },
+        { id: 'tabNavBalance', pane: 'paneDonorBalance' },
+        { id: 'tabNavVolunteers', pane: 'paneDonorVolunteers' },
+      ];
 
-      // Description & Quantity Row
-      const row1 = el('div', 'grid grid-cols-1 sm:grid-cols-3 gap-4');
-      const descGroup = el('div', 'sm:col-span-2 space-y-1');
-      descGroup.appendChild(el('label', 'block text-xs font-medium text-[var(--text-muted)]', 'Food Description'));
-      const descInput = el('input', 'w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-md px-3 py-1.5 text-sm');
-      descInput.id = 'postDesc';
-      descInput.required = true;
-      descInput.placeholder = 'e.g. Fresh vegetable biryani and bread';
-      descGroup.appendChild(descInput);
-      row1.appendChild(descGroup);
-
-      const qtyGroup = el('div', 'space-y-1');
-      qtyGroup.appendChild(el('label', 'block text-xs font-medium text-[var(--text-muted)]', 'Quantity (kg)'));
-      const qtyInput = el('input', 'w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-md px-3 py-1.5 text-sm tabular');
-      qtyInput.id = 'postQty';
-      qtyInput.type = 'number';
-      qtyInput.min = '1';
-      qtyInput.step = '1';
-      qtyInput.required = true;
-      qtyInput.placeholder = '15';
-      qtyGroup.appendChild(qtyInput);
-      row1.appendChild(qtyGroup);
-      form.appendChild(row1);
-
-      // Pickup Window Row
-      const row2 = el('div', 'grid grid-cols-1 sm:grid-cols-2 gap-4');
-      const fromGroup = el('div', 'space-y-1');
-      fromGroup.appendChild(el('label', 'block text-xs font-medium text-[var(--text-muted)]', 'Pickup From'));
-      const fromInput = el('input', 'w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-md px-3 py-1.5 text-sm tabular');
-      fromInput.id = 'postFrom';
-      fromInput.type = 'datetime-local';
-      fromInput.required = true;
-      fromInput.value = clockNow;
-      fromGroup.appendChild(fromInput);
-      row2.appendChild(fromGroup);
-
-      const untilGroup = el('div', 'space-y-1');
-      untilGroup.appendChild(el('label', 'block text-xs font-medium text-[var(--text-muted)]', 'Pickup Until'));
-      const untilInput = el('input', 'w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-md px-3 py-1.5 text-sm tabular');
-      untilInput.id = 'postUntil';
-      untilInput.type = 'datetime-local';
-      untilInput.required = true;
-      untilGroup.appendChild(untilInput);
-      row2.appendChild(untilGroup);
-      form.appendChild(row2);
-
-      const formError = el('div', 'text-xs text-[var(--danger)] min-h-[1rem]');
-      formError.id = 'postError';
-      form.appendChild(formError);
-
-      const submitBtn = el('button', 'btn btn-accent text-sm py-2 px-5', 'Post Donation');
-      submitBtn.type = 'submit';
-      form.appendChild(submitBtn);
-
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        formError.textContent = '';
-        submitBtn.disabled = true;
-
-        const description = descInput.value.trim();
-        const quantity_kg = parseInt(qtyInput.value, 10);
-        const pickup_from = fromInput.value;
-        const pickup_until = untilInput.value;
-
-        try {
-          await apiRequest('/api/donations', {
-            method: 'POST',
-            body: JSON.stringify({ description, quantity_kg, pickup_from, pickup_until }),
-          });
-          form.reset();
-          fromInput.value = clockNow;
-          showToast('Donation posted successfully');
-          await refreshAll();
-        } catch (err) {
-          if (err.errors && err.errors.length) {
-            formError.textContent = err.errors.map((e) => e.message).join(' | ');
-          } else {
-            formError.textContent = err.message;
-          }
-        } finally {
-          submitBtn.disabled = false;
+      tabMap.forEach((item) => {
+        const btn = document.getElementById(item.id);
+        const pane = document.getElementById(item.pane);
+        if (!btn || !pane) return;
+        if (item.id === tabId) {
+          btn.className = 'py-3 px-3 border-b-2 border-[var(--accent)] text-[var(--accent)] flex items-center space-x-2 whitespace-nowrap transition cursor-pointer font-bold';
+          pane.classList.remove('hidden');
+        } else {
+          btn.className = 'py-3 px-3 border-b-2 border-transparent text-[var(--text-muted)] hover:text-[var(--text)] flex items-center space-x-2 whitespace-nowrap transition cursor-pointer font-medium';
+          pane.classList.add('hidden');
         }
       });
 
-      formCard.appendChild(form);
-      container.appendChild(formCard);
+      if (tabId === 'tabNavManage') {
+        loadDonorDonations();
+      } else if (tabId === 'tabNavBalance') {
+        renderDonorBalanceTab();
+      } else if (tabId === 'tabNavVolunteers') {
+        renderDonorVolunteersTab();
+      }
+    }
 
-      // 2. My Donations List
-      const listCard = el('section', 'surface p-5 space-y-4');
-      listCard.appendChild(el('h2', 'text-base font-semibold', 'My Posted Donations'));
-
-      const listContainer = el('div', 'space-y-4');
-      listCard.appendChild(listContainer);
-      container.appendChild(listCard);
+    // Tab 2: My Posted Donations List
+    async function loadDonorDonations() {
+      const container = document.getElementById('donorDonationsContainer');
+      if (!container) return;
+      clearChildren(container);
 
       try {
         const donations = await apiRequest('/api/donations');
         if (donations.length === 0) {
-          listContainer.appendChild(el('p', 'text-sm text-[var(--text-muted)] py-4 text-center', 'No donations posted yet.'));
+          const empty = el('div', 'surface p-8 text-center text-[var(--text-muted)] space-y-2 rounded-2xl border border-[var(--border)]');
+          empty.appendChild(el('div', 'text-3xl mb-2', '📦'));
+          empty.appendChild(el('h3', 'font-bold text-base text-[var(--text)]', 'No Food Donations Posted Yet'));
+          empty.appendChild(el('p', 'text-xs', 'Use the "Post Surplus Food" tab to allot and schedule your first surplus donation batch.'));
+          container.appendChild(empty);
           return;
         }
 
         donations.forEach((d) => {
-          const itemCard = el('div', 'surface p-4 border border-[var(--border)] rounded-md space-y-3');
+          const card = el('div', 'surface p-5 border border-[var(--border)] rounded-2xl space-y-4 shadow-sm');
 
           // Header
-          const itemHeader = el('div', 'flex flex-wrap items-center justify-between gap-2');
-          const titleBox = el('div', 'flex items-center space-x-2');
-          titleBox.appendChild(el('span', 'font-bold font-mono text-sm', `#${d.id}`));
-          titleBox.appendChild(createStatusChip(d.status));
-          itemHeader.appendChild(titleBox);
+          const header = el('div', 'flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-[var(--border)]');
+          const leftHead = el('div', 'flex items-center space-x-2.5');
+          leftHead.appendChild(el('span', 'font-mono font-bold text-sm bg-[var(--surface-alt)] px-2.5 py-1 rounded-lg border border-[var(--border)]', `#${d.id}`));
+          leftHead.appendChild(createStatusChip(d.status));
+          leftHead.appendChild(el('span', 'text-xs text-[var(--text-muted)] font-medium', `Zone: ${d.zone}`));
+          header.appendChild(leftHead);
 
           // Cancel button (enabled only when OPEN and no ACTIVE/COLLECTED claims)
           const hasHeldClaims = d.claims && d.claims.some((c) => c.status === 'ACTIVE' || c.status === 'COLLECTED');
           const canCancel = d.status === 'OPEN' && !hasHeldClaims;
 
-          const cancelBtn = el('button', 'btn btn-outline text-xs px-2.5 py-1 text-[var(--danger)] border-[var(--danger)]', 'Cancel Donation');
+          const cancelBtn = el('button', 'btn btn-outline text-xs px-3 py-1.5 text-[var(--danger)] border-[var(--danger)] hover:bg-[var(--danger)] hover:text-white transition rounded-xl', 'Cancel Donation');
           cancelBtn.type = 'button';
           cancelBtn.disabled = !canCancel;
-          cancelBtn.addEventListener('click', async () => {
-            if (!confirm(`Cancel donation #${d.id}?`)) return;
-            try {
-              await apiRequest(`/api/donations/${d.id}/cancel`, { method: 'POST' });
-              showToast(`Donation #${d.id} cancelled`);
-              await refreshAll();
-            } catch (err) {
-              showToast(err.message, true);
-            }
-          });
-          itemHeader.appendChild(cancelBtn);
-          itemCard.appendChild(itemHeader);
+          if (!canCancel) {
+            cancelBtn.title = d.status !== 'OPEN' ? `Cannot cancel: donation is ${d.status}` : 'Cannot cancel: claims currently in progress';
+            cancelBtn.classList.add('opacity-40', 'cursor-not-allowed');
+          } else {
+            cancelBtn.addEventListener('click', async () => {
+              if (!confirm(`Cancel donation #${d.id} (${d.description})?`)) return;
+              try {
+                await apiRequest(`/api/donations/${d.id}/cancel`, { method: 'POST' });
+                showToast(`Donation #${d.id} successfully cancelled`);
+                await refreshAll();
+                loadDonorDonations();
+              } catch (err) {
+                showToast(err.message, true);
+              }
+            });
+          }
+          header.appendChild(cancelBtn);
+          card.appendChild(header);
 
-          // Details grid
-          const grid = el('div', 'grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs');
-          const d1 = el('div');
-          d1.appendChild(el('div', 'text-[var(--text-muted)]', 'Description:'));
-          d1.appendChild(el('div', 'font-medium', d.description));
-          grid.appendChild(d1);
+          // Food Info & Capacity Progress
+          const bodyGrid = el('div', 'grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs');
 
-          const d2 = el('div');
-          d2.appendChild(el('div', 'text-[var(--text-muted)]', 'Quantity:'));
-          d2.appendChild(el('div', 'font-mono tabular font-medium', `${d.quantity_kg} kg (Remaining: ${d.remaining_kg} kg)`));
-          grid.appendChild(d2);
+          const infoBox = el('div', 'space-y-1.5');
+          infoBox.appendChild(el('div', 'text-[var(--text-muted)] font-semibold', 'Food Description:'));
+          infoBox.appendChild(el('div', 'text-sm font-bold text-[var(--text)]', d.description));
+          infoBox.appendChild(el('div', 'text-[var(--text-muted)] pt-1', `Pickup Window: ${d.pickup_from} to ${d.pickup_until}`));
+          bodyGrid.appendChild(infoBox);
 
-          const d3 = el('div');
-          d3.appendChild(el('div', 'text-[var(--text-muted)]', 'Zone:'));
-          d3.appendChild(el('div', 'font-medium', d.zone));
-          grid.appendChild(d3);
+          const capBox = el('div', 'space-y-1.5 p-3 rounded-xl bg-[var(--surface-alt)] border border-[var(--border)]');
+          const capHead = el('div', 'flex justify-between items-center');
+          capHead.appendChild(el('span', 'font-semibold text-[var(--text-muted)]', 'Capacity Tracking:'));
+          capHead.appendChild(el('span', 'font-mono font-bold text-[var(--text)]', `${d.remaining_kg} kg left / ${d.quantity_kg} kg`));
+          capBox.appendChild(capHead);
 
-          const d4 = el('div');
-          d4.appendChild(el('div', 'text-[var(--text-muted)]', 'Pickup Window:'));
-          d4.appendChild(el('div', 'font-mono tabular', `${d.pickup_from} to ${d.pickup_until}`));
-          grid.appendChild(d4);
-          itemCard.appendChild(grid);
+          const barBg = el('div', 'bar-bg mt-1');
+          const barFill = el('div', 'bar-fill');
+          const pctClaimed = Math.round(((d.quantity_kg - d.remaining_kg) / (d.quantity_kg || 1)) * 100);
+          barFill.style.backgroundColor = d.remaining_kg === 0 ? 'var(--chip-collected)' : 'var(--accent)';
+          barFill.style.width = `${pctClaimed}%`;
+          barBg.appendChild(barFill);
+          capBox.appendChild(barBg);
 
-          // Nested Claims on this donation
-          const claimsBox = el('div', 'pt-2 border-t border-[var(--border)] text-xs space-y-1');
-          claimsBox.appendChild(el('div', 'font-semibold text-[var(--text-muted)]', 'Volunteer Claims on this Donation:'));
+          const capFoot = el('div', 'flex justify-between text-[11px] text-[var(--text-muted)]');
+          capFoot.appendChild(el('span', '', `${pctClaimed}% claimed by drivers`));
+          capFoot.appendChild(el('span', 'font-semibold text-[var(--chip-open)]', `${d.remaining_kg} kg available`));
+          capBox.appendChild(capFoot);
+
+          bodyGrid.appendChild(capBox);
+          card.appendChild(bodyGrid);
+
+          // Claims Queue on this donation
+          const claimsBox = el('div', 'pt-3 border-t border-[var(--border)] text-xs space-y-2');
+          claimsBox.appendChild(el('div', 'font-bold uppercase tracking-wider text-[var(--text-muted)] text-[10px]', 'Volunteer Driver Claims Queue:'));
 
           if (!d.claims || d.claims.length === 0) {
-            claimsBox.appendChild(el('div', 'text-[var(--text-muted)] italic', 'No claims reserved yet.'));
+            claimsBox.appendChild(el('div', 'text-[var(--text-muted)] italic py-1', 'No volunteer drivers have reserved food from this batch yet.'));
           } else {
+            const tableWrap = el('div', 'table-container');
             const table = el('table', 'w-full text-xs');
             const thead = el('thead');
             const trH = el('tr');
-            trH.appendChild(el('th', '', 'Claim'));
-            trH.appendChild(el('th', '', 'Volunteer'));
+            trH.appendChild(el('th', '', 'Claim ID'));
+            trH.appendChild(el('th', '', 'Volunteer Driver'));
             trH.appendChild(el('th', 'text-right', 'Amount'));
-            trH.appendChild(el('th', '', 'Planned Time'));
-            trH.appendChild(el('th', '', 'Status'));
+            trH.appendChild(el('th', '', 'Planned Pickup Time'));
+            trH.appendChild(el('th', 'text-right', 'Status'));
             thead.appendChild(trH);
             table.appendChild(thead);
 
             const tbody = el('tbody');
             d.claims.forEach((c) => {
               const tr = el('tr');
-              tr.appendChild(el('td', 'font-mono tabular', `#${c.id}`));
-              tr.appendChild(el('td', '', c.volunteer_id));
-              tr.appendChild(el('td', 'text-right font-mono tabular', `${c.kg} kg`));
+              tr.appendChild(el('td', 'font-mono font-semibold', `#${c.id}`));
+              tr.appendChild(el('td', 'font-medium', c.volunteer_id));
+              tr.appendChild(el('td', 'text-right font-mono font-bold tabular', `${c.kg} kg`));
               tr.appendChild(el('td', 'font-mono tabular', c.planned_at));
-              const tdStatus = el('td');
+              const tdStatus = el('td', 'text-right');
               tdStatus.appendChild(createStatusChip(c.status));
               tr.appendChild(tdStatus);
               tbody.appendChild(tr);
             });
             table.appendChild(tbody);
-            claimsBox.appendChild(table);
+            tableWrap.appendChild(table);
+            claimsBox.appendChild(tableWrap);
           }
-          itemCard.appendChild(claimsBox);
+          card.appendChild(claimsBox);
 
-          listContainer.appendChild(itemCard);
+          container.appendChild(card);
         });
       } catch (err) {
-        listContainer.appendChild(el('div', 'text-sm text-[var(--danger)]', err.message));
+        container.appendChild(el('div', 'text-sm text-[var(--danger)] p-4', `Failed to load donations: ${err.message}`));
+      }
+    }
+
+    // Tab 3: Food Balance & Conservation Identity
+    function renderDonorBalanceTab() {
+      if (!dashboardData) return;
+      const { totals, identityHolds } = dashboardData;
+
+      // Identity badge
+      const badge = document.getElementById('identityBadge');
+      if (badge) {
+        if (identityHolds) {
+          badge.textContent = `Listed ${totals.listed} = ${totals.listed} OK (100% Accounted)`;
+          badge.className = 'text-xs font-semibold px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 shadow-sm';
+        } else {
+          badge.textContent = `Mismatch! Listed ${totals.listed} != ${dashboardData.accounted}`;
+          badge.className = 'text-xs font-semibold px-3 py-1 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/30 shadow-sm';
+        }
+      }
+
+      // 3D Pie Chart slices
+      const slices = [
+        { label: 'Collected (Rescued)', value: totals.collected, color: '#10b981' },
+        { label: 'In Progress (Active Claims)', value: totals.inProgress, color: '#3b82f6' },
+        { label: 'Still Open (Available)', value: totals.stillOpen, color: '#f59e0b' },
+        { label: 'Wasted (Expired Food)', value: totals.wasted, color: '#ef4444' },
+        { label: 'Missed (Unfulfilled Claims)', value: totals.missed, color: '#ec4899' },
+      ];
+
+      render3DPieChartSVG('balancePieChartBox', 'balanceLegendBox', slices);
+
+      // 6 Metric Breakdown Cards
+      const list = document.getElementById('metricsList');
+      if (list) {
+        clearChildren(list);
+        const items = [
+          { label: 'Listed (Total Posted)', value: totals.listed, color: 'var(--text-muted)' },
+          { label: 'Collected (Rescued)', value: totals.collected, color: 'var(--chip-collected)' },
+          { label: 'In Progress (Active)', value: totals.inProgress, color: 'var(--accent)' },
+          { label: 'Still Open (Available)', value: totals.stillOpen, color: 'var(--chip-open)' },
+          { label: 'Wasted (Expired)', value: totals.wasted, color: 'var(--danger)' },
+          { label: 'Missed (No-Shows)', value: totals.missed, color: 'var(--danger)' },
+        ];
+        const maxVal = totals.listed || 1;
+
+        items.forEach((item) => {
+          const card = el('div', 'p-3 rounded-xl bg-[var(--surface-alt)] border border-[var(--border)] space-y-1.5');
+          const header = el('div', 'flex justify-between items-center text-xs');
+          header.appendChild(el('span', 'text-[var(--text-muted)] font-medium', item.label));
+          header.appendChild(el('span', 'font-bold font-mono tabular text-[var(--text)]', `${item.value} kg`));
+          card.appendChild(header);
+
+          const barBg = el('div', 'bar-bg');
+          const barFill = el('div', 'bar-fill');
+          barFill.style.backgroundColor = item.color;
+          const pct = Math.min(100, Math.round((item.value / maxVal) * 100));
+          barFill.style.width = `${pct}%`;
+          barBg.appendChild(barFill);
+          card.appendChild(barBg);
+
+          list.appendChild(card);
+        });
+      }
+    }
+
+    // Tab 4: Volunteer Rescue History & Reliability
+    function renderDonorVolunteersTab() {
+      if (!dashboardData) return;
+      const { byVolunteer } = dashboardData;
+
+      // Color Palette for Volunteers
+      const volColors = ['#06b6d4', '#8b5cf6', '#3b82f6', '#10b981', '#f59e0b', '#ec4899', '#6366f1'];
+      const slices = byVolunteer.map((v, i) => ({
+        label: `${v.name} (Rescued)`,
+        value: v.collectedKg,
+        color: volColors[i % volColors.length],
+      }));
+
+      // Missed slice
+      const totalMissedKg = byVolunteer.reduce((acc, v) => acc + (v.missedClaims * 5), 0);
+      if (totalMissedKg > 0) {
+        slices.push({
+          label: 'Missed / No-Show Rescues',
+          value: totalMissedKg,
+          color: '#f43f5e',
+        });
+      }
+
+      render3DPieChartSVG('volunteerPieChartBox', 'volunteerLegendBox', slices);
+
+      // Driver Reliability Table
+      const volBody = document.getElementById('volunteerStatsBody');
+      if (volBody) {
+        clearChildren(volBody);
+        byVolunteer.forEach((v) => {
+          const tr = document.createElement('tr');
+          const volMeta = people.volunteers.find((vol) => vol.id === v.id || vol.name === v.name);
+          const capStr = volMeta ? `${volMeta.capacity_kg} kg` : '--';
+
+          tr.appendChild(el('td', 'font-semibold', v.name));
+          tr.appendChild(el('td', 'text-right font-mono tabular', capStr));
+          tr.appendChild(el('td', 'text-right font-mono tabular font-bold text-emerald-600 dark:text-emerald-400', `${v.collectedKg} kg`));
+          tr.appendChild(el('td', 'text-right font-mono tabular text-rose-500 font-bold', String(v.missedClaims)));
+
+          // Fulfillment Score Rating
+          const tdScore = el('td', 'text-right font-mono tabular font-semibold');
+          const totalAttempts = v.collectedKg + v.missedClaims;
+          let scoreText = '100%';
+          let scoreClass = 'text-emerald-600 dark:text-emerald-400';
+          if (totalAttempts > 0) {
+            const pct = Math.round((v.collectedKg / (v.collectedKg + v.missedClaims * 5)) * 100);
+            scoreText = `${Math.max(0, Math.min(100, pct))}%`;
+            if (pct < 70) scoreClass = 'text-rose-500';
+            else if (pct < 90) scoreClass = 'text-amber-500';
+          }
+          tdScore.appendChild(el('span', scoreClass, scoreText));
+          tr.appendChild(tdScore);
+
+          volBody.appendChild(tr);
+        });
+      }
+    }
+
+    // Role-Specific Views Orchestrator
+    function renderRoleWork() {
+      const donorTabs = document.getElementById('donorTabsContainer');
+      const donorTabBar = document.getElementById('donorTabBar');
+      const volTabs = document.getElementById('volunteerTabsContainer');
+      const volTabBar = document.getElementById('volTabBar');
+
+      if (!activeActor) {
+        if (donorTabBar) donorTabBar.classList.add('hidden');
+        if (donorTabs) donorTabs.classList.add('hidden');
+        if (volTabBar) volTabBar.classList.add('hidden');
+        if (volTabs) volTabs.classList.add('hidden');
+        return;
+      }
+
+      if (activeActor.role === 'donor') {
+        // Show Restaurant Owner Tabs & Hide Volunteer Panels
+        if (donorTabBar) donorTabBar.classList.remove('hidden');
+        if (donorTabs) donorTabs.classList.remove('hidden');
+        if (volTabBar) volTabBar.classList.add('hidden');
+        if (volTabs) volTabs.classList.add('hidden');
+
+        // Switch to current active tab
+        switchDonorTab(activeDonorTab);
+      } else {
+        // Show Volunteer Panels & Hide Restaurant Owner Panels
+        if (donorTabBar) donorTabBar.classList.add('hidden');
+        if (donorTabs) donorTabs.classList.add('hidden');
+        if (volTabBar) volTabBar.classList.remove('hidden');
+        if (volTabs) volTabs.classList.remove('hidden');
+
+        renderVolunteerWorkArea();
       }
     }
 
     // -------------------------------------------------------------
-    // VOLUNTEER VIEW
+    // VOLUNTEER WORK AREA
     // -------------------------------------------------------------
-    async function renderVolunteerWork(container) {
-      // 1. Available Open Donations in Zones
-      const openCard = el('section', 'surface p-5 space-y-4');
-      const openHeader = el('div', 'flex justify-between items-center');
-      openHeader.appendChild(el('h2', 'text-base font-semibold', 'Open Donations in Your Zones'));
-      openHeader.appendChild(el('span', 'text-xs text-[var(--text-muted)]', `Zones: ${activeActor.zones.join(', ')} | Max Cap: ${activeActor.capacity_kg}kg`));
-      openCard.appendChild(openHeader);
+    async function renderVolunteerWorkArea() {
+      const container = document.getElementById('volunteerWorkArea');
+      if (!container) return;
+      clearChildren(container);
+
+      // 1. Open Donations in Volunteer Zones
+      const openCard = el('section', 'surface p-5 space-y-4 rounded-2xl border border-[var(--border)]');
+      const openHead = el('div', 'flex justify-between items-center pb-2 border-b border-[var(--border)]');
+      openHead.appendChild(el('h2', 'text-base font-bold', 'Available Surplus in Your Zones'));
+      openHead.appendChild(el('span', 'text-xs text-[var(--text-muted)]', `Vehicle Cap: ${activeActor.capacity_kg}kg | Zones: ${activeActor.zones.join(', ')}`));
+      openCard.appendChild(openHead);
 
       const openContainer = el('div', 'space-y-4');
       openCard.appendChild(openContainer);
       container.appendChild(openCard);
 
-      // 2. My Claims
-      const claimsCard = el('section', 'surface p-5 space-y-4');
-      claimsCard.appendChild(el('h2', 'text-base font-semibold', 'My Claimed Pickups'));
+      // 2. My Claimed Pickups
+      const claimsCard = el('section', 'surface p-5 space-y-4 rounded-2xl border border-[var(--border)]');
+      const claimsHead = el('div', 'flex justify-between items-center pb-2 border-b border-[var(--border)]');
+      claimsHead.appendChild(el('h2', 'text-base font-bold', 'My Claimed Pickups'));
+      claimsCard.appendChild(claimsHead);
 
       const claimsContainer = el('div', 'space-y-4');
       claimsCard.appendChild(claimsContainer);
@@ -1175,7 +1608,7 @@
           openContainer.appendChild(el('p', 'text-sm text-[var(--text-muted)] py-4 text-center', 'No open donations in your zones right now.'));
         } else {
           openDonations.forEach((d) => {
-            const card = el('div', 'surface p-4 border border-[var(--border)] rounded-md space-y-3');
+            const card = el('div', 'surface p-4 border border-[var(--border)] rounded-xl space-y-3');
 
             const hRow = el('div', 'flex justify-between items-center');
             const leftH = el('div', 'space-x-2');
@@ -1183,11 +1616,10 @@
             leftH.appendChild(el('span', 'font-semibold', d.donor_name));
             leftH.appendChild(el('span', 'text-xs text-[var(--text-muted)]', `(Zone: ${d.zone})`));
             hRow.appendChild(leftH);
-
             hRow.appendChild(createStatusChip('OPEN'));
             card.appendChild(hRow);
 
-            const descRow = el('div', 'text-sm', d.description);
+            const descRow = el('div', 'text-sm font-medium', d.description);
             card.appendChild(descRow);
 
             const metaRow = el('div', 'grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-[var(--text-muted)]');
@@ -1222,7 +1654,6 @@
             fRow.appendChild(claimSubmit);
             claimForm.appendChild(fRow);
 
-            // Error container for rule violation reporting
             const claimErrorBox = el('div', 'text-xs text-[var(--danger)] min-h-[0px] space-y-1');
             claimForm.appendChild(claimErrorBox);
 
@@ -1271,6 +1702,7 @@
         if (myClaims.length === 0) {
           claimsContainer.appendChild(el('p', 'text-sm text-[var(--text-muted)] py-4 text-center', 'You have no claims yet.'));
         } else {
+          const tableWrap = el('div', 'table-container');
           const table = el('table', 'w-full text-xs');
           const thead = el('thead');
           const trH = el('tr');
@@ -1297,10 +1729,7 @@
             tdStatus.appendChild(createStatusChip(c.status));
             tr.appendChild(tdStatus);
 
-            // Action buttons: Collect & Cancel
             const tdActions = el('td', 'text-right space-x-2');
-
-            // Collect button
             const collectBtn = el('button', 'btn btn-accent text-[11px] px-2 py-1', 'Collect');
             collectBtn.type = 'button';
             collectBtn.disabled = !c.can_collect;
@@ -1316,7 +1745,6 @@
             });
             tdActions.appendChild(collectBtn);
 
-            // Cancel button
             const cancelBtn = el('button', 'btn btn-outline text-[11px] px-2 py-1 text-[var(--danger)] border-[var(--danger)]', 'Cancel');
             cancelBtn.type = 'button';
             cancelBtn.disabled = !c.can_cancel;
@@ -1337,7 +1765,8 @@
             tbody.appendChild(tr);
           });
           table.appendChild(tbody);
-          claimsContainer.appendChild(table);
+          tableWrap.appendChild(table);
+          claimsContainer.appendChild(tableWrap);
         }
       } catch (err) {
         claimsContainer.appendChild(el('div', 'text-sm text-[var(--danger)]', err.message));
@@ -1450,10 +1879,76 @@
       };
 
       document.getElementById('authSwitchBtn').onclick = switchToAuth;
-      document.getElementById('railSwitchBtn').onclick = () => {
-        authMode = 'signup';
-        switchToAuth();
-      };
+      const railBtn = document.getElementById('railSwitchBtn');
+      if (railBtn) {
+        railBtn.onclick = () => {
+          authMode = 'signup';
+          switchToAuth();
+        };
+      }
+
+      // Wire up Restaurant Owner Tabs
+      const tabPost = document.getElementById('tabNavPost');
+      const tabManage = document.getElementById('tabNavManage');
+      const tabBalance = document.getElementById('tabNavBalance');
+      const tabVolunteers = document.getElementById('tabNavVolunteers');
+      if (tabPost) tabPost.onclick = () => switchDonorTab('tabNavPost');
+      if (tabManage) tabManage.onclick = () => switchDonorTab('tabNavManage');
+      if (tabBalance) tabBalance.onclick = () => switchDonorTab('tabNavBalance');
+      if (tabVolunteers) tabVolunteers.onclick = () => switchDonorTab('tabNavVolunteers');
+
+      // Wire up Quick Simulation Clock Advance Buttons
+      const q30 = document.getElementById('quickClock30m');
+      const q1h = document.getElementById('quickClock1h');
+      const q2h = document.getElementById('quickClock2h');
+      const q1d = document.getElementById('quickClock1d');
+      if (q30) q30.onclick = () => advanceClock(30);
+      if (q1h) q1h.onclick = () => advanceClock(60);
+      if (q2h) q2h.onclick = () => advanceClock(120);
+      if (q1d) q1d.onclick = () => advanceClock(1440);
+
+      // Wire up Refresh Manage List Button
+      const refManage = document.getElementById('refreshManageBtn');
+      if (refManage) refManage.onclick = () => loadDonorDonations();
+
+      // Wire up Post Surplus Food Form
+      const postForm = document.getElementById('postDonationForm');
+      if (postForm) {
+        postForm.onsubmit = async (e) => {
+          e.preventDefault();
+          const errBox = document.getElementById('postErrorBox');
+          const submitBtn = document.getElementById('postSubmitBtn');
+          if (errBox) errBox.textContent = '';
+          if (submitBtn) submitBtn.disabled = true;
+
+          const description = document.getElementById('postDesc').value.trim();
+          const quantity_kg = parseInt(document.getElementById('postKg').value, 10);
+          const pickup_from = document.getElementById('postFrom').value;
+          const pickup_until = document.getElementById('postUntil').value;
+
+          try {
+            await apiRequest('/api/donations', {
+              method: 'POST',
+              body: JSON.stringify({ description, quantity_kg, pickup_from, pickup_until }),
+            });
+            showToast(`🎉 Successfully posted ${quantity_kg}kg surplus food donation!`);
+            postForm.reset();
+            document.getElementById('postFrom').value = clockNow;
+            await refreshAll();
+            switchDonorTab('tabNavManage');
+          } catch (err) {
+            if (errBox) {
+              if (err.errors && err.errors.length) {
+                errBox.textContent = err.errors.map((e) => e.message).join(' | ');
+              } else {
+                errBox.textContent = err.message;
+              }
+            }
+          } finally {
+            if (submitBtn) submitBtn.disabled = false;
+          }
+        };
+      }
 
       // Form 1: Restaurant Sign Up
       formSignupRestaurant.onsubmit = async (e) => {
