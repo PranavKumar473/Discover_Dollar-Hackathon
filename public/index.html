@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SurplusLink — Food Recovery Dispatch</title>
 
+  <!-- Google Fonts: Digital Clock Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
   <!-- Fallback & Design System CSS (Ensures 100% usability if CDN is unreachable) -->
   <style>
     :root {
@@ -246,22 +251,55 @@
       background: #4C8C53; transform: rotate(-38deg);
     }
 
-    /* 3D Simulation Clock Widget */
-    .clock-3d-card {
-      background: linear-gradient(145deg, #182026, #0D1115);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      box-shadow: 
-        0 14px 28px -6px rgba(0, 0, 0, 0.5),
-        0 8px 12px -6px rgba(0, 0, 0, 0.4),
-        inset 0 1px 1px rgba(255, 255, 255, 0.25),
-        inset 0 -2px 4px rgba(0, 0, 0, 0.7);
-      border-radius: 18px;
-    }
-    .clock-3d-display {
-      background: #06090B;
-      box-shadow: inset 0 3px 8px rgba(0,0,0,0.85), 0 1px 0 rgba(255,255,255,0.08);
+    /* Digital Simulation Clock Widget */
+    .clock-3d-card, .digital-clock-card {
+      background: linear-gradient(150deg, #18222b 0%, #0d1217 100%);
       border: 1px solid rgba(0, 240, 255, 0.25);
-      border-radius: 12px;
+      box-shadow: 
+        0 18px 36px -8px rgba(0, 0, 0, 0.65),
+        0 8px 16px -6px rgba(0, 0, 0, 0.45),
+        inset 0 1px 1px rgba(255, 255, 255, 0.22),
+        inset 0 -2px 6px rgba(0, 0, 0, 0.8);
+      border-radius: 20px;
+    }
+    .digital-screen-bezel {
+      background: #04080d;
+      border: 1.5px solid #1a2533;
+      border-radius: 14px;
+      box-shadow: 
+        inset 0 4px 14px rgba(0, 0, 0, 0.95),
+        0 1px 0 rgba(255, 255, 255, 0.08),
+        0 0 16px rgba(6, 182, 212, 0.12);
+      position: relative;
+      overflow: hidden;
+    }
+    .digital-screen-bezel::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,0.035) 0%, transparent 40%, rgba(0,0,0,0.2) 100%);
+      pointer-events: none;
+    }
+    .digital-ghost-layer {
+      color: rgba(6, 182, 212, 0.08);
+      user-select: none;
+      pointer-events: none;
+      font-family: 'Share Tech Mono', 'Orbitron', monospace;
+    }
+    .digital-active-glow {
+      color: #22d3ee;
+      font-family: 'Share Tech Mono', 'Orbitron', monospace;
+      text-shadow: 
+        0 0 8px rgba(34, 211, 238, 0.8),
+        0 0 18px rgba(6, 182, 212, 0.5),
+        0 0 32px rgba(6, 182, 212, 0.25);
+    }
+    .digital-colon-blink {
+      animation: digitalBlink 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    @keyframes digitalBlink {
+      0%, 100% { opacity: 1; filter: drop-shadow(0 0 6px #22d3ee); }
+      50% { opacity: 0.18; filter: none; }
     }
     .btn-3d {
       background: linear-gradient(180deg, #2E3A44 0%, #1B242B 100%);
@@ -612,22 +650,66 @@
         </div>
       </section>
 
-      <!-- 2. Fixed 3D Simulation Clock Widget -->
-      <section class="clock-3d-card p-5 space-y-4 text-white relative overflow-hidden">
-        <!-- 3D Header -->
+      <!-- 2. Fixed Digital Simulation Clock Widget -->
+      <section class="digital-clock-card clock-3d-card p-5 space-y-4 text-white relative overflow-hidden">
+        <!-- Digital Hardware Header -->
         <div class="flex items-center justify-between">
           <div class="flex items-center space-x-2">
             <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_#22d3ee]"></span>
-            <span class="text-xs font-bold uppercase tracking-widest text-slate-300">3D Simulation Clock</span>
+            <span class="text-xs font-bold uppercase tracking-widest text-slate-300">Digital Simulation Clock</span>
           </div>
-          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-cyan-300 border border-slate-700">App Clock</span>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-950/80 text-cyan-300 border border-cyan-800/60 uppercase tracking-wider font-semibold">Digital LED</span>
         </div>
 
-        <!-- 3D Digital LED Display -->
-        <div class="clock-3d-display p-4 text-center space-y-1">
-          <div id="clockDateDisplay" class="text-xs font-mono tracking-widest text-slate-400 font-semibold">2026-03-10</div>
-          <div id="clockTimeDisplay" class="text-3xl font-extrabold font-mono tracking-wider text-cyan-300 drop-shadow-[0_0_12px_rgba(6,182,212,0.4)]">12:00</div>
-          <div class="text-[10px] text-slate-500 uppercase font-mono tracking-widest">Simulated City Dispatch Time</div>
+        <!-- Digital Screen Bezel & LCD Display -->
+        <div class="digital-screen-bezel p-3.5 space-y-2">
+          <!-- Screen Header: Day of Week Pills + Full ISO Date -->
+          <div class="flex items-center justify-between border-b border-slate-800/80 pb-2">
+            <div class="flex items-center space-x-1 text-[10px] font-mono" id="clockDayPills">
+              <span class="clock-day-pill px-1 rounded transition-colors text-slate-500 opacity-40" data-day="SUN">SU</span>
+              <span class="clock-day-pill px-1 rounded transition-colors text-slate-500 opacity-40" data-day="MON">MO</span>
+              <span class="clock-day-pill px-1 rounded transition-colors text-slate-500 opacity-40" data-day="TUE">TU</span>
+              <span class="clock-day-pill px-1 rounded transition-colors text-slate-500 opacity-40" data-day="WED">WE</span>
+              <span class="clock-day-pill px-1 rounded transition-colors text-slate-500 opacity-40" data-day="THU">TH</span>
+              <span class="clock-day-pill px-1 rounded transition-colors text-slate-500 opacity-40" data-day="FRI">FR</span>
+              <span class="clock-day-pill px-1 rounded transition-colors text-slate-500 opacity-40" data-day="SAT">SA</span>
+            </div>
+            <div id="clockDateDisplay" class="text-xs font-mono font-bold tracking-widest text-emerald-400 drop-shadow-[0_0_6px_rgba(52,211,153,0.5)]">2026-03-10</div>
+          </div>
+
+          <!-- Main Digital Readout (Hours : Minutes : Seconds AM/PM) -->
+          <div class="relative py-1 flex items-baseline justify-center">
+            <!-- Ghost Background Segments for authentic LCD look -->
+            <div class="absolute inset-0 flex items-baseline justify-center digital-ghost-layer text-4xl sm:text-5xl font-mono font-extrabold tracking-wider select-none" aria-hidden="true">
+              <span>88</span>
+              <span class="mx-0.5">:</span>
+              <span>88</span>
+              <div class="ml-2.5 flex flex-col text-xs font-mono tracking-tight leading-none opacity-40">
+                <span>88s</span>
+                <span>88</span>
+              </div>
+            </div>
+
+            <!-- Glowing Digital Foreground Digits -->
+            <div id="clockTimeDisplay" class="relative z-10 flex items-baseline justify-center digital-active-glow text-4xl sm:text-5xl font-mono font-extrabold tracking-wider">
+              <span id="clockHours">12</span>
+              <span id="clockColon" class="digital-colon-blink mx-0.5 text-cyan-300">:</span>
+              <span id="clockMinutes">00</span>
+              <div class="ml-2.5 flex flex-col text-xs font-mono font-bold tracking-wider leading-none text-cyan-300">
+                <span id="clockSeconds" class="text-[11px] text-emerald-400 drop-shadow-[0_0_4px_#34d399]">:00</span>
+                <span id="clockAmPm" class="text-[10px] text-cyan-200 mt-1 uppercase">PM</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Digital Telemetry Sub-bar -->
+          <div class="flex items-center justify-between pt-1 border-t border-slate-800/80 text-[10px] font-mono text-slate-400">
+            <span class="flex items-center space-x-1.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+              <span class="tracking-wider uppercase text-slate-400">Simulated Dispatch</span>
+            </span>
+            <span id="clockDayDisplay" class="text-cyan-300 font-semibold uppercase tracking-wider">TUE</span>
+          </div>
         </div>
 
         <!-- Quick 1-Tap Advance Steps (Clean, instant, non-cluttered) -->
@@ -1056,10 +1138,50 @@
       clockNow = data.now;
       const dateEl = document.getElementById('clockDateDisplay');
       const timeEl = document.getElementById('clockTimeDisplay');
+      const hoursEl = document.getElementById('clockHours');
+      const minutesEl = document.getElementById('clockMinutes');
+      const secondsEl = document.getElementById('clockSeconds');
+      const ampmEl = document.getElementById('clockAmPm');
+      const dayEl = document.getElementById('clockDayDisplay');
+
       if (clockNow) {
         const parts = clockNow.split('T');
-        if (dateEl) dateEl.textContent = parts[0] || clockNow;
-        if (timeEl) timeEl.textContent = parts[1] ? parts[1].substring(0, 5) : clockNow;
+        const dateStr = parts[0] || clockNow;
+        const timePart = parts[1] || '12:00';
+        const hhmm = timePart.substring(0, 5);
+
+        if (dateEl) dateEl.textContent = dateStr;
+
+        if (hoursEl && minutesEl) {
+          const [hhStr, mmStr] = hhmm.split(':');
+          const hh = parseInt(hhStr, 10) || 0;
+          const mm = parseInt(mmStr, 10) || 0;
+          hoursEl.textContent = String(hh).padStart(2, '0');
+          minutesEl.textContent = String(mm).padStart(2, '0');
+          if (secondsEl) secondsEl.textContent = ':00';
+          if (ampmEl) ampmEl.textContent = hh >= 12 ? 'PM' : 'AM';
+        } else if (timeEl) {
+          timeEl.textContent = hhmm;
+        }
+
+        try {
+          const [yr, mo, da] = dateStr.split('-').map(Number);
+          if (yr && mo && da) {
+            const dateObj = new Date(yr, mo - 1, da);
+            const daysArr = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+            const curDay = daysArr[dateObj.getDay()] || 'DISPATCH';
+            if (dayEl) dayEl.textContent = curDay;
+            document.querySelectorAll('.clock-day-pill').forEach(pill => {
+              if (pill.dataset.day === curDay) {
+                pill.classList.add('text-cyan-400', 'font-bold', 'opacity-100');
+                pill.classList.remove('opacity-40', 'text-slate-500');
+              } else {
+                pill.classList.remove('text-cyan-400', 'font-bold', 'opacity-100');
+                pill.classList.add('opacity-40', 'text-slate-500');
+              }
+            });
+          }
+        } catch (_) {}
       }
       const legacyEl = document.getElementById('clockDisplay');
       if (legacyEl) legacyEl.textContent = clockNow;
