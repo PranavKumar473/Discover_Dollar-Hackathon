@@ -876,6 +876,7 @@
             kgInput.max = String(Math.min(activeActor.capacity_kg, d.remaining_kg));
             kgInput.placeholder = 'kg to take';
             kgInput.required = true;
+            kgInput.setAttribute('aria-label', `Kilograms to claim from donation #${d.id}`);
             fRow.appendChild(kgInput);
 
             const timeInput = el('input', 'bg-[var(--surface-alt)] border border-[var(--border)] rounded-md px-2.5 py-1 text-sm tabular flex-1 min-w-[200px]');
@@ -884,6 +885,7 @@
             timeInput.value = d.pickup_from;
             timeInput.min = d.pickup_from;
             timeInput.max = d.pickup_until;
+            timeInput.setAttribute('aria-label', `Planned pickup time for donation #${d.id}`);
             fRow.appendChild(timeInput);
 
             const claimSubmit = el('button', 'btn btn-accent text-xs px-4 py-1.5', 'Claim Food');

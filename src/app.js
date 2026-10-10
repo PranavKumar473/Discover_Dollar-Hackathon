@@ -41,12 +41,12 @@ function createApp(customDb) {
     return db.prepare('SELECT * FROM claims').all();
   }
 
-  // Middleware: require actor of a specific role
+  // Middleware: require actor of a specific role (header or body)
   function requireActor(role) {
     return (req, res, next) => {
-      const actorId = req.headers['x-actor-id'];
+      const actorId = req.headers['x-actor-id'] || (req.body && (req.body.actor_id || req.body.actorId || req.body.actor));
       if (!actorId) {
-        return res.status(400).json({ error: 'X-Actor-Id header is required' });
+        return res.status(400).json({ error: 'X-Actor-Id header or actor_id in body is required' });
       }
 
       if (role === 'donor') {
@@ -217,17 +217,24 @@ function createApp(customDb) {
 
     let updatedDonation;
     db.transaction(() => {
-      const check = canCancelDonation(donation, claims, now);
+      const currentDonation = getDonationWithZone(req.params.id);
+      if (!currentDonation) {
+        const err = new Error('Donation not found');
+        err.status = 404;
+        throw err;
+      }
+      const allClaims = getAllClaims();
+      const check = canCancelDonation(currentDonation, allClaims, now);
       if (!check.ok) {
         const err = new Error(check.reason);
         err.status = 409;
         throw err;
       }
 
-      db.prepare('UPDATE donations SET cancelled = 1 WHERE id = ?').run(donation.id);
-      donation.cancelled = 1;
+      db.prepare('UPDATE donations SET cancelled = 1 WHERE id = ?').run(currentDonation.id);
+      currentDonation.cancelled = 1;
       updatedDonation = {
-        ...donation,
+        ...currentDonation,
         status: 'CANCELLED',
       };
     })();
@@ -367,15 +374,21 @@ function createApp(customDb) {
 
     let updatedClaim;
     db.transaction(() => {
-      const check = canCollect(claim, donation, now);
+      const currentClaim = db.prepare('SELECT * FROM claims WHERE id = ?').get(req.params.id);
+      if (!currentClaim) {
+        const err = new Error('Claim not found');
+        err.status = 404;
+        throw err;
+      }
+      const check = canCollect(currentClaim, donation, now);
       if (!check.ok) {
         const err = new Error(check.reason);
         err.status = 409;
         throw err;
       }
 
-      db.prepare("UPDATE claims SET status = 'COLLECTED' WHERE id = ?").run(claim.id);
-      updatedClaim = { ...claim, status: 'COLLECTED' };
+      db.prepare("UPDATE claims SET status = 'COLLECTED' WHERE id = ?").run(currentClaim.id);
+      updatedClaim = { ...currentClaim, status: 'COLLECTED' };
     })();
 
     res.json(updatedClaim);
@@ -394,15 +407,21 @@ function createApp(customDb) {
     const now = getClock();
     let updatedClaim;
     db.transaction(() => {
-      const check = canCancelClaim(claim, now);
+      const currentClaim = db.prepare('SELECT * FROM claims WHERE id = ?').get(req.params.id);
+      if (!currentClaim) {
+        const err = new Error('Claim not found');
+        err.status = 404;
+        throw err;
+      }
+      const check = canCancelClaim(currentClaim, now);
       if (!check.ok) {
         const err = new Error(check.reason);
         err.status = 409;
         throw err;
       }
 
-      db.prepare("UPDATE claims SET status = 'CANCELLED' WHERE id = ?").run(claim.id);
-      updatedClaim = { ...claim, status: 'CANCELLED' };
+      db.prepare("UPDATE claims SET status = 'CANCELLED' WHERE id = ?").run(currentClaim.id);
+      updatedClaim = { ...currentClaim, status: 'CANCELLED' };
     })();
 
     res.json(updatedClaim);
