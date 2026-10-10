@@ -315,6 +315,25 @@
       transform-origin: center center;
       transition: transform 0.25s ease;
     }
+
+    /* Glassmorphic Task Dashboard & Colorful Gradient UI */
+    .glass-header {
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+    .glass-nav-bar {
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+    .tab-glass-pill {
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .tab-glass-pill:hover:not(.active) {
+      transform: translateY(-1px);
+    }
+    .tab-glass-pill.active {
+      box-shadow: 0 4px 14px -2px rgba(6, 182, 212, 0.35);
+    }
   </style>
 
   <!-- Tailwind CDN -->
@@ -570,66 +589,109 @@
   <!-- MAIN APPLICATION CONSOLE (Visible After Login/Signup)          -->
   <!-- ============================================================== -->
   <div id="mainAppScreen" class="min-h-screen flex flex-col hidden">
-  <header class="border-b border-[var(--border)] bg-[var(--surface)] px-4 sm:px-6 py-3 flex items-center justify-between">
-    <div class="flex items-center space-x-3">
-      <div class="w-8 h-8 rounded-md bg-[var(--accent)] text-white font-bold flex items-center justify-center text-lg">
-        S
-      </div>
-      <div>
-        <h1 class="text-lg font-bold tracking-tight">SurplusLink</h1>
-        <p class="text-xs text-[var(--text-muted)]">City Food Rescue &amp; Volunteer Logistics</p>
-      </div>
-    </div>
+  <header class="glass-header relative sticky top-0 z-30 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200/80 dark:border-slate-800/80 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)]">
+    <!-- Top Multi-Stop Vibrant Gradient Accent Strip -->
+    <div class="h-[3.5px] w-full bg-gradient-to-r from-emerald-400 via-teal-500 via-cyan-500 via-indigo-500 to-fuchsia-500"></div>
 
-    <!-- Active Persona Badge & Switch, Theme Toggle & Refresh -->
-    <div class="flex items-center space-x-2">
-      <button id="authSwitchBtn" type="button" class="btn btn-outline text-xs px-2.5 py-1.5 flex items-center space-x-1.5">
-        <span id="headerPersonaBadge">👤 Active Persona</span>
-        <span class="text-[var(--accent)] font-semibold">↩ Switch / Log Out</span>
-      </button>
+    <div class="px-4 sm:px-8 py-3 flex items-center justify-between gap-4">
+      <!-- Brand & Mission with Colorful Gradient Logo -->
+      <div class="flex items-center space-x-3.5">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-teal-500 via-cyan-600 to-indigo-600 text-white font-extrabold flex items-center justify-center text-xl shadow-lg shadow-cyan-500/25 ring-2 ring-white/30 dark:ring-white/10 transition-transform hover:scale-105">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <h1 class="text-lg font-black tracking-tight bg-gradient-to-r from-slate-900 via-teal-900 to-cyan-900 dark:from-white dark:via-cyan-100 dark:to-teal-200 bg-clip-text text-transparent">
+              SurplusLink
+            </h1>
+            <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 hidden sm:inline-flex items-center space-x-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span>Live Engine</span>
+            </span>
+          </div>
+          <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">City Food Rescue &amp; Volunteer Logistics</p>
+        </div>
+      </div>
 
-      <button id="themeToggleBtn" type="button" class="btn btn-outline text-xs px-2.5 py-1.5" aria-label="Toggle color theme">
-        <span id="themeIcon">🌓</span> Theme
-      </button>
-      <button id="refreshBtn" type="button" class="btn btn-outline text-xs px-2.5 py-1.5" aria-label="Refresh data">
-        🔄 Refresh
-      </button>
+      <!-- Active Persona Badge & Actions with Glassmorphism -->
+      <div class="flex items-center space-x-2.5">
+        <!-- Frosted Glass Identity Pill -->
+        <button id="authSwitchBtn" type="button" class="group relative bg-gradient-to-r from-teal-500/10 via-cyan-500/10 to-indigo-500/10 hover:from-teal-500/20 hover:to-indigo-500/20 backdrop-blur-md border border-teal-500/25 dark:border-teal-400/20 rounded-full px-3.5 py-1.5 flex items-center space-x-2 text-xs transition-all duration-200 hover:shadow-md hover:border-teal-500/40 cursor-pointer">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span id="headerPersonaBadge" class="font-bold text-slate-800 dark:text-slate-100 flex items-center space-x-1.5">
+            <span>👤 Active Persona</span>
+          </span>
+          <span class="text-[11px] font-semibold text-teal-600 dark:text-teal-400 pl-1.5 border-l border-teal-500/20 group-hover:text-teal-700 dark:group-hover:text-teal-300 flex items-center space-x-1">
+            <span>↩</span>
+            <span class="hidden sm:inline">Switch / Log Out</span>
+            <span class="sm:hidden">Exit</span>
+          </span>
+        </button>
+
+        <!-- Glass Theme Toggle Button -->
+        <button id="themeToggleBtn" type="button" class="bg-white/70 dark:bg-slate-800/70 hover:bg-white dark:hover:bg-slate-700 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/80 rounded-full px-3 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 transition-all duration-200 shadow-sm hover:shadow flex items-center space-x-1.5 cursor-pointer hover:scale-105 active:scale-95" aria-label="Toggle color theme">
+          <span id="themeIcon">🌓</span>
+          <span class="hidden sm:inline">Theme</span>
+        </button>
+
+        <!-- Glass Refresh Button -->
+        <button id="refreshBtn" type="button" class="bg-white/70 dark:bg-slate-800/70 hover:bg-white dark:hover:bg-slate-700 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/80 rounded-full px-3 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 transition-all duration-200 shadow-sm hover:shadow flex items-center space-x-1.5 cursor-pointer hover:scale-105 active:scale-95" aria-label="Refresh data">
+          <span>🔄</span>
+          <span class="hidden sm:inline">Refresh</span>
+        </button>
+      </div>
     </div>
   </header>
 
-  <!-- Role-Specific Top Navigation Tab Bar -->
-  <nav id="donorTabBar" class="bg-[var(--surface)] border-b border-[var(--border)] px-4 sm:px-6 flex space-x-1 sm:space-x-4 overflow-x-auto text-sm font-semibold select-none">
-    <button id="tabNavPost" type="button" class="py-3 px-3 border-b-2 border-[var(--accent)] text-[var(--accent)] flex items-center space-x-2 whitespace-nowrap transition cursor-pointer">
-      <span>📦</span>
-      <span>Post Surplus Food</span>
-    </button>
-    <button id="tabNavManage" type="button" class="py-3 px-3 border-b-2 border-transparent text-[var(--text-muted)] hover:text-[var(--text)] flex items-center space-x-2 whitespace-nowrap transition cursor-pointer">
-      <span>📋</span>
-      <span>My Posted Donations</span>
-    </button>
-    <button id="tabNavBalance" type="button" class="py-3 px-3 border-b-2 border-transparent text-[var(--text-muted)] hover:text-[var(--text)] flex items-center space-x-2 whitespace-nowrap transition cursor-pointer">
-      <span>📊</span>
-      <span>Food Balance (3D Pie)</span>
-    </button>
-    <button id="tabNavVolunteers" type="button" class="py-3 px-3 border-b-2 border-transparent text-[var(--text-muted)] hover:text-[var(--text)] flex items-center space-x-2 whitespace-nowrap transition cursor-pointer">
-      <span>🚗</span>
-      <span>Volunteer History (3D Pie)</span>
-    </button>
+  <!-- Role-Specific Top Navigation Tab Bar with Colorful Gradients & Glassmorphism -->
+  <nav id="donorTabBar" class="glass-nav-bar bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl border-b border-slate-200/70 dark:border-slate-800/70 px-4 sm:px-8 py-2.5 flex items-center justify-between overflow-x-auto select-none transition-all">
+    <div class="inline-flex p-1 rounded-2xl bg-slate-200/50 dark:bg-slate-800/50 backdrop-blur-md border border-slate-300/40 dark:border-slate-700/50 shadow-inner gap-1 sm:gap-1.5 overflow-x-auto">
+      <button id="tabNavPost" type="button" class="tab-glass-pill active px-4 py-2 rounded-xl font-bold text-xs sm:text-sm flex items-center space-x-2 whitespace-nowrap transition-all duration-200 shadow-md bg-gradient-to-r from-teal-500 via-cyan-600 to-indigo-600 text-white shadow-cyan-500/25 cursor-pointer transform scale-[1.02]">
+        <span class="text-sm">📦</span>
+        <span>Post Surplus Food</span>
+      </button>
+      <button id="tabNavManage" type="button" class="tab-glass-pill px-4 py-2 rounded-xl font-medium text-xs sm:text-sm flex items-center space-x-2 whitespace-nowrap transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/80 dark:hover:bg-slate-700/60 cursor-pointer">
+        <span class="text-sm">📋</span>
+        <span>My Posted Donations</span>
+      </button>
+      <button id="tabNavBalance" type="button" class="tab-glass-pill px-4 py-2 rounded-xl font-medium text-xs sm:text-sm flex items-center space-x-2 whitespace-nowrap transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/80 dark:hover:bg-slate-700/60 cursor-pointer">
+        <span class="text-sm">📊</span>
+        <span>Food Balance (3D Pie)</span>
+      </button>
+      <button id="tabNavVolunteers" type="button" class="tab-glass-pill px-4 py-2 rounded-xl font-medium text-xs sm:text-sm flex items-center space-x-2 whitespace-nowrap transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/80 dark:hover:bg-slate-700/60 cursor-pointer">
+        <span class="text-sm">🚗</span>
+        <span>Volunteer History (3D Pie)</span>
+      </button>
+    </div>
+    <div class="hidden md:flex items-center space-x-2 text-xs font-medium text-slate-500 dark:text-slate-400">
+      <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-teal-500/10 text-teal-700 dark:text-teal-300 border border-teal-500/20">
+        ✨ Restaurant Workflow
+      </span>
+    </div>
   </nav>
 
-  <nav id="volTabBar" class="bg-[var(--surface)] border-b border-[var(--border)] px-4 sm:px-6 flex space-x-1 sm:space-x-4 overflow-x-auto text-sm font-semibold select-none hidden">
-    <button id="tabNavVolBrowse" type="button" class="py-3 px-3 border-b-2 border-[var(--accent)] text-[var(--accent)] flex items-center space-x-2 whitespace-nowrap transition cursor-pointer">
-      <span>🔍</span>
-      <span>Available Surplus</span>
-    </button>
-    <button id="tabNavVolPickups" type="button" class="py-3 px-3 border-b-2 border-transparent text-[var(--text-muted)] hover:text-[var(--text)] flex items-center space-x-2 whitespace-nowrap transition cursor-pointer">
-      <span>🚗</span>
-      <span>My Claimed Pickups</span>
-    </button>
-    <button id="tabNavVolFailed" type="button" class="py-3 px-3 border-b-2 border-transparent text-[var(--text-muted)] hover:text-[var(--text)] flex items-center space-x-2 whitespace-nowrap transition cursor-pointer">
-      <span>⚠️</span>
-      <span>Failed Pickups &amp; Improvement</span>
-    </button>
+  <nav id="volTabBar" class="glass-nav-bar bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl border-b border-slate-200/70 dark:border-slate-800/70 px-4 sm:px-8 py-2.5 flex items-center justify-between overflow-x-auto select-none transition-all hidden">
+    <div class="inline-flex p-1 rounded-2xl bg-slate-200/50 dark:bg-slate-800/50 backdrop-blur-md border border-slate-300/40 dark:border-slate-700/50 shadow-inner gap-1 sm:gap-1.5 overflow-x-auto">
+      <button id="tabNavVolBrowse" type="button" class="tab-glass-pill active px-4 py-2 rounded-xl font-bold text-xs sm:text-sm flex items-center space-x-2 whitespace-nowrap transition-all duration-200 shadow-md bg-gradient-to-r from-teal-500 via-cyan-600 to-indigo-600 text-white shadow-cyan-500/25 cursor-pointer transform scale-[1.02]">
+        <span class="text-sm">🔍</span>
+        <span>Available Surplus</span>
+      </button>
+      <button id="tabNavVolPickups" type="button" class="tab-glass-pill px-4 py-2 rounded-xl font-medium text-xs sm:text-sm flex items-center space-x-2 whitespace-nowrap transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/80 dark:hover:bg-slate-700/60 cursor-pointer">
+        <span class="text-sm">🚗</span>
+        <span>My Claimed Pickups</span>
+      </button>
+      <button id="tabNavVolFailed" type="button" class="tab-glass-pill px-4 py-2 rounded-xl font-medium text-xs sm:text-sm flex items-center space-x-2 whitespace-nowrap transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/80 dark:hover:bg-slate-700/60 cursor-pointer">
+        <span class="text-sm">⚠️</span>
+        <span>Failed Pickups &amp; Improvement</span>
+      </button>
+    </div>
+    <div class="hidden md:flex items-center space-x-2 text-xs font-medium text-slate-500 dark:text-slate-400">
+      <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-cyan-500/10 text-cyan-700 dark:text-cyan-300 border border-cyan-500/20">
+        ⚡ Volunteer Dispatch Active
+      </span>
+    </div>
   </nav>
 
   <!-- Main Grid Layout -->
@@ -639,14 +701,20 @@
     <aside class="lg:col-span-4 space-y-6">
 
       <!-- 1. Logged-in Identity (NO switch button inside card) -->
-      <section class="surface p-4 space-y-2">
-        <h2 class="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]">Active Identity</h2>
-        <div class="p-3.5 rounded-xl bg-[var(--surface-alt)] border border-[var(--border)] space-y-1.5">
+      <section class="p-4 space-y-2 rounded-2xl bg-white/70 dark:bg-slate-800/70 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/80 shadow-sm">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Active Identity</h2>
+          <span class="inline-flex items-center space-x-1 text-[11px] font-semibold text-teal-600 dark:text-teal-400">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>Online</span>
+          </span>
+        </div>
+        <div class="p-3.5 rounded-xl bg-gradient-to-br from-slate-50 to-slate-100/80 dark:from-slate-900/60 dark:to-slate-800/60 border border-slate-200/80 dark:border-slate-700/80 space-y-1.5">
           <div class="flex items-center justify-between">
-            <span id="railActorName" class="font-bold text-base text-[var(--text)]">Loading...</span>
-            <span id="railActorIdBadge" class="text-xs font-mono font-bold px-2.5 py-1 rounded-md bg-[var(--accent)] text-white shadow-sm">--</span>
+            <span id="railActorName" class="font-bold text-base text-slate-900 dark:text-white">Loading...</span>
+            <span id="railActorIdBadge" class="text-xs font-mono font-bold px-2.5 py-1 rounded-lg bg-gradient-to-r from-teal-500 to-cyan-600 text-white shadow-sm shadow-cyan-500/20">--</span>
           </div>
-          <div id="actorDetails" class="text-xs text-[var(--text-muted)] pt-1 border-t border-[var(--border)]"></div>
+          <div id="actorDetails" class="text-xs text-slate-500 dark:text-slate-400 pt-1 border-t border-slate-200/60 dark:border-slate-700/60"></div>
         </div>
       </section>
 
@@ -1504,7 +1572,9 @@
 
     // -------------------------------------------------------------
     // RESTAURANT OWNER (DONOR) TABS MANAGEMENT
-    // -------------------------------------------------------------
+    const activeTabClass = 'tab-glass-pill active px-4 py-2 rounded-xl font-bold text-xs sm:text-sm flex items-center space-x-2 whitespace-nowrap transition-all duration-200 shadow-md bg-gradient-to-r from-teal-500 via-cyan-600 to-indigo-600 text-white shadow-cyan-500/25 cursor-pointer transform scale-[1.02]';
+    const inactiveTabClass = 'tab-glass-pill px-4 py-2 rounded-xl font-medium text-xs sm:text-sm flex items-center space-x-2 whitespace-nowrap transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/80 dark:hover:bg-slate-700/60 cursor-pointer';
+
     let activeDonorTab = 'tabNavPost';
 
     function switchDonorTab(tabId) {
@@ -1521,10 +1591,10 @@
         const pane = document.getElementById(item.pane);
         if (!btn || !pane) return;
         if (item.id === tabId) {
-          btn.className = 'py-3 px-3 border-b-2 border-[var(--accent)] text-[var(--accent)] flex items-center space-x-2 whitespace-nowrap transition cursor-pointer font-bold';
+          btn.className = activeTabClass;
           pane.classList.remove('hidden');
         } else {
-          btn.className = 'py-3 px-3 border-b-2 border-transparent text-[var(--text-muted)] hover:text-[var(--text)] flex items-center space-x-2 whitespace-nowrap transition cursor-pointer font-medium';
+          btn.className = inactiveTabClass;
           pane.classList.add('hidden');
         }
       });
@@ -1842,10 +1912,10 @@
         const pane = document.getElementById(item.pane);
         if (!btn || !pane) return;
         if (item.id === tabId) {
-          btn.className = 'py-3 px-3 border-b-2 border-[var(--accent)] text-[var(--accent)] flex items-center space-x-2 whitespace-nowrap transition cursor-pointer font-bold';
+          btn.className = activeTabClass;
           pane.classList.remove('hidden');
         } else {
-          btn.className = 'py-3 px-3 border-b-2 border-transparent text-[var(--text-muted)] hover:text-[var(--text)] flex items-center space-x-2 whitespace-nowrap transition cursor-pointer font-medium';
+          btn.className = inactiveTabClass;
           pane.classList.add('hidden');
         }
       });
