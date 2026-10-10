@@ -1,8 +1,8 @@
 {
-  "name": "hackathon-starter",
+  "name": "surplus-link",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "SurplusLink: restaurants post surplus food, volunteers reserve and collect it",
+  "main": "src/server.js",
   "scripts": {
     "test": "node --test",
     "start": "node src/server.js",
@@ -13,9 +13,6 @@
   "license": "ISC",
   "dependencies": {
     "better-sqlite3": "^13.0.3",
-    "cors": "^2.8.6",
-    "csv-parse": "^7.0.3",
-    "express": "^4.22.3",
-    "multer": "^2.4.0"
+    "express": "^4.22.3"
   }
 }
