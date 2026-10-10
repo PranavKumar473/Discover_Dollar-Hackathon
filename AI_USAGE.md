@@ -62,10 +62,16 @@ This document discloses how AI tools were utilized during the development and it
    - **What changed**: Avoided heavy charting libraries (no Chart.js, D3, or bundlers).
    - **Implementation**: Custom pure SVG generator (`render3DPieChartSVG`) with tilted elliptical geometry (`rx`, `ry`), front-facing cylinder depth extrusion with darkened side-wall shading, drop shadows, and hover tooltips.
 
-5. **Fixed 3D Digital Simulation Clock**:
-   - **What changed**: Upgraded the clock into a metallic dark 3D glassmorphism widget with a glowing cyan LED digital readout for city dispatch date & time.
-   - **Testing Convenience**: Added 1-tap quick advance buttons (`+30m`, `+1h`, `+2h`, `+1d`) to effortlessly test deadline expiration (uncollected claims transitioning to `MISSED` and surplus becoming `WASTED`).
-   - **Sidebar Cleanup**: Removed the redundant "switch account" button from the Active Identity card to keep the sidebar focused.
+6. **Volunteer Modular Architecture & Smart Claim Validation**:
+   - **What changed**: Segregated the volunteer dashboard into 3 dedicated header tabs: `Available Surplus`, `My Claimed Pickups`, and `Failed Pickups & Improvement`.
+   - **Fixing Available Surplus Behavior**:
+     - Resolved Rule 6 invalid past-time errors by setting `timeInput.min` and `timeInput.value` dynamically to `Math.max(pickup_from, clockNow)`.
+     - Provided quick preset chips (`Max`, `10kg`, `5kg`) that automatically respect vehicle capacity limits (`Math.min(capacity_kg, remaining_kg)`).
+     - Added zone filtering pills (`My Zones` vs `All City Zones`) so drivers can explore city-wide opportunities with clear visual in-zone indicators.
+   - **New Tab: Failed Pickups & Improvement Hub**:
+     - Built a dedicated improvement hub tracking missed pickup deadlines (`MISSED` status).
+     - Provides a driver scorecard (Successfully Rescued kg, Failed Pickups count, Timely Cancellations, Reliability Rating %).
+     - Features actionable self-improvement guidance explaining how to maintain a 100% reliability rating and audit table for missed collections.
 
 ---
 
@@ -76,7 +82,8 @@ This document discloses how AI tools were utilized during the development and it
 | **Dependencies** | Using `multer`, `cors`, and `csv-parse` from prior template | **Rejected.** Kept only `express` and `better-sqlite3`. | Zero bloat, zero unused code, clean `package.json`. |
 | **Chart Libraries** | Installing `chart.js` or `recharts` | **Rejected.** Built a pure inline SVG 3D isometric pie chart generator. | Zero build step, instant rendering, 100% lightweight. |
 | **User Discovery** | Public select dropdown of all restaurants and drivers | **Rejected.** Switched to private Unique ID login (`D1`, `V1`). | Protects user privacy and simulates real-world identity management. |
-| **UI Organization** | Stacking all donor controls on a single continuous page | **Rejected.** Segregated into clean header tabs (`Post`, `Manage`, `Balance`, `Volunteers`). | Eliminates visual clutter and keeps each workflow focused and intuitive. |
+| **UI Organization** | Stacking all donor/volunteer controls on a single continuous page | **Rejected.** Segregated into clean header tabs for both roles (`Post`, `Manage`, `Balance`, `Volunteers` for Donors; `Available`, `My Pickups`, `Failed & Improvement` for Volunteers). | Eliminates visual clutter and keeps each workflow focused and intuitive. |
+| **Volunteer Time Defaults** | Defaulting pickup time input to `pickup_from` | **Rejected.** Dynamically clamped to `Math.max(pickup_from, clockNow)`. | Completely prevents unintentional Rule 6 past-time validation rejections. |
 | **Sidebar Identity** | Redundant switch buttons on every card | **Customized.** Removed button from identity card; kept switch/logout in top header. | Clear information hierarchy without UI redundancy. |
 | **DOM Safety** | Using `innerHTML` with template literals | **Rejected.** Strictly enforced `document.createElement` and `textContent`. | 100% immune to XSS and injection attacks from user-submitted text. |
 
