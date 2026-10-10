@@ -73,6 +73,15 @@ This document discloses how AI tools were utilized during the development and it
      - Provides a driver scorecard (Successfully Rescued kg, Failed Pickups count, Timely Cancellations, Reliability Rating %).
      - Features actionable self-improvement guidance explaining how to maintain a 100% reliability rating and audit table for missed collections.
 
+7. **Digital Simulation Clock Upgrade**:
+   - **What changed**: Upgraded the simulated clock widget to an authentic, high-contrast **Digital LED / LCD Simulation Clock** featuring:
+     - Obsidian glass recessed bezel with ambient cyan glow and scanline sheen.
+     - Authentic 7-segment / LED digital typography with ghost background segments (`88:88`).
+     - Animated blinking digital colon separator (`:`) pulsing at 1Hz.
+     - Live Day of the Week indicator pills (`SU MO TU WE TH FR SA`) illuminating the active day.
+     - Integrated simulated dispatch seconds (`:00`) and `AM`/`PM` sub-readout alongside full ISO date (`YYYY-MM-DD`).
+     - Maintained 1-tap quick advance controls (`+30m`, `+1h`, `+2h`, `+1d`) and custom simulation timestamp drawer.
+
 ---
 
 ## 4. What Was Accepted, Customized, or Rejected
@@ -85,6 +94,7 @@ This document discloses how AI tools were utilized during the development and it
 | **UI Organization** | Stacking all donor/volunteer controls on a single continuous page | **Rejected.** Segregated into clean header tabs for both roles (`Post`, `Manage`, `Balance`, `Volunteers` for Donors; `Available`, `My Pickups`, `Failed & Improvement` for Volunteers). | Eliminates visual clutter and keeps each workflow focused and intuitive. |
 | **Volunteer Time Defaults** | Defaulting pickup time input to `pickup_from` | **Rejected.** Dynamically clamped to `Math.max(pickup_from, clockNow)`. | Completely prevents unintentional Rule 6 past-time validation rejections. |
 | **Sidebar Identity** | Redundant switch buttons on every card | **Customized.** Removed button from identity card; kept switch/logout in top header. | Clear information hierarchy without UI redundancy. |
+| **Simulation Clock** | Analog dial face or generic text box | **Customized.** Engineered an authentic high-contrast Digital LED / LCD hardware-style display with ghost segments, blinking colon, and day-of-week indicators. | Provides high-clarity digital precision for time-critical food rescue dispatch testing. |
 | **DOM Safety** | Using `innerHTML` with template literals | **Rejected.** Strictly enforced `document.createElement` and `textContent`. | 100% immune to XSS and injection attacks from user-submitted text. |
 
 ---
