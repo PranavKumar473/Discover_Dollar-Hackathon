@@ -127,17 +127,3 @@ This document discloses how AI tools were utilized during the development and it
 
 ---
 
-## 5. Technical Interview Defense Guide
-
-### Q1: How do you guarantee that two volunteers cannot claim the last kilograms at the same time?
-> *"In `src/app.js`, claim reservations run inside `db.transaction(...).immediate()`. `better-sqlite3` runs synchronously in Node's main thread and `IMMEDIATE` acquires a write lock before any read. Because Node is single-threaded, concurrent incoming requests queue up at the database transaction boundary. The first transaction checks the remaining kg, reserves it, and commits. The second transaction runs immediately after, sees remaining is 0, and returns a 422 with Rule 3."*
-
-### Q2: Why are donation status and remaining kg not stored in the database?
-> *"To eliminate state drift. If we stored 'OPEN' or 'EXPIRED' in the database, a background job would have to continuously poll and update rows. Instead, we store only immutable facts (donation quantity and claim events). Every time a donation is read, its status is derived deterministically from the current simulated clock and claim states."*
-
-### Q3: Why does `toMinutes()` append `:00Z`?
-> *"Local time arithmetic is subject to timezone offsets and daylight-saving time shifts. By appending `:00Z` and parsing as UTC, minute differences between any two timestamps are purely mathematical: `(t2 - t1) / 60000`."*
-
-### Q4: How is the conservation identity maintained?
-> *"Listed quantity is an invariant. Claims hold kilograms from the moment they are made. If a claim expires, its kilograms become `MISSED`, and any unreserved kilograms on an expired donation become `Wasted`. Because `MISSED` claims are not cancelled, `Listed` always equals `Collected + Missed + Wasted + In progress + Still open`."*
-
