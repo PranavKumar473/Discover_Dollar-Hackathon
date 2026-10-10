@@ -319,7 +319,8 @@ function createApp(customDb) {
   // 8. GET /api/donations/open - Volunteer sees OPEN donations in their zones
   app.get('/api/donations/open', requireActor('volunteer'), (req, res) => {
     const now = getClock();
-    const volunteerZones = req.actor.zones;
+    const volunteerZones = req.actor.zones || [];
+    const showAll = req.query.all === 'true';
 
     const allDonations = db.prepare(`
       SELECT d.*, dn.zone, dn.name AS donor_name
@@ -331,7 +332,7 @@ function createApp(customDb) {
     const allClaims = getAllClaims();
 
     const openInZones = allDonations
-      .filter((d) => volunteerZones.includes(d.zone))
+      .filter((d) => showAll || volunteerZones.includes(d.zone))
       .map((d) => {
         const dClaims = allClaims.filter((c) => c.donation_id === d.id);
         const status = deriveStatus(d, dClaims, now);
@@ -340,6 +341,7 @@ function createApp(customDb) {
           ...d,
           status,
           remaining_kg: remaining,
+          in_my_zone: volunteerZones.includes(d.zone),
         };
       })
       .filter((d) => d.status === 'OPEN');

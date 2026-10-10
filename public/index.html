@@ -582,11 +582,15 @@
   <nav id="volTabBar" class="bg-[var(--surface)] border-b border-[var(--border)] px-4 sm:px-6 flex space-x-1 sm:space-x-4 overflow-x-auto text-sm font-semibold select-none hidden">
     <button id="tabNavVolBrowse" type="button" class="py-3 px-3 border-b-2 border-[var(--accent)] text-[var(--accent)] flex items-center space-x-2 whitespace-nowrap transition cursor-pointer">
       <span>🔍</span>
-      <span>Browse &amp; Claim Surplus</span>
+      <span>Available Surplus</span>
     </button>
     <button id="tabNavVolPickups" type="button" class="py-3 px-3 border-b-2 border-transparent text-[var(--text-muted)] hover:text-[var(--text)] flex items-center space-x-2 whitespace-nowrap transition cursor-pointer">
       <span>🚗</span>
       <span>My Claimed Pickups</span>
+    </button>
+    <button id="tabNavVolFailed" type="button" class="py-3 px-3 border-b-2 border-transparent text-[var(--text-muted)] hover:text-[var(--text)] flex items-center space-x-2 whitespace-nowrap transition cursor-pointer">
+      <span>⚠️</span>
+      <span>Failed Pickups &amp; Improvement</span>
     </button>
   </nav>
 
@@ -818,8 +822,132 @@
       <!-- VOLUNTEER WORK PANEL (When logged in as Volunteer)      -->
       <!-- ======================================================= -->
       <div id="volunteerTabsContainer" class="space-y-6 hidden">
-        <!-- Will be populated if logged in as volunteer driver -->
-        <div id="volunteerWorkArea" class="space-y-6"></div>
+
+        <!-- Tab Pane 1: Available Surplus for Rescue -->
+        <section id="paneVolBrowse" class="space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[var(--border)]">
+            <div>
+              <h2 class="text-lg font-bold text-[var(--text)]">Available Surplus Food for Rescue</h2>
+              <p class="text-xs text-[var(--text-muted)]">Cooked meals listed by donors ready for immediate volunteer pickup</p>
+            </div>
+            <div class="flex items-center space-x-2 self-start sm:self-auto">
+              <span class="text-xs text-[var(--text-muted)] font-medium">Filter:</span>
+              <button id="volFilterMyZonesBtn" type="button" class="text-xs px-3 py-1 rounded-full font-semibold bg-[var(--accent)] text-white shadow-sm transition">
+                My Zones
+              </button>
+              <button id="volFilterAllZonesBtn" type="button" class="text-xs px-3 py-1 rounded-full font-semibold bg-[var(--surface-alt)] text-[var(--text-muted)] hover:text-[var(--text)] border border-[var(--border)] transition">
+                All City Zones
+              </button>
+              <button id="refreshVolAvailableBtn" type="button" class="btn btn-outline text-xs px-2.5 py-1 ml-1" title="Refresh available surplus">
+                🔄
+              </button>
+            </div>
+          </div>
+
+          <!-- Quick driver vehicle capacity reminder banner -->
+          <div id="volVehicleBanner" class="p-3 bg-[var(--surface-alt)] rounded-xl border border-[var(--border)] text-xs text-[var(--text-muted)] flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+              <span class="text-base">🚗</span>
+              <span><strong>Your Vehicle Limit:</strong> <span id="volBannerCap" class="font-mono font-bold text-[var(--text)]">-- kg</span> | Dispatch Zones: <span id="volBannerZones" class="font-bold text-[var(--accent)]">--</span></span>
+            </div>
+            <span class="text-[11px] text-[var(--text-muted)]">Rule 2 &amp; 4 Enforced</span>
+          </div>
+
+          <div id="volAvailableContainer" class="space-y-4">
+            <!-- Dynamically populated available surplus cards -->
+          </div>
+        </section>
+
+        <!-- Tab Pane 2: My Claimed Pickups -->
+        <section id="paneVolPickups" class="space-y-4 hidden">
+          <div class="flex items-center justify-between pb-3 border-b border-[var(--border)]">
+            <div>
+              <h2 class="text-lg font-bold text-[var(--text)]">My Claimed Pickups (Active Rescues)</h2>
+              <p class="text-xs text-[var(--text-muted)]">Collect meals during the restaurant's accept window before deadline expiration</p>
+            </div>
+            <button id="refreshVolPickupsBtn" type="button" class="btn btn-outline text-xs px-2.5 py-1">
+              🔄 Refresh Pickups
+            </button>
+          </div>
+
+          <div id="volPickupsContainer" class="space-y-4">
+            <!-- Dynamically populated claimed pickups -->
+          </div>
+        </section>
+
+        <!-- Tab Pane 3: Failed Pickups & Improvement Hub -->
+        <section id="paneVolFailed" class="surface p-6 space-y-6 hidden">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[var(--border)]">
+            <div>
+              <h2 class="text-lg font-bold text-[var(--text)]">Pickup Reliability &amp; Improvement Hub</h2>
+              <p class="text-xs text-[var(--text-muted)]">Review missed deadlines and track your progress to improve delivery reliability</p>
+            </div>
+            <span id="volReliabilityScoreBadge" class="text-xs font-semibold px-3 py-1 rounded-full border self-start sm:self-auto">
+              Reliability Score: --
+            </span>
+          </div>
+
+          <!-- Driver Scorecard Cards -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+            <div class="p-3.5 rounded-2xl bg-[var(--surface-alt)] border border-[var(--border)] space-y-1">
+              <span class="text-[var(--text-muted)] font-medium">Successfully Rescued</span>
+              <div id="volSuccessKgStat" class="text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400">0 kg</div>
+              <span id="volSuccessCountStat" class="text-[11px] text-[var(--text-muted)]">0 completed dispatches</span>
+            </div>
+            <div class="p-3.5 rounded-2xl bg-[var(--surface-alt)] border border-[var(--border)] space-y-1">
+              <span class="text-[var(--text-muted)] font-medium">Failed / Missed Pickups</span>
+              <div id="volMissedKgStat" class="text-xl font-bold font-mono text-rose-500">0 kg</div>
+              <span id="volMissedCountStat" class="text-[11px] text-rose-500 font-semibold">0 failed pickups</span>
+            </div>
+            <div class="p-3.5 rounded-2xl bg-[var(--surface-alt)] border border-[var(--border)] space-y-1">
+              <span class="text-[var(--text-muted)] font-medium">Cancelled in Advance</span>
+              <div id="volCancelledCountStat" class="text-xl font-bold font-mono text-[var(--text)]">0</div>
+              <span class="text-[11px] text-[var(--text-muted)]">Released back to queue</span>
+            </div>
+            <div class="p-3.5 rounded-2xl bg-[var(--surface-alt)] border border-[var(--border)] space-y-1">
+              <span class="text-[var(--text-muted)] font-medium">Reliability Rating</span>
+              <div id="volRatingPercentStat" class="text-xl font-bold font-mono text-cyan-600 dark:text-cyan-400">100%</div>
+              <span id="volRatingStatusStat" class="text-[11px] text-[var(--text-muted)]">Rating: Excellent</span>
+            </div>
+          </div>
+
+          <!-- Improvement Guidance Box -->
+          <div class="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-xs space-y-2">
+            <div class="flex items-center space-x-2 font-bold text-amber-800 dark:text-amber-300">
+              <span>💡</span>
+              <span>Self-Improvement Guide: How to Achieve 100% Delivery Reliability</span>
+            </div>
+            <ul class="space-y-1.5 text-[var(--text-muted)] list-disc list-inside">
+              <li><strong>Accept Window Countdown:</strong> Restaurants allot food with a strict deadline. Uncollected food expires at the deadline and turns unfulfilled claims into MISSED.</li>
+              <li><strong>Running Late? Cancel in Advance:</strong> If you cannot pick up on time, cancel your claim <em>strictly before your scheduled time</em>. This instantly frees the food for the next driver in queue!</li>
+              <li><strong>Buffer Spacing:</strong> Always leave at least 60 minutes between pickups (Rule 7) to account for city transit delays and avoid getting stuck.</li>
+            </ul>
+          </div>
+
+          <!-- Failed Pickups Audit Table -->
+          <div class="pt-2">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] mb-3">Failed / Missed Pickups Log</h3>
+            <div class="table-container">
+              <table class="text-xs">
+                <thead>
+                  <tr>
+                    <th>Claim ID</th>
+                    <th>Donor &amp; Location</th>
+                    <th>Food Item</th>
+                    <th class="text-right">Lost Amount</th>
+                    <th>Planned Time</th>
+                    <th>Deadline Missed</th>
+                    <th>Failure Reason</th>
+                  </tr>
+                </thead>
+                <tbody id="volFailedTableBody">
+                  <!-- Populated via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
       </div>
 
     </main>
@@ -1568,208 +1696,463 @@
         if (volTabBar) volTabBar.classList.remove('hidden');
         if (volTabs) volTabs.classList.remove('hidden');
 
-        renderVolunteerWorkArea();
+        // Switch to current active volunteer tab
+        switchVolunteerTab(activeVolTab);
       }
     }
 
     // -------------------------------------------------------------
-    // VOLUNTEER WORK AREA
+    // VOLUNTEER TABS MANAGEMENT & WORKFLOW
     // -------------------------------------------------------------
-    async function renderVolunteerWorkArea() {
-      const container = document.getElementById('volunteerWorkArea');
+    let activeVolTab = 'tabNavVolBrowse';
+    let volZoneFilter = 'my'; // 'my' | 'all'
+
+    function switchVolunteerTab(tabId) {
+      activeVolTab = tabId;
+      const tabMap = [
+        { id: 'tabNavVolBrowse', pane: 'paneVolBrowse' },
+        { id: 'tabNavVolPickups', pane: 'paneVolPickups' },
+        { id: 'tabNavVolFailed', pane: 'paneVolFailed' },
+      ];
+
+      tabMap.forEach((item) => {
+        const btn = document.getElementById(item.id);
+        const pane = document.getElementById(item.pane);
+        if (!btn || !pane) return;
+        if (item.id === tabId) {
+          btn.className = 'py-3 px-3 border-b-2 border-[var(--accent)] text-[var(--accent)] flex items-center space-x-2 whitespace-nowrap transition cursor-pointer font-bold';
+          pane.classList.remove('hidden');
+        } else {
+          btn.className = 'py-3 px-3 border-b-2 border-transparent text-[var(--text-muted)] hover:text-[var(--text)] flex items-center space-x-2 whitespace-nowrap transition cursor-pointer font-medium';
+          pane.classList.add('hidden');
+        }
+      });
+
+      if (tabId === 'tabNavVolBrowse') {
+        loadVolunteerAvailable();
+      } else if (tabId === 'tabNavVolPickups') {
+        loadVolunteerPickups();
+      } else if (tabId === 'tabNavVolFailed') {
+        loadVolunteerFailedHub();
+      }
+    }
+
+    // 1. Volunteer Tab 1: Available Surplus Food for Rescue
+    async function loadVolunteerAvailable() {
+      const container = document.getElementById('volAvailableContainer');
+      const bannerCap = document.getElementById('volBannerCap');
+      const bannerZones = document.getElementById('volBannerZones');
       if (!container) return;
       clearChildren(container);
 
-      // 1. Open Donations in Volunteer Zones
-      const openCard = el('section', 'surface p-5 space-y-4 rounded-2xl border border-[var(--border)]');
-      const openHead = el('div', 'flex justify-between items-center pb-2 border-b border-[var(--border)]');
-      openHead.appendChild(el('h2', 'text-base font-bold', 'Available Surplus in Your Zones'));
-      openHead.appendChild(el('span', 'text-xs text-[var(--text-muted)]', `Vehicle Cap: ${activeActor.capacity_kg}kg | Zones: ${activeActor.zones.join(', ')}`));
-      openCard.appendChild(openHead);
+      if (bannerCap && activeActor) bannerCap.textContent = `${activeActor.capacity_kg} kg`;
+      if (bannerZones && activeActor) bannerZones.textContent = (activeActor.zones || []).join(', ');
 
-      const openContainer = el('div', 'space-y-4');
-      openCard.appendChild(openContainer);
-      container.appendChild(openCard);
-
-      // 2. My Claimed Pickups
-      const claimsCard = el('section', 'surface p-5 space-y-4 rounded-2xl border border-[var(--border)]');
-      const claimsHead = el('div', 'flex justify-between items-center pb-2 border-b border-[var(--border)]');
-      claimsHead.appendChild(el('h2', 'text-base font-bold', 'My Claimed Pickups'));
-      claimsCard.appendChild(claimsHead);
-
-      const claimsContainer = el('div', 'space-y-4');
-      claimsCard.appendChild(claimsContainer);
-      container.appendChild(claimsCard);
-
-      // Fetch open donations
-      try {
-        const openDonations = await apiRequest('/api/donations/open');
-        if (openDonations.length === 0) {
-          openContainer.appendChild(el('p', 'text-sm text-[var(--text-muted)] py-4 text-center', 'No open donations in your zones right now.'));
+      const myZonesBtn = document.getElementById('volFilterMyZonesBtn');
+      const allZonesBtn = document.getElementById('volFilterAllZonesBtn');
+      if (myZonesBtn && allZonesBtn) {
+        if (volZoneFilter === 'my') {
+          myZonesBtn.className = 'text-xs px-3 py-1 rounded-full font-semibold bg-[var(--accent)] text-white shadow-sm transition';
+          allZonesBtn.className = 'text-xs px-3 py-1 rounded-full font-semibold bg-[var(--surface-alt)] text-[var(--text-muted)] hover:text-[var(--text)] border border-[var(--border)] transition';
         } else {
-          openDonations.forEach((d) => {
-            const card = el('div', 'surface p-4 border border-[var(--border)] rounded-xl space-y-3');
-
-            const hRow = el('div', 'flex justify-between items-center');
-            const leftH = el('div', 'space-x-2');
-            leftH.appendChild(el('span', 'font-bold font-mono', `#${d.id}`));
-            leftH.appendChild(el('span', 'font-semibold', d.donor_name));
-            leftH.appendChild(el('span', 'text-xs text-[var(--text-muted)]', `(Zone: ${d.zone})`));
-            hRow.appendChild(leftH);
-            hRow.appendChild(createStatusChip('OPEN'));
-            card.appendChild(hRow);
-
-            const descRow = el('div', 'text-sm font-medium', d.description);
-            card.appendChild(descRow);
-
-            const metaRow = el('div', 'grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-[var(--text-muted)]');
-            metaRow.appendChild(el('div', '', `Remaining: ${d.remaining_kg} kg available (Posted: ${d.quantity_kg} kg)`));
-            metaRow.appendChild(el('div', 'font-mono tabular', `Pickup: ${d.pickup_from} to ${d.pickup_until}`));
-            card.appendChild(metaRow);
-
-            // Inline Claim Form
-            const claimForm = el('form', 'pt-3 border-t border-[var(--border)] space-y-2');
-            const fRow = el('div', 'flex flex-wrap items-center gap-3');
-
-            const kgInput = el('input', 'bg-[var(--surface-alt)] border border-[var(--border)] rounded-md px-2.5 py-1 text-sm tabular w-28');
-            kgInput.type = 'number';
-            kgInput.min = '1';
-            kgInput.max = String(Math.min(activeActor.capacity_kg, d.remaining_kg));
-            kgInput.placeholder = 'kg to take';
-            kgInput.required = true;
-            kgInput.setAttribute('aria-label', `Kilograms to claim from donation #${d.id}`);
-            fRow.appendChild(kgInput);
-
-            const timeInput = el('input', 'bg-[var(--surface-alt)] border border-[var(--border)] rounded-md px-2.5 py-1 text-sm tabular flex-1 min-w-[200px]');
-            timeInput.type = 'datetime-local';
-            timeInput.required = true;
-            timeInput.value = d.pickup_from;
-            timeInput.min = d.pickup_from;
-            timeInput.max = d.pickup_until;
-            timeInput.setAttribute('aria-label', `Planned pickup time for donation #${d.id}`);
-            fRow.appendChild(timeInput);
-
-            const claimSubmit = el('button', 'btn btn-accent text-xs px-4 py-1.5', 'Claim Food');
-            claimSubmit.type = 'submit';
-            fRow.appendChild(claimSubmit);
-            claimForm.appendChild(fRow);
-
-            const claimErrorBox = el('div', 'text-xs text-[var(--danger)] min-h-[0px] space-y-1');
-            claimForm.appendChild(claimErrorBox);
-
-            claimForm.addEventListener('submit', async (e) => {
-              e.preventDefault();
-              clearChildren(claimErrorBox);
-              claimSubmit.disabled = true;
-
-              const kg = parseInt(kgInput.value, 10);
-              const planned_at = timeInput.value;
-
-              try {
-                await apiRequest(`/api/donations/${d.id}/claims`, {
-                  method: 'POST',
-                  body: JSON.stringify({ kg, planned_at }),
-                });
-                showToast(`Claimed ${kg} kg on #${d.id}`);
-                await refreshAll();
-              } catch (err) {
-                if (err.errors && err.errors.length) {
-                  err.errors.forEach((ruleErr) => {
-                    const row = el('div', 'flex items-center space-x-1');
-                    row.appendChild(el('span', 'font-semibold', `[Rule ${ruleErr.rule}]:`));
-                    row.appendChild(el('span', '', ruleErr.message));
-                    claimErrorBox.appendChild(row);
-                  });
-                } else {
-                  claimErrorBox.appendChild(el('div', '', err.message));
-                }
-              } finally {
-                claimSubmit.disabled = false;
-              }
-            });
-
-            card.appendChild(claimForm);
-            openContainer.appendChild(card);
-          });
+          allZonesBtn.className = 'text-xs px-3 py-1 rounded-full font-semibold bg-[var(--accent)] text-white shadow-sm transition';
+          myZonesBtn.className = 'text-xs px-3 py-1 rounded-full font-semibold bg-[var(--surface-alt)] text-[var(--text-muted)] hover:text-[var(--text)] border border-[var(--border)] transition';
         }
-      } catch (err) {
-        openContainer.appendChild(el('div', 'text-sm text-[var(--danger)]', err.message));
       }
 
-      // Fetch volunteer claims
       try {
-        const myClaims = await apiRequest('/api/claims');
-        if (myClaims.length === 0) {
-          claimsContainer.appendChild(el('p', 'text-sm text-[var(--text-muted)] py-4 text-center', 'You have no claims yet.'));
-        } else {
-          const tableWrap = el('div', 'table-container');
-          const table = el('table', 'w-full text-xs');
-          const thead = el('thead');
-          const trH = el('tr');
-          trH.appendChild(el('th', '', 'Claim'));
-          trH.appendChild(el('th', '', 'Food'));
-          trH.appendChild(el('th', '', 'Donor'));
-          trH.appendChild(el('th', 'text-right', 'kg'));
-          trH.appendChild(el('th', '', 'Planned Time'));
-          trH.appendChild(el('th', '', 'Status'));
-          trH.appendChild(el('th', 'text-right', 'Actions'));
-          thead.appendChild(trH);
-          table.appendChild(thead);
+        const queryPath = volZoneFilter === 'all' ? '/api/donations/open?all=true' : '/api/donations/open';
+        const openDonations = await apiRequest(queryPath);
 
-          const tbody = el('tbody');
-          myClaims.forEach((c) => {
-            const tr = el('tr');
-            tr.appendChild(el('td', 'font-mono tabular', `#${c.id}`));
-            tr.appendChild(el('td', 'font-medium', c.donation_description));
-            tr.appendChild(el('td', '', `${c.donor_name} (${c.zone})`));
-            tr.appendChild(el('td', 'text-right font-mono tabular', `${c.kg} kg`));
-            tr.appendChild(el('td', 'font-mono tabular', c.planned_at));
-
-            const tdStatus = el('td');
-            tdStatus.appendChild(createStatusChip(c.status));
-            tr.appendChild(tdStatus);
-
-            const tdActions = el('td', 'text-right space-x-2');
-            const collectBtn = el('button', 'btn btn-accent text-[11px] px-2 py-1', 'Collect');
-            collectBtn.type = 'button';
-            collectBtn.disabled = !c.can_collect;
-            collectBtn.title = c.can_collect ? 'Mark as collected' : 'Allowed only when clock is within pickup window';
-            collectBtn.addEventListener('click', async () => {
-              try {
-                await apiRequest(`/api/claims/${c.id}/collect`, { method: 'POST' });
-                showToast(`Claim #${c.id} marked as COLLECTED`);
-                await refreshAll();
-              } catch (err) {
-                showToast(err.message, true);
-              }
-            });
-            tdActions.appendChild(collectBtn);
-
-            const cancelBtn = el('button', 'btn btn-outline text-[11px] px-2 py-1 text-[var(--danger)] border-[var(--danger)]', 'Cancel');
-            cancelBtn.type = 'button';
-            cancelBtn.disabled = !c.can_cancel;
-            cancelBtn.title = c.can_cancel ? 'Cancel claim' : 'Allowed only strictly before planned pickup time';
-            cancelBtn.addEventListener('click', async () => {
-              if (!confirm(`Cancel claim #${c.id}?`)) return;
-              try {
-                await apiRequest(`/api/claims/${c.id}/cancel`, { method: 'POST' });
-                showToast(`Claim #${c.id} CANCELLED`);
-                await refreshAll();
-              } catch (err) {
-                showToast(err.message, true);
-              }
-            });
-            tdActions.appendChild(cancelBtn);
-
-            tr.appendChild(tdActions);
-            tbody.appendChild(tr);
-          });
-          table.appendChild(tbody);
-          tableWrap.appendChild(table);
-          claimsContainer.appendChild(tableWrap);
+        if (!openDonations || openDonations.length === 0) {
+          const empty = el('div', 'surface p-8 text-center text-[var(--text-muted)] space-y-2 rounded-2xl border border-[var(--border)]');
+          empty.appendChild(el('div', 'text-3xl mb-1', '🍽️'));
+          empty.appendChild(el('h3', 'font-bold text-base text-[var(--text)]', volZoneFilter === 'my' ? 'No Open Surplus in Your Registered Zones Right Now' : 'No Open Surplus in City'));
+          empty.appendChild(el('p', 'text-xs', volZoneFilter === 'my'
+            ? 'Try toggling "All City Zones" above to see food across the entire city, or check back as restaurants post cooked surplus.'
+            : 'All currently listed surplus has been claimed or expired. Check back shortly!'));
+          container.appendChild(empty);
+          return;
         }
+
+        openDonations.forEach((d) => {
+          const card = el('div', 'surface p-5 border border-[var(--border)] rounded-2xl space-y-4 shadow-sm');
+
+          // Header
+          const header = el('div', 'flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-[var(--border)]');
+          const leftHead = el('div', 'flex items-center space-x-2');
+          leftHead.appendChild(el('span', 'font-mono font-bold text-sm bg-[var(--surface-alt)] px-2.5 py-1 rounded-lg border border-[var(--border)]', `#${d.id}`));
+          leftHead.appendChild(el('span', 'font-bold text-base text-[var(--text)]', d.donor_name));
+
+          const isInZone = activeActor.zones && activeActor.zones.includes(d.zone);
+          const zoneChip = el('span', `text-xs px-2.5 py-0.5 rounded-full font-semibold border ${isInZone ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30' : 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30'}`);
+          zoneChip.textContent = isInZone ? `Zone: ${d.zone} (Your Zone)` : `Zone: ${d.zone} (Outside Zone)`;
+          leftHead.appendChild(zoneChip);
+
+          header.appendChild(leftHead);
+          header.appendChild(createStatusChip('OPEN'));
+          card.appendChild(header);
+
+          // Food Description
+          const descBox = el('div', 'space-y-1');
+          descBox.appendChild(el('div', 'text-sm font-semibold text-[var(--text)]', d.description));
+          card.appendChild(descBox);
+
+          // Capacity & Time Breakdown
+          const metaGrid = el('div', 'grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs');
+
+          // Capacity Box
+          const maxClaimable = Math.min(activeActor.capacity_kg, d.remaining_kg);
+          const capBox = el('div', 'p-3 rounded-xl bg-[var(--surface-alt)] border border-[var(--border)] space-y-1.5');
+          const capHead = el('div', 'flex justify-between items-center');
+          capHead.appendChild(el('span', 'text-[var(--text-muted)] font-semibold', 'Surplus Batch Availability:'));
+          capHead.appendChild(el('span', 'font-mono font-bold text-[var(--text)]', `${d.remaining_kg} kg / ${d.quantity_kg} kg`));
+          capBox.appendChild(capHead);
+
+          const barBg = el('div', 'bar-bg');
+          const barFill = el('div', 'bar-fill');
+          const pctLeft = Math.round((d.remaining_kg / (d.quantity_kg || 1)) * 100);
+          barFill.style.backgroundColor = 'var(--chip-open)';
+          barFill.style.width = `${pctLeft}%`;
+          barBg.appendChild(barFill);
+          capBox.appendChild(barBg);
+
+          const capFoot = el('div', 'flex justify-between text-[11px] text-[var(--text-muted)]');
+          capFoot.appendChild(el('span', '', `Vehicle Cap: ${activeActor.capacity_kg} kg`));
+          capFoot.appendChild(el('span', 'font-bold text-[var(--accent)]', `Max Claimable: ${maxClaimable} kg`));
+          capBox.appendChild(capFoot);
+          metaGrid.appendChild(capBox);
+
+          // Window Box
+          const winBox = el('div', 'p-3 rounded-xl bg-[var(--surface-alt)] border border-[var(--border)] space-y-1.5 flex flex-col justify-between');
+          winBox.appendChild(el('div', 'text-[var(--text-muted)] font-semibold', 'Accept Window Guarantee:'));
+          const winTime = el('div', 'font-mono text-xs text-[var(--text)] font-bold');
+          winTime.textContent = `${d.pickup_from}  ⟶  ${d.pickup_until}`;
+          winBox.appendChild(winTime);
+
+          const winNote = el('div', 'text-[11px] text-[var(--text-muted)] flex items-center space-x-1');
+          winNote.appendChild(el('span', '', '⏱️'));
+          winNote.appendChild(el('span', '', 'Pickup must be completed before deadline'));
+          winBox.appendChild(winNote);
+          metaGrid.appendChild(winBox);
+
+          card.appendChild(metaGrid);
+
+          // Smart Claim Reservation Form
+          const claimForm = el('form', 'pt-3 border-t border-[var(--border)] space-y-3');
+
+          // Form fields row
+          const formRow = el('div', 'grid grid-cols-1 sm:grid-cols-12 gap-3 items-end');
+
+          // Amount kg input
+          const kgGroup = el('div', 'sm:col-span-4 space-y-1');
+          kgGroup.appendChild(el('label', 'block text-[11px] font-semibold text-[var(--text-muted)]', 'Quantity to Take (kg)'));
+          const kgInput = el('input', 'w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-3 py-2 text-sm tabular font-mono font-bold text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]');
+          kgInput.type = 'number';
+          kgInput.min = '1';
+          kgInput.max = String(maxClaimable);
+          kgInput.value = String(maxClaimable);
+          kgInput.required = true;
+          kgGroup.appendChild(kgInput);
+          formRow.appendChild(kgGroup);
+
+          // Planned pickup time input (guaranteed valid: min = max(pickup_from, clockNow))
+          const timeGroup = el('div', 'sm:col-span-5 space-y-1');
+          timeGroup.appendChild(el('label', 'block text-[11px] font-semibold text-[var(--text-muted)]', 'Planned Pickup Time'));
+
+          // Earliest valid time is max(pickup_from, clockNow)
+          const earliestTime = (clockNow && clockNow > d.pickup_from) ? clockNow : d.pickup_from;
+          const timeInput = el('input', 'w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-3 py-2 text-xs tabular font-mono text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]');
+          timeInput.type = 'datetime-local';
+          timeInput.required = true;
+          timeInput.value = earliestTime;
+          timeInput.min = earliestTime;
+          timeInput.max = d.pickup_until;
+          timeGroup.appendChild(timeInput);
+          formRow.appendChild(timeGroup);
+
+          // Submit Claim Button
+          const btnGroup = el('div', 'sm:col-span-3');
+          const claimBtn = el('button', 'w-full py-2.5 px-3 rounded-xl bg-[#0F2942] hover:bg-[#1A3D5E] text-white text-xs font-semibold shadow-md transition active:scale-[0.98]', 'Claim Surplus →');
+          claimBtn.type = 'submit';
+          if (!isInZone) {
+            claimBtn.title = `Your vehicle is registered for ${activeActor.zones.join(', ')}. Donation is in ${d.zone}.`;
+          }
+          btnGroup.appendChild(claimBtn);
+          formRow.appendChild(btnGroup);
+
+          claimForm.appendChild(formRow);
+
+          // Quick preset buttons row
+          const presetRow = el('div', 'flex items-center space-x-2 text-[11px] text-[var(--text-muted)]');
+          presetRow.appendChild(el('span', '', 'Quick set kg:'));
+
+          const maxPreset = el('button', 'px-2 py-0.5 rounded bg-[var(--surface-alt)] hover:bg-[var(--border)] border border-[var(--border)] transition font-mono', `Max (${maxClaimable}kg)`);
+          maxPreset.type = 'button';
+          maxPreset.onclick = () => { kgInput.value = String(maxClaimable); };
+          presetRow.appendChild(maxPreset);
+
+          if (maxClaimable > 10) {
+            const tenPreset = el('button', 'px-2 py-0.5 rounded bg-[var(--surface-alt)] hover:bg-[var(--border)] border border-[var(--border)] transition font-mono', '10kg');
+            tenPreset.type = 'button';
+            tenPreset.onclick = () => { kgInput.value = '10'; };
+            presetRow.appendChild(tenPreset);
+          }
+
+          if (maxClaimable > 5) {
+            const fivePreset = el('button', 'px-2 py-0.5 rounded bg-[var(--surface-alt)] hover:bg-[var(--border)] border border-[var(--border)] transition font-mono', '5kg');
+            fivePreset.type = 'button';
+            fivePreset.onclick = () => { kgInput.value = '5'; };
+            presetRow.appendChild(fivePreset);
+          }
+
+          claimForm.appendChild(presetRow);
+
+          // Error box for rule violations
+          const errorBox = el('div', 'space-y-1 text-xs text-[var(--danger)] min-h-[0px]');
+          claimForm.appendChild(errorBox);
+
+          // Form Submission
+          claimForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            clearChildren(errorBox);
+            claimBtn.disabled = true;
+
+            const kg = parseInt(kgInput.value, 10);
+            const planned_at = timeInput.value;
+
+            try {
+              await apiRequest(`/api/donations/${d.id}/claims`, {
+                method: 'POST',
+                body: JSON.stringify({ kg, planned_at }),
+              });
+              showToast(`🎉 Successfully claimed ${kg}kg from ${d.donor_name}!`);
+              await refreshAll();
+              switchVolunteerTab('tabNavVolPickups');
+            } catch (err) {
+              if (err.errors && err.errors.length) {
+                err.errors.forEach((ruleErr) => {
+                  const errRow = el('div', 'p-2 rounded-lg bg-rose-500/10 border border-rose-500/30 flex items-start space-x-1.5');
+                  errRow.appendChild(el('span', 'font-bold text-rose-600 dark:text-rose-400', `[Rule ${ruleErr.rule}]`));
+                  errRow.appendChild(el('span', 'text-rose-700 dark:text-rose-300', ruleErr.message));
+                  errorBox.appendChild(errRow);
+                });
+              } else {
+                errorBox.appendChild(el('div', 'p-2 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-700 dark:text-rose-300', err.message));
+              }
+            } finally {
+              claimBtn.disabled = false;
+            }
+          });
+
+          card.appendChild(claimForm);
+          container.appendChild(card);
+        });
       } catch (err) {
-        claimsContainer.appendChild(el('div', 'text-sm text-[var(--danger)]', err.message));
+        container.appendChild(el('div', 'p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-600 dark:text-rose-400 text-xs', `Failed to load available surplus: ${err.message}`));
+      }
+    }
+
+    // 2. Volunteer Tab 2: My Claimed Pickups (Active Rescues)
+    async function loadVolunteerPickups() {
+      const container = document.getElementById('volPickupsContainer');
+      if (!container) return;
+      clearChildren(container);
+
+      try {
+        const claims = await apiRequest('/api/claims');
+        const activeClaims = (claims || []).filter((c) => c.status === 'ACTIVE');
+
+        if (activeClaims.length === 0) {
+          const empty = el('div', 'surface p-8 text-center text-[var(--text-muted)] space-y-3 rounded-2xl border border-[var(--border)]');
+          empty.appendChild(el('div', 'text-3xl mb-1', '🚗'));
+          empty.appendChild(el('h3', 'font-bold text-base text-[var(--text)]', 'No Active Claims Right Now'));
+          empty.appendChild(el('p', 'text-xs', 'You do not have any pending surplus pickups reserved. Head over to Available Surplus to claim fresh meals!'));
+          const goBtn = el('button', 'btn btn-accent rounded-full px-5 py-2 text-xs font-semibold', 'Browse Available Surplus →');
+          goBtn.type = 'button';
+          goBtn.onclick = () => switchVolunteerTab('tabNavVolBrowse');
+          empty.appendChild(goBtn);
+          container.appendChild(empty);
+          return;
+        }
+
+        activeClaims.forEach((c) => {
+          const card = el('div', 'surface p-5 border border-[var(--border)] rounded-2xl space-y-4 shadow-sm');
+
+          // Header
+          const header = el('div', 'flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-[var(--border)]');
+          const leftHead = el('div', 'flex items-center space-x-2.5');
+          leftHead.appendChild(el('span', 'font-mono font-bold text-sm bg-[var(--surface-alt)] px-2.5 py-1 rounded-lg border border-[var(--border)]', `#${c.id}`));
+          leftHead.appendChild(createStatusChip(c.status));
+          leftHead.appendChild(el('span', 'text-xs text-[var(--text-muted)] font-medium', `${c.donor_name} (Zone: ${c.zone})`));
+          header.appendChild(leftHead);
+
+          // Action buttons: Collect and Cancel
+          const btnGroup = el('div', 'flex items-center space-x-2');
+
+          // Collect button
+          const collectBtn = el('button', `btn text-xs px-3.5 py-1.5 rounded-xl font-semibold transition ${c.can_collect ? 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm' : 'bg-slate-200 dark:bg-slate-800 text-slate-400 cursor-not-allowed opacity-50'}`);
+          collectBtn.type = 'button';
+          collectBtn.textContent = '✓ Mark Collected';
+          collectBtn.disabled = !c.can_collect;
+          collectBtn.title = c.can_collect
+            ? 'Clock is within the restaurant pickup window. Click to mark as collected.'
+            : `Allowed only within pickup window (${c.pickup_from} to ${c.pickup_until}). Current clock: ${clockNow}`;
+          collectBtn.addEventListener('click', async () => {
+            try {
+              await apiRequest(`/api/claims/${c.id}/collect`, { method: 'POST' });
+              showToast(`🎉 Pickup #${c.id} marked as COLLECTED!`);
+              await refreshAll();
+              loadVolunteerPickups();
+            } catch (err) {
+              showToast(err.message, true);
+            }
+          });
+          btnGroup.appendChild(collectBtn);
+
+          // Cancel button
+          const cancelBtn = el('button', `btn text-xs px-3 py-1.5 rounded-xl font-semibold border transition ${c.can_cancel ? 'border-[var(--danger)] text-[var(--danger)] hover:bg-[var(--danger)] hover:text-white' : 'border-slate-300 dark:border-slate-700 text-slate-400 cursor-not-allowed opacity-40'}`);
+          cancelBtn.type = 'button';
+          cancelBtn.textContent = 'Cancel Claim';
+          cancelBtn.disabled = !c.can_cancel;
+          cancelBtn.title = c.can_cancel
+            ? 'Allowed strictly before planned pickup time. Releases food back to queue.'
+            : `Cannot cancel at or after planned pickup time (${c.planned_at}).`;
+          cancelBtn.addEventListener('click', async () => {
+            if (!confirm(`Cancel claim #${c.id} (${c.kg}kg from ${c.donor_name})? This will release the food for other drivers.`)) return;
+            try {
+              await apiRequest(`/api/claims/${c.id}/cancel`, { method: 'POST' });
+              showToast(`Claim #${c.id} cancelled. Food released back to queue.`);
+              await refreshAll();
+              loadVolunteerPickups();
+            } catch (err) {
+              showToast(err.message, true);
+            }
+          });
+          btnGroup.appendChild(cancelBtn);
+
+          header.appendChild(btnGroup);
+          card.appendChild(header);
+
+          // Details Grid
+          const grid = el('div', 'grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs');
+
+          const d1 = el('div', 'p-3 rounded-xl bg-[var(--surface-alt)] border border-[var(--border)] space-y-1');
+          d1.appendChild(el('span', 'text-[var(--text-muted)] font-semibold', 'Food Description:'));
+          d1.appendChild(el('div', 'font-bold text-sm text-[var(--text)]', c.donation_description));
+          grid.appendChild(d1);
+
+          const d2 = el('div', 'p-3 rounded-xl bg-[var(--surface-alt)] border border-[var(--border)] space-y-1');
+          d2.appendChild(el('span', 'text-[var(--text-muted)] font-semibold', 'Reserved Weight:'));
+          d2.appendChild(el('div', 'font-mono font-bold text-base text-[var(--accent)]', `${c.kg} kg`));
+          grid.appendChild(d2);
+
+          const d3 = el('div', 'p-3 rounded-xl bg-[var(--surface-alt)] border border-[var(--border)] space-y-1');
+          d3.appendChild(el('span', 'text-[var(--text-muted)] font-semibold', 'Scheduled Pickup Time:'));
+          d3.appendChild(el('div', 'font-mono font-bold text-sm text-[var(--text)]', c.planned_at));
+          d3.appendChild(el('div', 'text-[11px] text-[var(--text-muted)]', `Window: ${c.pickup_from} – ${c.pickup_until}`));
+          grid.appendChild(d3);
+
+          card.appendChild(grid);
+          container.appendChild(card);
+        });
+      } catch (err) {
+        container.appendChild(el('div', 'p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-600 dark:text-rose-400 text-xs', `Failed to load claimed pickups: ${err.message}`));
+      }
+    }
+
+    // 3. Volunteer Tab 3: Failed Pickups & Improvement Hub
+    async function loadVolunteerFailedHub() {
+      const tableBody = document.getElementById('volFailedTableBody');
+      const successKg = document.getElementById('volSuccessKgStat');
+      const successCount = document.getElementById('volSuccessCountStat');
+      const missedKg = document.getElementById('volMissedKgStat');
+      const missedCount = document.getElementById('volMissedCountStat');
+      const cancelledCount = document.getElementById('volCancelledCountStat');
+      const ratingPercent = document.getElementById('volRatingPercentStat');
+      const ratingStatus = document.getElementById('volRatingStatusStat');
+      const scoreBadge = document.getElementById('volReliabilityScoreBadge');
+      if (!tableBody) return;
+      clearChildren(tableBody);
+
+      try {
+        const claims = await apiRequest('/api/claims');
+        const allClaims = claims || [];
+
+        const collectedClaims = allClaims.filter((c) => c.status === 'COLLECTED');
+        const missedClaims = allClaims.filter((c) => c.status === 'MISSED');
+        const cancelledClaims = allClaims.filter((c) => c.status === 'CANCELLED');
+
+        const totalCollectedKg = collectedClaims.reduce((sum, c) => sum + c.kg, 0);
+        const totalMissedKg = missedClaims.reduce((sum, c) => sum + c.kg, 0);
+
+        if (successKg) successKg.textContent = `${totalCollectedKg} kg`;
+        if (successCount) successCount.textContent = `${collectedClaims.length} completed rescues`;
+
+        if (missedKg) missedKg.textContent = `${totalMissedKg} kg`;
+        if (missedCount) missedCount.textContent = `${missedClaims.length} failed pickups`;
+
+        if (cancelledCount) cancelledCount.textContent = String(cancelledClaims.length);
+
+        // Calculate Reliability Rating
+        const finishedCount = collectedClaims.length + missedClaims.length;
+        let scorePct = 100;
+        let scoreColor = 'text-emerald-600 dark:text-emerald-400';
+        let statusText = 'Rating: Excellent (100%)';
+
+        if (finishedCount > 0) {
+          scorePct = Math.round((collectedClaims.length / finishedCount) * 100);
+          if (scorePct < 70) {
+            scoreColor = 'text-rose-500';
+            statusText = 'Rating: Needs Attention';
+          } else if (scorePct < 90) {
+            scoreColor = 'text-amber-500';
+            statusText = 'Rating: Fair / Improving';
+          } else {
+            statusText = 'Rating: Excellent';
+          }
+        }
+
+        if (ratingPercent) {
+          ratingPercent.textContent = `${scorePct}%`;
+          ratingPercent.className = `text-xl font-bold font-mono ${scoreColor}`;
+        }
+        if (ratingStatus) ratingStatus.textContent = statusText;
+
+        if (scoreBadge) {
+          scoreBadge.textContent = `Reliability Rate: ${scorePct}%`;
+          scoreBadge.className = scorePct >= 90
+            ? 'text-xs font-semibold px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30'
+            : 'text-xs font-semibold px-3 py-1 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/30';
+        }
+
+        // Render Table Rows
+        if (missedClaims.length === 0) {
+          const tr = document.createElement('tr');
+          const td = el('td', 'text-center py-6 text-[var(--text-muted)] italic', '🌟 Zero Failed Pickups! You have fulfilled 100% of your claimed dispatches on time. Outstanding effort!');
+          td.colSpan = 7;
+          tr.appendChild(td);
+          tableBody.appendChild(tr);
+          return;
+        }
+
+        missedClaims.forEach((c) => {
+          const tr = document.createElement('tr');
+          tr.appendChild(el('td', 'font-mono font-bold text-rose-600 dark:text-rose-400', `#${c.id}`));
+          tr.appendChild(el('td', 'font-medium', `${c.donor_name} (${c.zone})`));
+          tr.appendChild(el('td', '', c.donation_description));
+          tr.appendChild(el('td', 'text-right font-mono font-bold text-rose-600 dark:text-rose-400 tabular', `${c.kg} kg`));
+          tr.appendChild(el('td', 'font-mono tabular', c.planned_at));
+          tr.appendChild(el('td', 'font-mono tabular text-rose-500 font-semibold', c.pickup_until));
+          tr.appendChild(el('td', 'text-xs text-[var(--text-muted)]', `Deadline passed at ${c.pickup_until} before collection`));
+          tableBody.appendChild(tr);
+        });
+      } catch (err) {
+        const tr = document.createElement('tr');
+        const td = el('td', 'text-center py-4 text-rose-500', `Error loading failed dispatches: ${err.message}`);
+        td.colSpan = 7;
+        tr.appendChild(td);
+        tableBody.appendChild(tr);
       }
     }
 
@@ -1896,6 +2279,32 @@
       if (tabManage) tabManage.onclick = () => switchDonorTab('tabNavManage');
       if (tabBalance) tabBalance.onclick = () => switchDonorTab('tabNavBalance');
       if (tabVolunteers) tabVolunteers.onclick = () => switchDonorTab('tabNavVolunteers');
+
+      // Wire up Volunteer Tabs
+      const tabVolBrowse = document.getElementById('tabNavVolBrowse');
+      const tabVolPickups = document.getElementById('tabNavVolPickups');
+      const tabVolFailed = document.getElementById('tabNavVolFailed');
+      if (tabVolBrowse) tabVolBrowse.onclick = () => switchVolunteerTab('tabNavVolBrowse');
+      if (tabVolPickups) tabVolPickups.onclick = () => switchVolunteerTab('tabNavVolPickups');
+      if (tabVolFailed) tabVolFailed.onclick = () => switchVolunteerTab('tabNavVolFailed');
+
+      // Wire up Volunteer Zone Filter Buttons
+      const myZonesBtn = document.getElementById('volFilterMyZonesBtn');
+      const allZonesBtn = document.getElementById('volFilterAllZonesBtn');
+      if (myZonesBtn) myZonesBtn.onclick = () => {
+        volZoneFilter = 'my';
+        loadVolunteerAvailable();
+      };
+      if (allZonesBtn) allZonesBtn.onclick = () => {
+        volZoneFilter = 'all';
+        loadVolunteerAvailable();
+      };
+
+      // Wire up Volunteer Refresh Handlers
+      const refVolAvail = document.getElementById('refreshVolAvailableBtn');
+      if (refVolAvail) refVolAvail.onclick = () => loadVolunteerAvailable();
+      const refVolPickups = document.getElementById('refreshVolPickupsBtn');
+      if (refVolPickups) refVolPickups.onclick = () => loadVolunteerPickups();
 
       // Wire up Quick Simulation Clock Advance Buttons
       const q30 = document.getElementById('quickClock30m');
