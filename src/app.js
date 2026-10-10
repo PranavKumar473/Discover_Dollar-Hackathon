@@ -188,6 +188,13 @@ function createApp(customDb) {
     res.json({ now: newNow, missed: missedCount });
   });
 
+  // 3b. POST /api/clock/reset - Reset simulated clock back to daytime seed default (12:00 PM)
+  app.post('/api/clock/reset', (req, res) => {
+    const seedTime = (req.body && req.body.now) || '2026-03-10T12:00';
+    db.prepare("UPDATE meta SET value = ? WHERE key = 'clock'").run(seedTime);
+    res.json({ now: seedTime, message: `Clock reset to ${seedTime}` });
+  });
+
   // 4. GET /api/dashboard - Metrics and stats
   app.get('/api/dashboard', (req, res) => {
     const now = getClock();

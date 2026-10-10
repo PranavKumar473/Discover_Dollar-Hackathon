@@ -800,6 +800,10 @@
               +1d
             </button>
           </div>
+          <button id="quickClockReset" type="button" class="w-full btn-3d text-[11px] font-semibold py-1.5 text-emerald-300 rounded-lg flex items-center justify-center space-x-1.5 mt-1.5 cursor-pointer" title="Reset simulated clock back to 12:00 PM daytime surplus recovery">
+            <span>↺</span>
+            <span>Reset Simulation Day (12:00 PM)</span>
+          </button>
         </div>
 
         <!-- Expandable Custom Clock Form -->
@@ -1312,10 +1316,31 @@
       }
     }
 
+    async function resetClockToDaytime() {
+      try {
+        const res = await apiRequest('/api/clock/reset', {
+          method: 'POST',
+          body: JSON.stringify({ now: '2026-03-10T12:00' }),
+        });
+        showToast(`Clock reset to ${res.now} (Daytime Surplus Active)`);
+        await refreshAll();
+        if (activeActor && activeActor.role === 'volunteer') {
+          loadVolunteerAvailable();
+        }
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    }
+
     function renderDashboard() {
-      // Safe no-op / updater for dashboard data
-      if (typeof renderDonorBalanceTab === 'function' && activeActor && activeActor.role === 'donor' && activeDonorTab === 'tabNavBalance') {
-        renderDonorBalanceTab();
+      if (!activeActor) return;
+      if (activeActor.role === 'donor') {
+        if (activeDonorTab === 'tabNavBalance' && typeof renderDonorBalanceTab === 'function') {
+          renderDonorBalanceTab();
+        }
+        if (activeDonorTab === 'tabNavVolunteers' && typeof renderDonorVolunteersTab === 'function') {
+          renderDonorVolunteersTab();
+        }
       }
     }
 
@@ -1365,11 +1390,17 @@
         activeActor = explicitActorObj;
       } else if (role === 'donor') {
         const donor = people.donors.find((d) => d.id === id);
-        if (!donor) return;
+        if (!donor) {
+          switchToAuth();
+          return;
+        }
         activeActor = { ...donor, role: 'donor' };
       } else {
         const volunteer = people.volunteers.find((v) => v.id === id);
-        if (!volunteer) return;
+        if (!volunteer) {
+          switchToAuth();
+          return;
+        }
         activeActor = { ...volunteer, role: 'volunteer' };
       }
 
@@ -1845,7 +1876,14 @@
 
     // Tab 4: Volunteer Rescue History & Reliability
     function renderDonorVolunteersTab() {
-      if (!dashboardData) return;
+      if (!dashboardData) {
+        loadDashboard().then(() => {
+          if (activeActor && activeActor.role === 'donor' && activeDonorTab === 'tabNavVolunteers') {
+            renderDonorVolunteersTab();
+          }
+        });
+        return;
+      }
       const { byVolunteer } = dashboardData;
 
       // Color Palette for Volunteers
@@ -1951,6 +1989,12 @@
         { id: 'tabNavVolFailed', pane: 'paneVolFailed' },
       ];
 
+      // Defensively ensure volunteer tabs container and tab bar are visible
+      const volContainer = document.getElementById('volunteerTabsContainer');
+      if (volContainer) volContainer.classList.remove('hidden');
+      const volTabBar = document.getElementById('volTabBar');
+      if (volTabBar) volTabBar.classList.remove('hidden');
+
       tabMap.forEach((item) => {
         const btn = document.getElementById(item.id);
         const pane = document.getElementById(item.pane);
@@ -1981,6 +2025,8 @@
       if (!container) return;
       clearChildren(container);
 
+      if (!activeActor || activeActor.role !== 'volunteer') return;
+
       if (bannerCap && activeActor) bannerCap.textContent = `${activeActor.capacity_kg} kg`;
       if (bannerZones && activeActor) bannerZones.textContent = (activeActor.zones || []).join(', ');
 
@@ -2001,12 +2047,32 @@
         const openDonations = await apiRequest(queryPath);
 
         if (!openDonations || openDonations.length === 0) {
-          const empty = el('div', 'surface p-8 text-center text-[var(--text-muted)] space-y-2 rounded-2xl border border-[var(--border)]');
-          empty.appendChild(el('div', 'text-3xl mb-1', '🍽️'));
+          const empty = el('div', 'surface p-8 text-center text-[var(--text-muted)] space-y-4 rounded-2xl border border-[var(--border)]');
+          empty.appendChild(el('div', 'text-4xl mb-1', '🍽️'));
           empty.appendChild(el('h3', 'font-bold text-base text-[var(--text)]', volZoneFilter === 'my' ? 'No Open Surplus in Your Registered Zones Right Now' : 'No Open Surplus in City'));
-          empty.appendChild(el('p', 'text-xs', volZoneFilter === 'my'
-            ? 'Try toggling "All City Zones" above to see food across the entire city, or check back as restaurants post cooked surplus.'
-            : 'All currently listed surplus has been claimed or expired. Check back shortly!'));
+          empty.appendChild(el('p', 'text-xs max-w-md mx-auto', volZoneFilter === 'my'
+            ? 'Donations in your registered zones may have passed their pickup deadline or already been collected. Toggle "All City Zones" or reset the clock to daytime.'
+            : 'All currently listed surplus food has either been claimed or expired past the accept window deadline.'));
+          
+          const btnRow = el('div', 'flex flex-wrap items-center justify-center gap-2 pt-2');
+          if (volZoneFilter === 'my') {
+            const toggleBtn = el('button', 'btn btn-outline text-xs px-3.5 py-1.5 rounded-xl font-semibold', '🌐 View All City Zones');
+            toggleBtn.type = 'button';
+            toggleBtn.onclick = () => {
+              volZoneFilter = 'all';
+              loadVolunteerAvailable();
+            };
+            btnRow.appendChild(toggleBtn);
+          }
+
+          const resetDayBtn = el('button', 'btn text-xs px-3.5 py-1.5 rounded-xl font-semibold bg-cyan-600 hover:bg-cyan-700 text-white shadow-sm flex items-center space-x-1.5', '↺ Reset Clock to 12:00 PM (Restore Active Meals)');
+          resetDayBtn.type = 'button';
+          resetDayBtn.onclick = async () => {
+            await resetClockToDaytime();
+          };
+          btnRow.appendChild(resetDayBtn);
+
+          empty.appendChild(btnRow);
           container.appendChild(empty);
           return;
         }
@@ -2547,10 +2613,12 @@
       const q1h = document.getElementById('quickClock1h');
       const q2h = document.getElementById('quickClock2h');
       const q1d = document.getElementById('quickClock1d');
+      const qReset = document.getElementById('quickClockReset');
       if (q30) q30.onclick = () => advanceClock(30);
       if (q1h) q1h.onclick = () => advanceClock(60);
       if (q2h) q2h.onclick = () => advanceClock(120);
       if (q1d) q1d.onclick = () => advanceClock(1440);
+      if (qReset) qReset.onclick = resetClockToDaytime;
 
       // Wire up Refresh Manage List Button
       const refManage = document.getElementById('refreshManageBtn');

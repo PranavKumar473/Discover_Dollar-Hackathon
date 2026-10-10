@@ -97,6 +97,17 @@ This document discloses how AI tools were utilized during the development and it
      - **Footer Log Out Action**: Relocated the Logout / Switch Account button to the extreme bottom left of the newly added application footer (`<footer>`), styled with an accessible rose-accented frosted glass button with micro-lift on hover.
      - **Page Load Render Error Fix**: Resolved an uncaught `ReferenceError: renderDashboard is not defined` that occurred on initial page load inside `loadDashboard()` and reordered bootstrap initialization so saved local credentials populate before invoking `refreshAll()`.
 
+10. **Volunteer Tab Visibility & Daytime Simulation Clock Recovery**:
+    - **Root Cause Analysis**:
+      - When testing end-of-day expiry and missed pickups in prior sprints, the simulated clock was advanced to `2026-03-10T23:59`. At 23:59, all initial seed surplus donations (`DN1` through `DN5` and `DN7`) had passed their `pickup_until` deadlines and were expired.
+      - Consequently, `GET /api/donations/open` returned an empty list (`[]`), causing the volunteer tab to render an empty state without actionable options to restore active testing.
+      - Furthermore, `switchVolunteerTab()` relied on parent container visibility cascades without defensively verifying that `#volunteerTabsContainer` was unhidden, and `renderDonorVolunteersTab()` did not re-trigger if `dashboardData` was still resolving.
+    - **What changed**:
+      - **Simulation Day Reset (`POST /api/clock/reset`)**: Added a dedicated backend endpoint and UI button (`↺ Reset Simulation Day (12:00 PM)`) allowing testers to instantly restore the clock back to peak daytime food recovery (`12:00 PM`) without violating the forward-only rule of standard clock advancement.
+      - **Defensive Unhiding**: In `switchVolunteerTab()`, explicitly unhid `#volunteerTabsContainer` and `#volTabBar` to eliminate race conditions between role switching and tab clicks.
+      - **Rich Actionable Empty States**: Upgraded the volunteer available empty state with a 1-click button to reset simulation time to 12:00 PM or view city-wide zones.
+      - **Actor Selection Safe Guard**: If a saved session ID is no longer present in memory, `selectActor()` gracefully redirects to `authScreen` rather than leaving the viewport in an indeterminate hidden state.
+
 ---
 
 ## 4. What Was Accepted, Customized, or Rejected
