@@ -65,6 +65,21 @@ describe('SurplusLink API Integration & Concurrency Tests', () => {
     assert.deepEqual(res.data.zones.sort(), ['CENTRAL', 'NORTH']);
   });
 
+  test('GET /api/donors/:id and GET /api/volunteers/:id look up individuals securely', async () => {
+    const dRes = await request('/api/donors/D1');
+    assert.equal(dRes.status, 200);
+    assert.equal(dRes.data.id, 'D1');
+    assert.equal(dRes.data.name, 'Spice Garden');
+
+    const vRes = await request('/api/volunteers/V1');
+    assert.equal(vRes.status, 200);
+    assert.equal(vRes.data.id, 'V1');
+    assert.deepEqual(vRes.data.zones.sort(), ['EAST', 'NORTH']);
+
+    const notFound = await request('/api/donors/D999');
+    assert.equal(notFound.status, 404);
+  });
+
   test('GET /api/clock returns initial seed clock', async () => {
     const { status, data } = await request('/api/clock');
     assert.equal(status, 200);

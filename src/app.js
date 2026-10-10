@@ -130,6 +130,27 @@ function createApp(customDb) {
     res.status(201).json(createdVolunteer);
   });
 
+  // 1d. GET /api/donors/:id - Lookup restaurant by ID
+  app.get('/api/donors/:id', (req, res) => {
+    const id = req.params.id ? req.params.id.trim().toUpperCase() : '';
+    const donor = db.prepare('SELECT id, name, zone FROM donors WHERE id = ?').get(id);
+    if (!donor) {
+      return res.status(404).json({ error: `Restaurant with ID ${id} not found` });
+    }
+    res.json(donor);
+  });
+
+  // 1e. GET /api/volunteers/:id - Lookup volunteer by ID
+  app.get('/api/volunteers/:id', (req, res) => {
+    const id = req.params.id ? req.params.id.trim().toUpperCase() : '';
+    const volunteer = db.prepare('SELECT id, name, capacity_kg FROM volunteers WHERE id = ?').get(id);
+    if (!volunteer) {
+      return res.status(404).json({ error: `Volunteer with ID ${id} not found` });
+    }
+    const zones = db.prepare('SELECT zone FROM volunteer_zones WHERE volunteer_id = ?').all(id).map((r) => r.zone);
+    res.json({ ...volunteer, zones });
+  });
+
   // 2. GET /api/clock - Current simulated clock
   app.get('/api/clock', (req, res) => {
     res.json({ now: getClock() });

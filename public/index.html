@@ -460,30 +460,26 @@
         <!-- 3. Form: Log In - Restaurant -->
         <form id="formLoginRestaurant" class="space-y-4 text-left hidden">
           <div>
-            <label for="loginRestaurantSelect" class="block text-xs font-semibold text-[var(--text-muted)] mb-1">Select Registered Restaurant</label>
-            <select id="loginRestaurantSelect" class="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-3.5 py-2.5 text-sm text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
-              <option value="">Loading restaurants...</option>
-            </select>
-            <p class="text-[11px] text-[var(--text-muted)] mt-1.5">Includes seeded restaurants (Olive Bistro, Sunrise Cafe, City Baker, etc.)</p>
+            <label for="loginRestaurantId" class="block text-xs font-semibold text-[var(--text-muted)] mb-1">Restaurant Unique ID</label>
+            <input type="text" id="loginRestaurantId" required placeholder="e.g. D1" autocomplete="off" class="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-3.5 py-2.5 text-sm uppercase font-mono tracking-wider text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
+            <p class="text-[11px] text-[var(--text-muted)] mt-1.5">Enter your private Restaurant ID assigned at registration (e.g. D1, D2).</p>
           </div>
           <div id="loginRestaurantError" class="text-xs text-[var(--danger)] min-h-[1rem]"></div>
           <button type="submit" class="w-full bg-[#0F2942] hover:bg-[#1A3D5E] text-white py-3 rounded-full text-base font-semibold shadow-md transition active:scale-[0.98]">
-            Log In as Restaurant →
+            Log In with Restaurant ID →
           </button>
         </form>
 
         <!-- 4. Form: Log In - Volunteer -->
         <form id="formLoginVolunteer" class="space-y-4 text-left hidden">
           <div>
-            <label for="loginVolunteerSelect" class="block text-xs font-semibold text-[var(--text-muted)] mb-1">Select Registered Volunteer Driver</label>
-            <select id="loginVolunteerSelect" class="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-3.5 py-2.5 text-sm text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
-              <option value="">Loading volunteers...</option>
-            </select>
-            <p class="text-[11px] text-[var(--text-muted)] mt-1.5">Includes seeded drivers (Alex Rivera, Jordan Chen, Taylor Smith, etc.)</p>
+            <label for="loginVolunteerId" class="block text-xs font-semibold text-[var(--text-muted)] mb-1">Volunteer Driver Unique ID</label>
+            <input type="text" id="loginVolunteerId" required placeholder="e.g. V1" autocomplete="off" class="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-3.5 py-2.5 text-sm uppercase font-mono tracking-wider text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
+            <p class="text-[11px] text-[var(--text-muted)] mt-1.5">Enter your private Driver ID assigned at registration (e.g. V1, V2).</p>
           </div>
           <div id="loginVolunteerError" class="text-xs text-[var(--danger)] min-h-[1rem]"></div>
           <button type="submit" class="w-full bg-[#0F2942] hover:bg-[#1A3D5E] text-white py-3 rounded-full text-base font-semibold shadow-md transition active:scale-[0.98]">
-            Log In as Volunteer →
+            Log In with Volunteer ID →
           </button>
         </form>
 
@@ -537,21 +533,21 @@
     <!-- Left Rail: Identity, Clock, Dashboard (4 cols on lg) -->
     <aside class="lg:col-span-4 space-y-6">
 
-      <!-- 1. Identity Selector -->
+      <!-- 1. Logged-in Identity -->
       <section class="surface p-4 space-y-3">
         <div class="flex items-center justify-between">
-          <h2 class="text-sm font-semibold uppercase tracking-wider text-[var(--text-muted)]">Acting As</h2>
-          <button id="railSwitchBtn" type="button" class="text-xs text-[var(--accent)] hover:underline font-medium">
-            + Sign Up New
+          <h2 class="text-sm font-semibold uppercase tracking-wider text-[var(--text-muted)]">Active Identity</h2>
+          <button id="railSwitchBtn" type="button" class="text-xs text-[var(--accent)] hover:underline font-semibold">
+            ↩ Switch Account
           </button>
         </div>
-        <div>
-          <label for="actorSelect" class="block text-xs font-medium text-[var(--text-muted)] mb-1">Select Persona</label>
-          <select id="actorSelect" class="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-md px-3 py-2 text-sm">
-            <option value="">Loading people...</option>
-          </select>
+        <div class="p-3 rounded-lg bg-[var(--surface-alt)] border border-[var(--border)] space-y-1.5">
+          <div class="flex items-center justify-between">
+            <span id="railActorName" class="font-bold text-sm text-[var(--text)]">Loading...</span>
+            <span id="railActorIdBadge" class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-[var(--accent)] text-white">--</span>
+          </div>
+          <div id="actorDetails" class="text-xs text-[var(--text-muted)] pt-0.5 border-t border-[var(--border)]"></div>
         </div>
-        <div id="actorDetails" class="text-xs text-[var(--text-muted)] pt-1 border-t border-[var(--border)]"></div>
       </section>
 
       <!-- 2. Simulated Clock Control -->
@@ -730,8 +726,6 @@
     async function loadPeople() {
       const data = await apiRequest('/api/people');
       people = data;
-      renderActorSelect();
-      renderLoginSelects();
     }
 
     async function loadClock() {
@@ -757,87 +751,18 @@
       }
     }
 
-    // Render Actor Selector (Left Rail)
-    function renderActorSelect() {
-      const select = document.getElementById('actorSelect');
-      clearChildren(select);
-
-      const placeholder = el('option', '', '-- Select Persona --');
-      placeholder.value = '';
-      select.appendChild(placeholder);
-
-      // Donors Group
-      const donorGroup = document.createElement('optgroup');
-      donorGroup.label = 'Restaurants & Donors';
-      for (const d of people.donors) {
-        const opt = el('option', '', `${d.name} (${d.zone}) [${d.id}]`);
-        opt.value = `donor:${d.id}`;
-        donorGroup.appendChild(opt);
-      }
-      select.appendChild(donorGroup);
-
-      // Volunteers Group
-      const volGroup = document.createElement('optgroup');
-      volGroup.label = 'Volunteer Drivers';
-      for (const v of people.volunteers) {
-        const opt = el('option', '', `${v.name} (Cap: ${v.capacity_kg}kg, Zones: ${v.zones.join(', ')}) [${v.id}]`);
-        opt.value = `volunteer:${v.id}`;
-        volGroup.appendChild(opt);
-      }
-      select.appendChild(volGroup);
-
-      if (activeActor) {
-        select.value = `${activeActor.role}:${activeActor.id}`;
-      }
-
-      select.onchange = (e) => {
-        selectActor(e.target.value);
-      };
-    }
-
-    // Render Registered Persona Dropdowns for Log In
-    function renderLoginSelects() {
-      const resSelect = document.getElementById('loginRestaurantSelect');
-      if (resSelect) {
-        clearChildren(resSelect);
-        if (people.donors.length === 0) {
-          const opt = el('option', '', 'No restaurants registered yet');
-          opt.value = '';
-          resSelect.appendChild(opt);
-        } else {
-          for (const d of people.donors) {
-            const opt = el('option', '', `${d.name} (${d.zone}) [ID: ${d.id}]`);
-            opt.value = `donor:${d.id}`;
-            resSelect.appendChild(opt);
-          }
-        }
-      }
-
-      const volSelect = document.getElementById('loginVolunteerSelect');
-      if (volSelect) {
-        clearChildren(volSelect);
-        if (people.volunteers.length === 0) {
-          const opt = el('option', '', 'No volunteers registered yet');
-          opt.value = '';
-          volSelect.appendChild(opt);
-        } else {
-          for (const v of people.volunteers) {
-            const opt = el('option', '', `${v.name} (Cap: ${v.capacity_kg}kg, Zones: ${v.zones.join(', ')}) [ID: ${v.id}]`);
-            opt.value = `volunteer:${v.id}`;
-            volSelect.appendChild(opt);
-          }
-        }
-      }
-    }
-
-    function selectActor(val) {
+    function selectActor(val, explicitActorObj = null) {
       const details = document.getElementById('actorDetails');
       const badge = document.getElementById('headerPersonaBadge');
+      const railName = document.getElementById('railActorName');
+      const railBadge = document.getElementById('railActorIdBadge');
       clearChildren(details);
 
       if (!val) {
         activeActor = null;
         badge.textContent = '👤 Choose Persona';
+        if (railName) railName.textContent = 'None';
+        if (railBadge) railBadge.textContent = '--';
         document.getElementById('authScreen').classList.remove('hidden');
         document.getElementById('mainAppScreen').classList.add('hidden');
         renderRoleWork();
@@ -845,27 +770,34 @@
       }
 
       const [role, id] = val.split(':');
-      if (role === 'donor') {
+      if (explicitActorObj) {
+        activeActor = explicitActorObj;
+      } else if (role === 'donor') {
         const donor = people.donors.find((d) => d.id === id);
         if (!donor) return;
         activeActor = { ...donor, role: 'donor' };
-        details.textContent = `Restaurant ${donor.id} | Zone ${donor.zone}`;
-        badge.textContent = `🍽️ ${donor.name} (${donor.zone})`;
       } else {
         const volunteer = people.volunteers.find((v) => v.id === id);
         if (!volunteer) return;
         activeActor = { ...volunteer, role: 'volunteer' };
-        details.textContent = `Volunteer ${volunteer.id} | Max ${volunteer.capacity_kg}kg | Zones: ${volunteer.zones.join(', ')}`;
-        badge.textContent = `🚗 ${volunteer.name} (${volunteer.capacity_kg}kg)`;
+      }
+
+      if (activeActor.role === 'donor') {
+        if (railName) railName.textContent = activeActor.name;
+        if (railBadge) railBadge.textContent = activeActor.id;
+        details.textContent = `Restaurant ${activeActor.id} | Zone: ${activeActor.zone}`;
+        badge.textContent = `🍽️ ${activeActor.name} [ID: ${activeActor.id}]`;
+      } else {
+        if (railName) railName.textContent = activeActor.name;
+        if (railBadge) railBadge.textContent = activeActor.id;
+        const zonesStr = activeActor.zones ? activeActor.zones.join(', ') : '';
+        details.textContent = `Volunteer ${activeActor.id} | Max: ${activeActor.capacity_kg}kg | Zones: ${zonesStr}`;
+        badge.textContent = `🚗 ${activeActor.name} [ID: ${activeActor.id}]`;
       }
 
       try {
         localStorage.setItem('surpluslink_active_actor', val);
       } catch (e) {}
-
-      // Sync rail select
-      const railSelect = document.getElementById('actorSelect');
-      if (railSelect) railSelect.value = val;
 
       // Transition from Auth Screen to Main Application
       document.getElementById('authScreen').classList.add('hidden');
@@ -1491,17 +1423,23 @@
         updateAuthUI();
       };
 
-      // Left Phone Mockup "Continue" Button (Quick Demo Persona Login)
+      // Left Phone Mockup "Continue" Button
       document.getElementById('kombaiQuickContinueBtn').onclick = () => {
-        if (authRole === 'restaurant' && people.donors.length > 0) {
-          selectActor(`donor:${people.donors[0].id}`);
-          showToast(`Welcome! Logged in as ${people.donors[0].name}`);
-        } else if (people.volunteers.length > 0) {
-          selectActor(`volunteer:${people.volunteers[0].id}`);
-          showToast(`Welcome! Logged in as ${people.volunteers[0].name}`);
-        } else {
-          showToast('Please sign up or select a persona on the right', true);
+        if (activeActor) {
+          document.getElementById('authScreen').classList.add('hidden');
+          document.getElementById('mainAppScreen').classList.remove('hidden');
+          return;
         }
+        authMode = 'login';
+        updateAuthUI();
+        if (authRole === 'restaurant') {
+          const inp = document.getElementById('loginRestaurantId');
+          if (inp) inp.focus();
+        } else {
+          const inp = document.getElementById('loginVolunteerId');
+          if (inp) inp.focus();
+        }
+        showToast('Please enter your unique ID to log in');
       };
 
       // Switch Persona / Log Out Buttons (In Main App Header & Left Rail)
@@ -1531,8 +1469,9 @@
             body: JSON.stringify({ name, zone }),
           });
           await loadPeople();
-          selectActor(`donor:${created.id}`);
-          showToast(`Restaurant ${created.name} registered successfully!`);
+          selectActor(`donor:${created.id}`, { ...created, role: 'donor' });
+          alert(`🎉 Restaurant Registered!\n\nYour Unique Restaurant ID is: ${created.id}\n\nPlease save this ID (${created.id}) to log in anytime.`);
+          showToast(`Welcome! Registered with ID: ${created.id}`);
           formSignupRestaurant.reset();
           await refreshAll();
         } catch (err) {
@@ -1561,8 +1500,9 @@
             body: JSON.stringify({ name, capacity_kg, zones }),
           });
           await loadPeople();
-          selectActor(`volunteer:${created.id}`);
-          showToast(`Volunteer ${created.name} registered successfully!`);
+          selectActor(`volunteer:${created.id}`, { ...created, role: 'volunteer' });
+          alert(`🎉 Volunteer Registered!\n\nYour Unique Volunteer Driver ID is: ${created.id}\n\nPlease save this ID (${created.id}) to log in anytime.`);
+          showToast(`Welcome! Registered with ID: ${created.id}`);
           formSignupVolunteer.reset();
           await refreshAll();
         } catch (err) {
@@ -1570,30 +1510,50 @@
         }
       };
 
-      // Form 3: Restaurant Log In
-      formLoginRestaurant.onsubmit = (e) => {
+      // Form 3: Restaurant Log In with Unique ID
+      formLoginRestaurant.onsubmit = async (e) => {
         e.preventDefault();
-        const val = document.getElementById('loginRestaurantSelect').value;
-        if (!val) {
-          document.getElementById('loginRestaurantError').textContent = 'Please choose a restaurant.';
+        const errBox = document.getElementById('loginRestaurantError');
+        errBox.textContent = '';
+        const rawId = document.getElementById('loginRestaurantId').value.trim().toUpperCase();
+        if (!rawId) {
+          errBox.textContent = 'Please enter your Restaurant ID (e.g. D1).';
           return;
         }
-        selectActor(val);
-        showToast('Logged in as Restaurant successfully!');
-        refreshAll();
+
+        try {
+          const donor = await apiRequest(`/api/donors/${encodeURIComponent(rawId)}`);
+          selectActor(`donor:${donor.id}`, { ...donor, role: 'donor' });
+          showToast(`Welcome back, ${donor.name}!`);
+          await refreshAll();
+        } catch (err) {
+          errBox.textContent = err.status === 404
+            ? `No restaurant found with ID "${rawId}". Please check your ID or create an account.`
+            : err.message;
+        }
       };
 
-      // Form 4: Volunteer Log In
-      formLoginVolunteer.onsubmit = (e) => {
+      // Form 4: Volunteer Log In with Unique ID
+      formLoginVolunteer.onsubmit = async (e) => {
         e.preventDefault();
-        const val = document.getElementById('loginVolunteerSelect').value;
-        if (!val) {
-          document.getElementById('loginVolunteerError').textContent = 'Please choose a volunteer driver.';
+        const errBox = document.getElementById('loginVolunteerError');
+        errBox.textContent = '';
+        const rawId = document.getElementById('loginVolunteerId').value.trim().toUpperCase();
+        if (!rawId) {
+          errBox.textContent = 'Please enter your Volunteer Driver ID (e.g. V1).';
           return;
         }
-        selectActor(val);
-        showToast('Logged in as Volunteer successfully!');
-        refreshAll();
+
+        try {
+          const vol = await apiRequest(`/api/volunteers/${encodeURIComponent(rawId)}`);
+          selectActor(`volunteer:${vol.id}`, { ...vol, role: 'volunteer' });
+          showToast(`Welcome back, ${vol.name}!`);
+          await refreshAll();
+        } catch (err) {
+          errBox.textContent = err.status === 404
+            ? `No volunteer found with ID "${rawId}". Please check your ID or create an account.`
+            : err.message;
+        }
       };
 
       // Top Refresh button
