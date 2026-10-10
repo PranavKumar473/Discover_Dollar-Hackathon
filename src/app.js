@@ -77,6 +77,59 @@ function createApp(customDb) {
     res.json({ donors, volunteers });
   });
 
+  // 1b. POST /api/donors - Register a new donor/restaurant
+  app.post('/api/donors', (req, res) => {
+    const { name, zone } = req.body || {};
+    if (typeof name !== 'string' || !name.trim()) {
+      return res.status(400).json({ error: 'name must be a non-empty string' });
+    }
+    if (typeof zone !== 'string' || !zone.trim()) {
+      return res.status(400).json({ error: 'zone must be a non-empty string' });
+    }
+
+    let createdDonor;
+    db.transaction(() => {
+      const id = nextId(db, 'donors');
+      const cleanZone = zone.trim().toUpperCase();
+      db.prepare('INSERT INTO donors (id, name, zone) VALUES (?, ?, ?)').run(id, name.trim(), cleanZone);
+      createdDonor = { id, name: name.trim(), zone: cleanZone };
+    })();
+
+    res.status(201).json(createdDonor);
+  });
+
+  // 1c. POST /api/volunteers - Register a new volunteer
+  app.post('/api/volunteers', (req, res) => {
+    const { name, capacity_kg, zones } = req.body || {};
+    if (typeof name !== 'string' || !name.trim()) {
+      return res.status(400).json({ error: 'name must be a non-empty string' });
+    }
+    if (typeof capacity_kg !== 'number' || !Number.isInteger(capacity_kg) || capacity_kg < 1) {
+      return res.status(400).json({ error: 'capacity_kg must be a positive whole integer' });
+    }
+    if (!Array.isArray(zones) || zones.length === 0) {
+      return res.status(400).json({ error: 'zones must be a non-empty array of strings' });
+    }
+
+    const cleanZones = [...new Set(zones.map((z) => String(z).trim().toUpperCase()).filter(Boolean))];
+    if (cleanZones.length === 0) {
+      return res.status(400).json({ error: 'At least one valid zone is required' });
+    }
+
+    let createdVolunteer;
+    db.transaction(() => {
+      const id = nextId(db, 'volunteers');
+      db.prepare('INSERT INTO volunteers (id, name, capacity_kg) VALUES (?, ?, ?)').run(id, name.trim(), capacity_kg);
+      const insertZone = db.prepare('INSERT INTO volunteer_zones (volunteer_id, zone) VALUES (?, ?)');
+      for (const z of cleanZones) {
+        insertZone.run(id, z);
+      }
+      createdVolunteer = { id, name: name.trim(), capacity_kg, zones: cleanZones };
+    })();
+
+    res.status(201).json(createdVolunteer);
+  });
+
   // 2. GET /api/clock - Current simulated clock
   app.get('/api/clock', (req, res) => {
     res.json({ now: getClock() });

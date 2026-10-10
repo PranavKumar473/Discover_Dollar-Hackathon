@@ -43,6 +43,28 @@ describe('SurplusLink API Integration & Concurrency Tests', () => {
     assert.deepEqual(v1.zones.sort(), ['EAST', 'NORTH']);
   });
 
+  test('POST /api/donors registers a new restaurant / donor', async () => {
+    const res = await request('/api/donors', {
+      method: 'POST',
+      body: JSON.stringify({ name: 'The Olive Bistro', zone: 'CENTRAL' }),
+    });
+    assert.equal(res.status, 201);
+    assert.equal(res.data.id, 'D6');
+    assert.equal(res.data.name, 'The Olive Bistro');
+    assert.equal(res.data.zone, 'CENTRAL');
+  });
+
+  test('POST /api/volunteers registers a new volunteer with capacity and zones', async () => {
+    const res = await request('/api/volunteers', {
+      method: 'POST',
+      body: JSON.stringify({ name: 'Alex Driver', capacity_kg: 28, zones: ['CENTRAL', 'NORTH'] }),
+    });
+    assert.equal(res.status, 201);
+    assert.equal(res.data.id, 'V7');
+    assert.equal(res.data.capacity_kg, 28);
+    assert.deepEqual(res.data.zones.sort(), ['CENTRAL', 'NORTH']);
+  });
+
   test('GET /api/clock returns initial seed clock', async () => {
     const { status, data } = await request('/api/clock');
     assert.equal(status, 200);

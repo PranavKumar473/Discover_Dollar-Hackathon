@@ -14,15 +14,15 @@
       --text: #2C2B28;
       --text-muted: #6B6862;
       --border: #DDD8CD;
-      --accent: #3D7A6B;
-      --accent-hover: #316256;
+      --accent: #1E6F8C;
+      --accent-hover: #155870;
       --danger: #B5543E;
       --danger-hover: #984431;
-      --chip-open: #3D7A6B;
+      --chip-open: #1E6F8C;
       --chip-full: #8C7B5D;
       --chip-expired: #7A7670;
       --chip-cancelled: #B5543E;
-      --chip-active: #3D7A6B;
+      --chip-active: #1E6F8C;
       --chip-collected: #2F6F52;
       --chip-missed: #B5543E;
     }
@@ -33,15 +33,15 @@
       --text: #D9D6CE;
       --text-muted: #8E8B83;
       --border: #3A3F45;
-      --accent: #6FB5A3;
-      --accent-hover: #5DA291;
+      --accent: #4BA1BE;
+      --accent-hover: #388CA8;
       --danger: #E07A5F;
       --danger-hover: #C9674D;
-      --chip-open: #6FB5A3;
+      --chip-open: #4BA1BE;
       --chip-full: #B5A485;
       --chip-expired: #949088;
       --chip-cancelled: #E07A5F;
-      --chip-active: #6FB5A3;
+      --chip-active: #4BA1BE;
       --chip-collected: #73C29E;
       --chip-missed: #E07A5F;
     }
@@ -101,7 +101,7 @@
       font-weight: 500;
       cursor: pointer;
       border: 1px solid transparent;
-      transition: background-color 0.15s, opacity 0.15s;
+      transition: background-color 0.15s, opacity 0.15s, transform 0.15s;
     }
     .btn:disabled {
       opacity: 0.45;
@@ -149,6 +149,102 @@
       height: 100%;
       border-radius: 4px;
     }
+
+    /* Kombai-Inspired CSS Food Rescue Bag Illustration */
+    .hero-art {
+      position: relative;
+      width: 200px;
+      height: 220px;
+      margin: 10px auto;
+      flex: 0 0 auto;
+    }
+    .hero-art .cast {
+      position: absolute;
+      left: 6px;
+      right: 6px;
+      bottom: -6px;
+      height: 34px;
+      background: radial-gradient(50% 50% at 50% 50%, rgba(18,59,92,.25) 0%, rgba(18,59,92,0) 72%);
+      filter: blur(1px);
+    }
+    .bag-art {
+      position: absolute;
+      left: 14px;
+      bottom: 0;
+      width: 172px;
+      height: 160px;
+      background: linear-gradient(100deg, #2A809E 0%, #1E6F8C 42%, #1E6F8C 68%, #175C75 100%);
+      border-radius: 5px 7px 9px 9px;
+      box-shadow: inset 0 -28px 34px -26px rgba(0,0,0,.30), inset 0 22px 26px -22px rgba(255,255,255,.22);
+      overflow: hidden;
+    }
+    .bag-art .gusset {
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 26px;
+      background: linear-gradient(90deg, rgba(0,0,0,.06), rgba(0,0,0,.20));
+    }
+    .bag-art .fold {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 104px;
+      height: 10px;
+      background: linear-gradient(180deg, rgba(0,0,0,.13), rgba(255,255,255,.10));
+    }
+    .bag-art .mark {
+      position: absolute;
+      left: 0;
+      right: 26px;
+      top: 28px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      opacity: .95;
+    }
+    .bag-art .mark span {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: rgba(255,255,255,.95);
+      text-transform: uppercase;
+    }
+    .veg-art { position: absolute; }
+    .veg-art.aubergine {
+      left: 22px; top: 2px; width: 28px; height: 88px; border-radius: 14px;
+      background: linear-gradient(150deg, #6B4470, #3E2647); transform: rotate(26deg);
+    }
+    .veg-art.stalk {
+      left: 18px; top: -8px; width: 20px; height: 16px; border-radius: 8px;
+      background: #3E7A46; transform: rotate(26deg);
+    }
+    .veg-art.tomato {
+      left: 56px; top: 35px; width: 50px; height: 48px; border-radius: 50%;
+      background: radial-gradient(70% 70% at 34% 28%, #E2604A, #D6452F);
+    }
+    .veg-art.pepper {
+      left: 98px; top: 14px; width: 60px; height: 58px; border-radius: 26px 26px 30px 30px;
+      background: radial-gradient(70% 70% at 32% 26%, #F2BE4B, #E9A62A);
+    }
+    .veg-art.pepper-stem {
+      left: 126px; top: 2px; width: 9px; height: 22px; border-radius: 5px;
+      background: #2F6A3B; transform: rotate(16deg);
+    }
+    .veg-art.leaf-a {
+      left: 146px; top: 26px; width: 38px; height: 26px; border-radius: 60% 12% 60% 12%;
+      background: #417F49; transform: rotate(-14deg);
+    }
+    .veg-art.leaf-b {
+      left: 158px; top: 46px; width: 34px; height: 24px; border-radius: 60% 12% 60% 12%;
+      background: #356E3E; transform: rotate(18deg);
+    }
+    .veg-art.leaf-c {
+      left: 138px; top: 10px; width: 26px; height: 20px; border-radius: 60% 12% 60% 12%;
+      background: #4C8C53; transform: rotate(-38deg);
+    }
   </style>
 
   <!-- Tailwind CDN -->
@@ -177,7 +273,159 @@
 </head>
 <body class="bg-[var(--bg)] text-[var(--text)] min-h-screen flex flex-col">
 
-  <!-- Top App Banner / Header -->
+  <!-- ============================================================== -->
+  <!-- LAUNCH & ONBOARDING OVERLAY / MODAL (Kombai iOS Style)         -->
+  <!-- ============================================================== -->
+  <div id="launchModal" class="fixed inset-0 z-50 overflow-y-auto bg-black/75 backdrop-blur-md flex items-center justify-center p-3 sm:p-6">
+    <!-- iOS Device Frame Container -->
+    <div class="bg-white text-[#0F2942] max-w-[390px] w-full rounded-[44px] p-6 pt-4 pb-8 space-y-4 text-center shadow-2xl relative border-[7px] border-[#1C1F24] ring-1 ring-white/20 select-none">
+      
+      <!-- iOS Status Bar (9:41, Notch / Dynamic Island, Signal / Wifi / Battery) -->
+      <div class="flex items-center justify-between px-2 pt-1 pb-2 text-[13px] font-semibold text-[#0F2942] opacity-90">
+        <span class="tracking-tight pl-1">9:41</span>
+        <!-- Speaker / Dynamic island notch hint -->
+        <div class="w-20 h-4 bg-black rounded-full mx-auto"></div>
+        <div class="flex items-center space-x-1.5 pr-1">
+          <!-- Cellular signal -->
+          <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L12 22l7.03-4.39C20.26 16.07 21 14.12 21 12c0-4.97-4.03-9-9-9z" style="display:none"/><path d="M2 17h3v4H2v-4zm5-4h3v8H7v-8zm5-4h3v12h-3V9zm5-5h3v17h-3V4z"/></svg>
+          <!-- Wifi -->
+          <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 4C7.31 4 3.07 5.9 0 8.98L12 21 24 8.98C20.93 5.9 16.69 4 12 4zm0 3.5c3.67 0 7.02 1.37 9.58 3.66L12 18.2 2.42 11.16C4.98 8.87 8.33 7.5 12 7.5z"/></svg>
+          <!-- Battery -->
+          <div class="w-5 h-2.5 border border-current rounded-sm p-[1px] flex items-center">
+            <div class="w-full h-full bg-current rounded-[1px]"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Close button if actor is already active -->
+      <button id="closeLaunchModalBtn" type="button" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 p-1.5 rounded-full hover:bg-slate-100 hidden z-10" aria-label="Close launch screen">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+
+      <!-- Headline & Subtitle from Kombai inspiration -->
+      <div class="pt-1">
+        <h1 class="text-[32px] leading-tight font-extrabold tracking-tight text-[#0F2942]">Nice rescue!</h1>
+        <p class="text-[15px] font-medium text-[#1E3A5F] mt-1.5 max-w-[260px] mx-auto leading-snug">
+          That’s one more meal saved from the bin tonight
+        </p>
+      </div>
+
+      <!-- CSS Art Food Bag Hero -->
+      <figure class="hero-art my-1" aria-label="Paper grocery bag filled with vegetables">
+        <div class="cast"></div>
+        <div class="veg-art stalk"></div>
+        <div class="veg-art aubergine"></div>
+        <div class="veg-art leaf-c"></div>
+        <div class="veg-art pepper-stem"></div>
+        <div class="veg-art pepper"></div>
+        <div class="veg-art leaf-a"></div>
+        <div class="veg-art leaf-b"></div>
+        <div class="veg-art tomato"></div>
+
+        <div class="bag-art">
+          <div class="gusset"></div>
+          <div class="fold"></div>
+          <div class="mark">
+            <svg width="42" height="32" viewBox="0 0 52 42" fill="none" aria-hidden="true">
+              <path d="M24 4.5c7 0 12 6 12 13.5S31 34 24 34s-13-6-13-16S17 4.5 24 4.5Z" stroke="rgba(255,255,255,.95)" stroke-width="2.6"/>
+              <path d="M33 12c6.5 0 12 5.5 12 12.5S39.5 38 33 38s-11-5.5-11-13.5S26.5 12 33 12Z" stroke="rgba(255,255,255,.95)" stroke-width="2.6"/>
+            </svg>
+            <span class="tracking-widest font-bold">LASTBITE</span>
+          </div>
+        </div>
+      </figure>
+
+      <!-- iOS Segmented Control Tabs (Select, Restaurant, Volunteer) -->
+      <div class="bg-slate-100 p-1 rounded-2xl flex text-xs font-semibold text-slate-600 gap-1">
+        <button id="tabSelect" type="button" class="flex-1 py-1.5 px-2 rounded-xl bg-white text-[#0F2942] shadow-sm transition">
+          Select Persona
+        </button>
+        <button id="tabDonorSignup" type="button" class="flex-1 py-1.5 px-2 rounded-xl text-slate-500 hover:text-slate-900 transition">
+          Restaurant
+        </button>
+        <button id="tabVolSignup" type="button" class="flex-1 py-1.5 px-2 rounded-xl text-slate-500 hover:text-slate-900 transition">
+          Volunteer
+        </button>
+      </div>
+
+      <!-- Tab Content 1: Quick Select Existing Persona -->
+      <div id="paneSelect" class="space-y-4 text-left pt-1">
+        <div>
+          <label for="launchActorSelect" class="block text-xs font-semibold text-slate-500 mb-1">Choose Persona to Act As</label>
+          <select id="launchActorSelect" class="w-full bg-slate-50 border border-slate-200 text-slate-800 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0F2942]">
+            <option value="">Loading personas...</option>
+          </select>
+        </div>
+        <button id="launchContinueBtn" type="button" class="w-full bg-[#0F2942] hover:bg-[#1A3D5E] text-white py-3 rounded-full text-base font-semibold shadow-md transition active:scale-[0.98]">
+          Continue
+        </button>
+      </div>
+
+      <!-- Tab Content 2: Sign up Restaurant / Donor -->
+      <form id="paneDonorSignup" class="space-y-3 text-left pt-1 hidden">
+        <div>
+          <label for="newDonorName" class="block text-xs font-semibold text-slate-500 mb-1">Restaurant Name</label>
+          <input type="text" id="newDonorName" required placeholder="e.g. Green Olive Bistro" class="w-full bg-slate-50 border border-slate-200 text-slate-800 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0F2942]">
+        </div>
+        <div>
+          <label for="newDonorZone" class="block text-xs font-semibold text-slate-500 mb-1">City Zone</label>
+          <select id="newDonorZone" class="w-full bg-slate-50 border border-slate-200 text-slate-800 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0F2942]">
+            <option value="NORTH">NORTH</option>
+            <option value="SOUTH">SOUTH</option>
+            <option value="EAST">EAST</option>
+            <option value="WEST">WEST</option>
+            <option value="CENTRAL">CENTRAL</option>
+          </select>
+        </div>
+        <div id="donorSignupError" class="text-xs text-rose-600 min-h-[1rem]"></div>
+        <button type="submit" class="w-full bg-[#0F2942] hover:bg-[#1A3D5E] text-white py-3 rounded-full text-base font-semibold shadow-md transition active:scale-[0.98]">
+          Sign Up as Restaurant
+        </button>
+      </form>
+
+      <!-- Tab Content 3: Sign up Volunteer Driver -->
+      <form id="paneVolSignup" class="space-y-3 text-left pt-1 hidden">
+        <div>
+          <label for="newVolName" class="block text-xs font-semibold text-slate-500 mb-1">Volunteer Driver Name</label>
+          <input type="text" id="newVolName" required placeholder="e.g. Maya Lin" class="w-full bg-slate-50 border border-slate-200 text-slate-800 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0F2942]">
+        </div>
+        <div>
+          <label for="newVolCapacity" class="block text-xs font-semibold text-slate-500 mb-1">Vehicle Capacity (kg)</label>
+          <input type="number" id="newVolCapacity" min="1" step="1" required placeholder="25" class="w-full bg-slate-50 border border-slate-200 text-slate-800 rounded-xl px-3 py-2 text-sm tabular focus:outline-none focus:ring-2 focus:ring-[#0F2942]">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 mb-1">Authorized Zones</label>
+          <div class="grid grid-cols-2 gap-2 text-xs text-slate-700 bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+            <label class="flex items-center space-x-1.5 cursor-pointer">
+              <input type="checkbox" name="volZone" value="NORTH" checked class="rounded border-slate-300 text-[#0F2942] focus:ring-0">
+              <span>NORTH</span>
+            </label>
+            <label class="flex items-center space-x-1.5 cursor-pointer">
+              <input type="checkbox" name="volZone" value="SOUTH" class="rounded border-slate-300 text-[#0F2942] focus:ring-0">
+              <span>SOUTH</span>
+            </label>
+            <label class="flex items-center space-x-1.5 cursor-pointer">
+              <input type="checkbox" name="volZone" value="EAST" class="rounded border-slate-300 text-[#0F2942] focus:ring-0">
+              <span>EAST</span>
+            </label>
+            <label class="flex items-center space-x-1.5 cursor-pointer">
+              <input type="checkbox" name="volZone" value="WEST" class="rounded border-slate-300 text-[#0F2942] focus:ring-0">
+              <span>WEST</span>
+            </label>
+          </div>
+        </div>
+        <div id="volSignupError" class="text-xs text-rose-600 min-h-[1rem]"></div>
+        <button type="submit" class="w-full bg-[#0F2942] hover:bg-[#1A3D5E] text-white py-3 rounded-full text-base font-semibold shadow-md transition active:scale-[0.98]">
+          Sign Up as Volunteer
+        </button>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MAIN APPLICATION CONSOLE                                       -->
+  <!-- ============================================================== -->
   <header class="border-b border-[var(--border)] bg-[var(--surface)] px-4 sm:px-6 py-3 flex items-center justify-between">
     <div class="flex items-center space-x-3">
       <div class="w-8 h-8 rounded-md bg-[var(--accent)] text-white font-bold flex items-center justify-center text-lg">
@@ -189,8 +437,13 @@
       </div>
     </div>
 
-    <!-- Theme Toggle & Refresh -->
+    <!-- Active Persona, Switch Persona, Theme Toggle & Refresh -->
     <div class="flex items-center space-x-2">
+      <button id="openLaunchModalBtn" type="button" class="btn btn-outline text-xs px-2.5 py-1.5 flex items-center space-x-1.5">
+        <span id="headerPersonaBadge">👤 Choose Persona</span>
+        <span class="text-[var(--accent)] font-semibold">Switch / Join</span>
+      </button>
+
       <button id="themeToggleBtn" type="button" class="btn btn-outline text-xs px-2.5 py-1.5" aria-label="Toggle color theme">
         <span id="themeIcon">🌓</span> Theme
       </button>
@@ -208,7 +461,12 @@
 
       <!-- 1. Identity Selector -->
       <section class="surface p-4 space-y-3">
-        <h2 class="text-sm font-semibold uppercase tracking-wider text-[var(--text-muted)]">Acting As</h2>
+        <div class="flex items-center justify-between">
+          <h2 class="text-sm font-semibold uppercase tracking-wider text-[var(--text-muted)]">Acting As</h2>
+          <button id="railSwitchBtn" type="button" class="text-xs text-[var(--accent)] hover:underline font-medium">
+            + Sign Up New
+          </button>
+        </div>
         <div>
           <label for="actorSelect" class="block text-xs font-medium text-[var(--text-muted)] mb-1">Select Persona</label>
           <select id="actorSelect" class="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-md px-3 py-2 text-sm">
@@ -394,6 +652,7 @@
       const data = await apiRequest('/api/people');
       people = data;
       renderActorSelect();
+      renderLaunchActorSelect();
     }
 
     async function loadClock() {
@@ -419,18 +678,18 @@
       }
     }
 
-    // Render Actor Selector
+    // Render Actor Selector (Left Rail)
     function renderActorSelect() {
       const select = document.getElementById('actorSelect');
       clearChildren(select);
 
-      const placeholder = el('option', '', '-- Select Actor --');
+      const placeholder = el('option', '', '-- Select Persona --');
       placeholder.value = '';
       select.appendChild(placeholder);
 
       // Donors Group
       const donorGroup = document.createElement('optgroup');
-      donorGroup.label = 'Donors (Restaurants & Cafes)';
+      donorGroup.label = 'Restaurants & Donors';
       for (const d of people.donors) {
         const opt = el('option', '', `${d.name} (${d.zone}) [${d.id}]`);
         opt.value = `donor:${d.id}`;
@@ -440,7 +699,7 @@
 
       // Volunteers Group
       const volGroup = document.createElement('optgroup');
-      volGroup.label = 'Volunteers (Drivers)';
+      volGroup.label = 'Volunteer Drivers';
       for (const v of people.volunteers) {
         const opt = el('option', '', `${v.name} (Cap: ${v.capacity_kg}kg, Zones: ${v.zones.join(', ')}) [${v.id}]`);
         opt.value = `volunteer:${v.id}`;
@@ -448,23 +707,53 @@
       }
       select.appendChild(volGroup);
 
-      // Default to first donor if none selected
-      if (!activeActor && people.donors.length > 0) {
-        select.value = `donor:${people.donors[0].id}`;
-        selectActor(select.value);
+      if (activeActor) {
+        select.value = `${activeActor.role}:${activeActor.id}`;
       }
 
-      select.addEventListener('change', (e) => {
+      select.onchange = (e) => {
         selectActor(e.target.value);
-      });
+      };
+    }
+
+    // Render Actor Selector (Launch Modal)
+    function renderLaunchActorSelect() {
+      const select = document.getElementById('launchActorSelect');
+      clearChildren(select);
+
+      const donorGroup = document.createElement('optgroup');
+      donorGroup.label = 'Restaurants & Donors';
+      for (const d of people.donors) {
+        const opt = el('option', '', `${d.name} (${d.zone}) [${d.id}]`);
+        opt.value = `donor:${d.id}`;
+        donorGroup.appendChild(opt);
+      }
+      select.appendChild(donorGroup);
+
+      const volGroup = document.createElement('optgroup');
+      volGroup.label = 'Volunteer Drivers';
+      for (const v of people.volunteers) {
+        const opt = el('option', '', `${v.name} (Cap: ${v.capacity_kg}kg, Zones: ${v.zones.join(', ')}) [${v.id}]`);
+        opt.value = `volunteer:${v.id}`;
+        volGroup.appendChild(opt);
+      }
+      select.appendChild(volGroup);
+
+      if (activeActor) {
+        select.value = `${activeActor.role}:${activeActor.id}`;
+      } else if (people.donors.length > 0) {
+        select.value = `donor:${people.donors[0].id}`;
+      }
     }
 
     function selectActor(val) {
       const details = document.getElementById('actorDetails');
+      const badge = document.getElementById('headerPersonaBadge');
       clearChildren(details);
 
       if (!val) {
         activeActor = null;
+        badge.textContent = '👤 Choose Persona';
         renderRoleWork();
         return;
       }
@@ -473,14 +762,37 @@
       if (role === 'donor') {
         const donor = people.donors.find((d) => d.id === id);
         activeActor = { ...donor, role: 'donor' };
-        details.textContent = `Donor ${donor.id} | Zone ${donor.zone}`;
+        details.textContent = `Restaurant ${donor.id} | Zone ${donor.zone}`;
+        badge.textContent = `🍽️ ${donor.name} (${donor.zone})`;
       } else {
         const volunteer = people.volunteers.find((v) => v.id === id);
         activeActor = { ...volunteer, role: 'volunteer' };
         details.textContent = `Volunteer ${volunteer.id} | Max ${volunteer.capacity_kg}kg | Zones: ${volunteer.zones.join(', ')}`;
+        badge.textContent = `🚗 ${volunteer.name} (${volunteer.capacity_kg}kg)`;
       }
 
+      // Sync rail select
+      const railSelect = document.getElementById('actorSelect');
+      if (railSelect) railSelect.value = val;
+
       renderRoleWork();
+    }
+
+    // Modal Control
+    function showLaunchModal(canClose = true) {
+      const modal = document.getElementById('launchModal');
+      const closeBtn = document.getElementById('closeLaunchModalBtn');
+      modal.classList.remove('hidden');
+      if (canClose && activeActor) {
+        closeBtn.classList.remove('hidden');
+      } else {
+        closeBtn.classList.add('hidden');
+      }
+    }
+
+    function hideLaunchModal() {
+      const modal = document.getElementById('launchModal');
+      modal.classList.add('hidden');
     }
 
     // Render Dashboard
@@ -593,7 +905,13 @@
       clearChildren(panel);
 
       if (!activeActor) {
-        const empty = el('div', 'surface p-8 text-center text-[var(--text-muted)]', 'Select a person from the left rail to view and manage work.');
+        const empty = el('div', 'surface p-8 text-center text-[var(--text-muted)] space-y-3');
+        empty.appendChild(el('h2', 'text-lg font-bold', 'Welcome to SurplusLink'));
+        empty.appendChild(el('p', 'text-sm', 'Please select or sign up as a restaurant or volunteer to begin.'));
+        const chooseBtn = el('button', 'btn btn-accent rounded-full px-5 py-2 text-sm', 'Choose Persona');
+        chooseBtn.type = 'button';
+        chooseBtn.onclick = () => showLaunchModal(false);
+        empty.appendChild(chooseBtn);
         panel.appendChild(empty);
         return;
       }
@@ -1015,10 +1333,119 @@
       }
     }
 
-    // Event Listeners Setup
+    // Event Listeners & Bootstrap
     document.addEventListener('DOMContentLoaded', () => {
       initTheme();
 
+      // Launch Modal Tabs
+      const tabSelect = document.getElementById('tabSelect');
+      const tabDonorSignup = document.getElementById('tabDonorSignup');
+      const tabVolSignup = document.getElementById('tabVolSignup');
+
+      const paneSelect = document.getElementById('paneSelect');
+      const paneDonorSignup = document.getElementById('paneDonorSignup');
+      const paneVolSignup = document.getElementById('paneVolSignup');
+
+      function setLaunchTab(tab) {
+        const inactiveClass = 'flex-1 py-1.5 px-2 rounded-xl text-slate-500 hover:text-slate-900 transition font-semibold';
+        const activeClass = 'flex-1 py-1.5 px-2 rounded-xl bg-white text-[#0F2942] shadow-sm font-semibold transition';
+
+        [tabSelect, tabDonorSignup, tabVolSignup].forEach((t) => {
+          t.className = inactiveClass;
+        });
+        [paneSelect, paneDonorSignup, paneVolSignup].forEach((p) => p.classList.add('hidden'));
+
+        if (tab === 'select') {
+          tabSelect.className = activeClass;
+          paneSelect.classList.remove('hidden');
+        } else if (tab === 'donor') {
+          tabDonorSignup.className = activeClass;
+          paneDonorSignup.classList.remove('hidden');
+        } else if (tab === 'vol') {
+          tabVolSignup.className = activeClass;
+          paneVolSignup.classList.remove('hidden');
+        }
+      }
+
+      tabSelect.onclick = () => setLaunchTab('select');
+      tabDonorSignup.onclick = () => setLaunchTab('donor');
+      tabVolSignup.onclick = () => setLaunchTab('vol');
+
+      // Launch Modal Continue
+      document.getElementById('launchContinueBtn').onclick = () => {
+        const val = document.getElementById('launchActorSelect').value;
+        if (!val) {
+          showToast('Please select a persona', true);
+          return;
+        }
+        selectActor(val);
+        hideLaunchModal();
+      };
+
+      // Header and Rail Modal Open/Close Buttons
+      document.getElementById('openLaunchModalBtn').onclick = () => showLaunchModal(true);
+      document.getElementById('railSwitchBtn').onclick = () => {
+        setLaunchTab('donor');
+        showLaunchModal(true);
+      };
+      document.getElementById('closeLaunchModalBtn').onclick = () => hideLaunchModal();
+
+      // Restaurant Signup Form
+      paneDonorSignup.onsubmit = async (e) => {
+        e.preventDefault();
+        const errBox = document.getElementById('donorSignupError');
+        errBox.textContent = '';
+        const name = document.getElementById('newDonorName').value.trim();
+        const zone = document.getElementById('newDonorZone').value;
+
+        try {
+          const created = await apiRequest('/api/donors', {
+            method: 'POST',
+            body: JSON.stringify({ name, zone }),
+          });
+          await loadPeople();
+          selectActor(`donor:${created.id}`);
+          showToast(`Restaurant ${created.name} registered successfully!`);
+          paneDonorSignup.reset();
+          hideLaunchModal();
+          await refreshAll();
+        } catch (err) {
+          errBox.textContent = err.message;
+        }
+      };
+
+      // Volunteer Signup Form
+      paneVolSignup.onsubmit = async (e) => {
+        e.preventDefault();
+        const errBox = document.getElementById('volSignupError');
+        errBox.textContent = '';
+        const name = document.getElementById('newVolName').value.trim();
+        const capacity_kg = parseInt(document.getElementById('newVolCapacity').value, 10);
+        const zoneCheckboxes = document.querySelectorAll('input[name="volZone"]:checked');
+        const zones = Array.from(zoneCheckboxes).map((cb) => cb.value);
+
+        if (zones.length === 0) {
+          errBox.textContent = 'Please select at least one operating zone.';
+          return;
+        }
+
+        try {
+          const created = await apiRequest('/api/volunteers', {
+            method: 'POST',
+            body: JSON.stringify({ name, capacity_kg, zones }),
+          });
+          await loadPeople();
+          selectActor(`volunteer:${created.id}`);
+          showToast(`Volunteer ${created.name} registered successfully!`);
+          paneVolSignup.reset();
+          hideLaunchModal();
+          await refreshAll();
+        } catch (err) {
+          errBox.textContent = err.message;
+        }
+      };
+
+      // Top Refresh button
       document.getElementById('refreshBtn').addEventListener('click', () => {
         refreshAll();
       });
@@ -1049,7 +1476,12 @@
 
       // Initial Bootstrap
       loadPeople().then(() => {
-        refreshAll();
+        refreshAll().then(() => {
+          // If no active actor chosen yet, present launch screen
+          if (!activeActor) {
+            showLaunchModal(false);
+          }
+        });
       });
     });
   </script>

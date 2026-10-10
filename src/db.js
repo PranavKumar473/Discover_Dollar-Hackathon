@@ -81,7 +81,7 @@ function seedIfEmpty(db, seedPath = DEFAULT_SEED) {
   return true;
 }
 
-const ID_PREFIX = { donations: 'DN', claims: 'C' };
+const ID_PREFIX = { donations: 'DN', claims: 'C', donors: 'D', volunteers: 'V' };
 
 // Rows are never deleted, so max + 1 never reuses an id. Callers run this
 // inside their write transaction so two requests cannot pick the same id.

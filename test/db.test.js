@@ -55,7 +55,8 @@ describe('db', () => {
     assert.equal(nextId(db, 'claims'), 'C1');
     db.prepare(`INSERT INTO donations (id, donor_id, description, quantity_kg, pickup_from, pickup_until)
       VALUES ('DN10', 'D1', 'x', 1, '2026-03-10T18:00', '2026-03-10T19:00')`).run();
-    assert.equal(nextId(db, 'donations'), 'DN11');
-    assert.throws(() => nextId(db, 'donors'));
+    assert.equal(nextId(db, 'donors'), 'D6');
+    assert.equal(nextId(db, 'volunteers'), 'V7');
+    assert.throws(() => nextId(db, 'unknown_table'));
   });
 });
