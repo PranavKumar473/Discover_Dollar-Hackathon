@@ -91,6 +91,12 @@ This document discloses how AI tools were utilized during the development and it
      - **Glassmorphic Icon Action Buttons**: Frosted glass theme toggle and data refresh buttons with smooth micro-hover transitions.
      - **Segmented Glass Pill Tab Bar (`glass-nav-bar`)**: Replaced flat underline text tabs with an inner frosted glass capsule housing gradient-filled active pill buttons (`tab-glass-pill`) with subtle hover elevation and glowing shadow.
 
+9. **Dedicated Profile Display Section, Bottom-Left Logout, & Page-Load Bugfix**:
+   - **What changed**:
+     - **Header Profile Section**: Converted the top persona element into a dedicated information-only Profile Display Section showing user avatar, full name, unique ID badge, and live capacity/zone details without cluttering it with a logout trigger.
+     - **Footer Log Out Action**: Relocated the Logout / Switch Account button to the extreme bottom left of the newly added application footer (`<footer>`), styled with an accessible rose-accented frosted glass button with micro-lift on hover.
+     - **Page Load Render Error Fix**: Resolved an uncaught `ReferenceError: renderDashboard is not defined` that occurred on initial page load inside `loadDashboard()` and reordered bootstrap initialization so saved local credentials populate before invoking `refreshAll()`.
+
 ---
 
 ## 4. What Was Accepted, Customized, or Rejected
@@ -105,6 +111,7 @@ This document discloses how AI tools were utilized during the development and it
 | **Sidebar Identity** | Redundant switch buttons on every card | **Customized.** Removed button from identity card; kept switch/logout in top header. | Clear information hierarchy without UI redundancy. |
 | **Simulation Clock** | Analog dial face or generic text box | **Customized.** Engineered an authentic high-contrast Digital LED / LCD hardware-style display with ghost segments, blinking colon, and day-of-week indicators. | Provides high-clarity digital precision for time-critical food rescue dispatch testing. |
 | **Dashboard Navigation** | Flat monochromatic top header and plain underline tabs | **Customized.** Engineered a lightweight glassmorphic task dashboard with multi-stop colorful gradients, frosted glass pill capsules, and smooth micro-interactions. | Modern, aesthetic, lightweight, and keeps the food recovery dispatch workflow organized and visually engaging. |
+| **Profile & Logout Placement** | Bundling logout action inside the header persona pill | **Customized.** Dedicated the header space purely to displaying profile details, and shifted the logout action to the extreme bottom-left footer. | Follows standard UX ergonomics where destructive/session exit actions are distanced from active identity viewing. |
 | **DOM Safety** | Using `innerHTML` with template literals | **Rejected.** Strictly enforced `document.createElement` and `textContent`. | 100% immune to XSS and injection attacks from user-submitted text. |
 
 ---
