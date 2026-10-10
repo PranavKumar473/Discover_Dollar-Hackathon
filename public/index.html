@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SurplusLink — Food Recovery Dispatch</title>
+
+  <!-- Fallback & Design System CSS (Ensures 100% usability if CDN is unreachable) -->
+  <style>
+    :root {
+      --bg: #F3EFE6;
+      --surface: #FAF8F3;
+      --surface-alt: #EFEBE0;
+      --text: #2C2B28;
+      --text-muted: #6B6862;
+      --border: #DDD8CD;
+      --accent: #3D7A6B;
+      --accent-hover: #316256;
+      --danger: #B5543E;
+      --danger-hover: #984431;
+      --chip-open: #3D7A6B;
+      --chip-full: #8C7B5D;
+      --chip-expired: #7A7670;
+      --chip-cancelled: #B5543E;
+      --chip-active: #3D7A6B;
+      --chip-collected: #2F6F52;
+      --chip-missed: #B5543E;
+    }
+    .dark {
+      --bg: #1D2023;
+      --surface: #25292D;
+      --surface-alt: #2D3237;
+      --text: #D9D6CE;
+      --text-muted: #8E8B83;
+      --border: #3A3F45;
+      --accent: #6FB5A3;
+      --accent-hover: #5DA291;
+      --danger: #E07A5F;
+      --danger-hover: #C9674D;
+      --chip-open: #6FB5A3;
+      --chip-full: #B5A485;
+      --chip-expired: #949088;
+      --chip-cancelled: #E07A5F;
+      --chip-active: #6FB5A3;
+      --chip-collected: #73C29E;
+      --chip-missed: #E07A5F;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .tabular { font-variant-numeric: tabular-nums; }
+    button, input, select, textarea {
+      font-family: inherit;
+      font-size: 1rem;
+      color: inherit;
+    }
+    button:focus-visible, input:focus-visible, select:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+    .surface {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    .table-container {
+      overflow-x: auto;
+      max-width: 100%;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+    th, td {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    th {
+      font-weight: 600;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: background-color 0.15s, opacity 0.15s;
+    }
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+    .btn-accent {
+      background-color: var(--accent);
+      color: #FAF8F3;
+    }
+    .btn-accent:hover:not(:disabled) {
+      background-color: var(--accent-hover);
+    }
+    .btn-outline {
+      background-color: transparent;
+      border-color: var(--border);
+    }
+    .btn-outline:hover:not(:disabled) {
+      background-color: var(--surface-alt);
+    }
+    .btn-danger {
+      background-color: var(--danger);
+      color: #FAF8F3;
+    }
+    .btn-danger:hover:not(:disabled) {
+      background-color: var(--danger-hover);
+    }
+    .chip {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      border: 1px solid var(--border);
+    }
+    .bar-bg {
+      background-color: var(--surface-alt);
+      border-radius: 4px;
+      height: 10px;
+      overflow: hidden;
+      display: flex;
+    }
+    .bar-fill {
+      background-color: var(--accent);
+      height: 100%;
+      border-radius: 4px;
+    }
+  </style>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            field: {
+              bg: 'var(--bg)',
+              surface: 'var(--surface)',
+              alt: 'var(--surface-alt)',
+              border: 'var(--border)',
+              text: 'var(--text)',
+              muted: 'var(--text-muted)',
+              accent: 'var(--accent)',
+              danger: 'var(--danger)',
+            }
+          }
+        }
+      }
+    };
+  </script>
+</head>
+<body class="bg-[var(--bg)] text-[var(--text)] min-h-screen flex flex-col">
+
+  <!-- Top App Banner / Header -->
+  <header class="border-b border-[var(--border)] bg-[var(--surface)] px-4 sm:px-6 py-3 flex items-center justify-between">
+    <div class="flex items-center space-x-3">
+      <div class="w-8 h-8 rounded-md bg-[var(--accent)] text-white font-bold flex items-center justify-center text-lg">
+        S
+      </div>
+      <div>
+        <h1 class="text-lg font-bold tracking-tight">SurplusLink</h1>
+        <p class="text-xs text-[var(--text-muted)]">City Food Rescue &amp; Volunteer Logistics</p>
+      </div>
+    </div>
+
+    <!-- Theme Toggle & Refresh -->
+    <div class="flex items-center space-x-2">
+      <button id="themeToggleBtn" type="button" class="btn btn-outline text-xs px-2.5 py-1.5" aria-label="Toggle color theme">
+        <span id="themeIcon">🌓</span> Theme
+      </button>
+      <button id="refreshBtn" type="button" class="btn btn-outline text-xs px-2.5 py-1.5" aria-label="Refresh data">
+        🔄 Refresh
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Grid Layout -->
+  <div class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- Left Rail: Identity, Clock, Dashboard (4 cols on lg) -->
+    <aside class="lg:col-span-4 space-y-6">
+
+      <!-- 1. Identity Selector -->
+      <section class="surface p-4 space-y-3">
+        <h2 class="text-sm font-semibold uppercase tracking-wider text-[var(--text-muted)]">Acting As</h2>
+        <div>
+          <label for="actorSelect" class="block text-xs font-medium text-[var(--text-muted)] mb-1">Select Persona</label>
+          <select id="actorSelect" class="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-md px-3 py-2 text-sm">
+            <option value="">Loading people...</option>
+          </select>
+        </div>
+        <div id="actorDetails" class="text-xs text-[var(--text-muted)] pt-1 border-t border-[var(--border)]"></div>
+      </section>
+
+      <!-- 2. Simulated Clock Control -->
+      <section class="surface p-4 space-y-3">
+        <div class="flex items-center justify-between">
+          <h2 class="text-sm font-semibold uppercase tracking-wider text-[var(--text-muted)]">Simulated Clock</h2>
+          <span class="text-xs px-2 py-0.5 rounded bg-[var(--surface-alt)] border border-[var(--border)] font-mono text-[var(--text-muted)]">System Clock Off</span>
+        </div>
+        <div>
+          <div class="text-xs text-[var(--text-muted)]">Current Simulation Time:</div>
+          <div id="clockDisplay" class="text-xl font-bold font-mono tabular py-1 text-[var(--accent)]">--:--</div>
+        </div>
+
+        <form id="clockForm" class="space-y-2 pt-2 border-t border-[var(--border)]">
+          <label for="clockInput" class="block text-xs font-medium text-[var(--text-muted)]">Advance Clock</label>
+          <input type="datetime-local" id="clockInput" required class="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-md px-3 py-1.5 text-sm tabular">
+          <button type="submit" class="btn btn-accent w-full text-sm py-1.5">
+            Advance Clock
+          </button>
+          <div id="clockMessage" class="text-xs min-h-[1.2rem]" role="alert"></div>
+        </form>
+      </section>
+
+      <!-- 3. Dashboard Totals & Identity -->
+      <section class="surface p-4 space-y-4">
+        <div class="flex items-center justify-between">
+          <h2 class="text-sm font-semibold uppercase tracking-wider text-[var(--text-muted)]">Food Balance</h2>
+          <span id="identityBadge" class="text-xs font-semibold px-2 py-0.5 rounded">Checking...</span>
+        </div>
+
+        <!-- 6 Metrics List with Visual Div Bars -->
+        <div id="metricsList" class="space-y-2.5 text-xs">
+          <!-- Dynamically populated -->
+        </div>
+
+        <!-- Donor Summary Table -->
+        <div class="pt-3 border-t border-[var(--border)]">
+          <h3 class="text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)] mb-2">Collected by Donor</h3>
+          <div class="table-container max-h-36 overflow-y-auto">
+            <table class="text-xs">
+              <thead>
+                <tr>
+                  <th>Donor</th>
+                  <th class="text-right">Collected (kg)</th>
+                </tr>
+              </thead>
+              <tbody id="donorStatsBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Volunteer Summary Table -->
+        <div class="pt-3 border-t border-[var(--border)]">
+          <h3 class="text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)] mb-2">Volunteer Activity</h3>
+          <div class="table-container max-h-36 overflow-y-auto">
+            <table class="text-xs">
+              <thead>
+                <tr>
+                  <th>Volunteer</th>
+                  <th class="text-right">Collected</th>
+                  <th class="text-right">Missed</th>
+                </tr>
+              </thead>
+              <tbody id="volunteerStatsBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </aside>
+
+    <!-- Main Working Area (8 cols on lg) -->
+    <main class="lg:col-span-8 space-y-6">
+
+      <!-- Dynamic Role Panel Container -->
+      <div id="rolePanel" class="space-y-6">
+        <!-- Will be dynamically populated for Donor or Volunteer -->
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- Global Toast / Status Banner for Feedback -->
+  <div id="toast" class="fixed bottom-4 right-4 z-50 max-w-sm px-4 py-3 rounded-lg surface shadow-lg text-sm border border-[var(--border)] transition-opacity duration-200 opacity-0 pointer-events-none" role="status">
+    <span id="toastText"></span>
+  </div>
+
+  <!-- Application Logic (Vanilla JS, Strict TextContent Safety) -->
+  <script>
+    // State
+    let people = { donors: [], volunteers: [] };
+    let activeActor = null; // { id, role, name, zone?, capacity_kg?, zones? }
+    let clockNow = '';
+    let dashboardData = null;
+
+    // DOM Utilities (Ensures zero innerHTML for user data)
+    function el(tag, className, textContent) {
+      const element = document.createElement(tag);
+      if (className) element.className = className;
+      if (textContent !== undefined && textContent !== null) element.textContent = textContent;
+      return element;
+    }
+
+    function clearChildren(node) {
+      while (node.firstChild) node.removeChild(node.firstChild);
+    }
+
+    function showToast(message, isError = false) {
+      const toast = document.getElementById('toast');
+      const toastText = document.getElementById('toastText');
+      toastText.textContent = message;
+      toast.style.borderColor = isError ? 'var(--danger)' : 'var(--accent)';
+      toast.style.color = isError ? 'var(--danger)' : 'var(--text)';
+      toast.classList.remove('opacity-0', 'pointer-events-none');
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'pointer-events-none');
+      }, 4000);
+    }
+
+    // Theme Management
+    function initTheme() {
+      let isDark = false;
+      try {
+        const saved = localStorage.getItem('surpluslink-theme');
+        if (saved) {
+          isDark = saved === 'dark';
+        } else {
+          isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        }
+      } catch (e) {
+        isDark = false;
+      }
+      applyTheme(isDark);
+
+      document.getElementById('themeToggleBtn').addEventListener('click', () => {
+        const currentDark = document.documentElement.classList.contains('dark');
+        applyTheme(!currentDark);
+      });
+    }
+
+    function applyTheme(isDark) {
+      if (isDark) {
+        document.documentElement.classList.add('dark');
+        document.getElementById('themeIcon').textContent = '☀️';
+      } else {
+        document.documentElement.classList.remove('dark');
+        document.getElementById('themeIcon').textContent = '🌙';
+      }
+      try {
+        localStorage.setItem('surpluslink-theme', isDark ? 'dark' : 'light');
+      } catch (e) {}
+    }
+
+    // API Helpers
+    async function apiRequest(path, options = {}) {
+      const headers = { 'Content-Type': 'application/json', ...(options.headers || {}) };
+      if (activeActor) {
+        headers['X-Actor-Id'] = activeActor.id;
+      }
+
+      const res = await fetch(path, { ...options, headers });
+      const data = await res.json().catch(() => null);
+
+      if (!res.ok) {
+        const error = new Error(data && data.error ? data.error : `HTTP ${res.status}`);
+        error.status = res.status;
+        error.errors = data && data.errors ? data.errors : null;
+        throw error;
+      }
+      return data;
+    }
+
+    // Data Loaders
+    async function loadPeople() {
+      const data = await apiRequest('/api/people');
+      people = data;
+      renderActorSelect();
+    }
+
+    async function loadClock() {
+      const data = await apiRequest('/api/clock');
+      clockNow = data.now;
+      document.getElementById('clockDisplay').textContent = clockNow;
+      document.getElementById('clockInput').value = clockNow;
+      document.getElementById('clockInput').min = clockNow;
+    }
+
+    async function loadDashboard() {
+      const data = await apiRequest('/api/dashboard');
+      dashboardData = data;
+      renderDashboard();
+    }
+
+    async function refreshAll() {
+      try {
+        await Promise.all([loadClock(), loadDashboard()]);
+        renderRoleWork();
+      } catch (err) {
+        showToast(`Refresh failed: ${err.message}`, true);
+      }
+    }
+
+    // Render Actor Selector
+    function renderActorSelect() {
+      const select = document.getElementById('actorSelect');
+      clearChildren(select);
+
+      const placeholder = el('option', '', '-- Select Actor --');
+      placeholder.value = '';
+      select.appendChild(placeholder);
+
+      // Donors Group
+      const donorGroup = document.createElement('optgroup');
+      donorGroup.label = 'Donors (Restaurants & Cafes)';
+      for (const d of people.donors) {
+        const opt = el('option', '', `${d.name} (${d.zone}) [${d.id}]`);
+        opt.value = `donor:${d.id}`;
+        donorGroup.appendChild(opt);
+      }
+      select.appendChild(donorGroup);
+
+      // Volunteers Group
+      const volGroup = document.createElement('optgroup');
+      volGroup.label = 'Volunteers (Drivers)';
+      for (const v of people.volunteers) {
+        const opt = el('option', '', `${v.name} (Cap: ${v.capacity_kg}kg, Zones: ${v.zones.join(', ')}) [${v.id}]`);
+        opt.value = `volunteer:${v.id}`;
+        volGroup.appendChild(opt);
+      }
+      select.appendChild(volGroup);
+
+      // Default to first donor if none selected
+      if (!activeActor && people.donors.length > 0) {
+        select.value = `donor:${people.donors[0].id}`;
+        selectActor(select.value);
+      }
+
+      select.addEventListener('change', (e) => {
+        selectActor(e.target.value);
+      });
+    }
+
+    function selectActor(val) {
+      const details = document.getElementById('actorDetails');
+      clearChildren(details);
+
+      if (!val) {
+        activeActor = null;
+        renderRoleWork();
+        return;
+      }
+
+      const [role, id] = val.split(':');
+      if (role === 'donor') {
+        const donor = people.donors.find((d) => d.id === id);
+        activeActor = { ...donor, role: 'donor' };
+        details.textContent = `Donor ${donor.id} | Zone ${donor.zone}`;
+      } else {
+        const volunteer = people.volunteers.find((v) => v.id === id);
+        activeActor = { ...volunteer, role: 'volunteer' };
+        details.textContent = `Volunteer ${volunteer.id} | Max ${volunteer.capacity_kg}kg | Zones: ${volunteer.zones.join(', ')}`;
+      }
+
+      renderRoleWork();
+    }
+
+    // Render Dashboard
+    function renderDashboard() {
+      if (!dashboardData) return;
+
+      const { totals, identityHolds, byDonor, byVolunteer } = dashboardData;
+
+      // Identity badge
+      const badge = document.getElementById('identityBadge');
+      if (identityHolds) {
+        badge.textContent = `Listed ${totals.listed} = ${totals.listed} OK`;
+        badge.className = 'text-xs font-semibold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30';
+      } else {
+        badge.textContent = `Mismatch! Listed ${totals.listed} != ${dashboardData.accounted}`;
+        badge.className = 'text-xs font-semibold px-2 py-0.5 rounded bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/30';
+      }
+
+      // Metrics with horizontal div bars
+      const list = document.getElementById('metricsList');
+      clearChildren(list);
+
+      const items = [
+        { label: 'Listed (Total posted)', value: totals.listed, color: 'var(--text-muted)' },
+        { label: 'Collected (Successful)', value: totals.collected, color: 'var(--chip-collected)' },
+        { label: 'In Progress (Active claims)', value: totals.inProgress, color: 'var(--accent)' },
+        { label: 'Still Open (Available)', value: totals.stillOpen, color: 'var(--chip-open)' },
+        { label: 'Wasted (Expired food)', value: totals.wasted, color: 'var(--danger)' },
+        { label: 'Missed (Unfulfilled claims)', value: totals.missed, color: 'var(--danger)' },
+      ];
+
+      const maxVal = totals.listed || 1;
+
+      items.forEach((item) => {
+        const row = el('div', 'space-y-1');
+        const header = el('div', 'flex justify-between items-center text-xs');
+        header.appendChild(el('span', 'text-[var(--text-muted)]', item.label));
+        header.appendChild(el('span', 'font-bold font-mono tabular', `${item.value} kg`));
+        row.appendChild(header);
+
+        const barBg = el('div', 'bar-bg');
+        const barFill = el('div', 'bar-fill');
+        barFill.style.backgroundColor = item.color;
+        const pct = Math.min(100, Math.round((item.value / maxVal) * 100));
+        barFill.style.width = `${pct}%`;
+        barBg.appendChild(barFill);
+        row.appendChild(barBg);
+
+        list.appendChild(row);
+      });
+
+      // Donor summary table
+      const donorBody = document.getElementById('donorStatsBody');
+      clearChildren(donorBody);
+      byDonor.forEach((d) => {
+        const tr = document.createElement('tr');
+        tr.appendChild(el('td', '', d.name));
+        tr.appendChild(el('td', 'text-right font-mono tabular', `${d.collectedKg} kg`));
+        donorBody.appendChild(tr);
+      });
+
+      // Volunteer summary table
+      const volBody = document.getElementById('volunteerStatsBody');
+      clearChildren(volBody);
+      byVolunteer.forEach((v) => {
+        const tr = document.createElement('tr');
+        tr.appendChild(el('td', '', v.name));
+        tr.appendChild(el('td', 'text-right font-mono tabular', `${v.collectedKg} kg`));
+        tr.appendChild(el('td', 'text-right font-mono tabular', String(v.missedClaims)));
+        volBody.appendChild(tr);
+      });
+    }
+
+    // Status Chip Helper
+    function createStatusChip(status) {
+      const chip = el('span', 'chip tabular', status);
+      switch (status) {
+        case 'OPEN':
+          chip.style.borderColor = 'var(--chip-open)';
+          chip.style.color = 'var(--chip-open)';
+          break;
+        case 'FULLY_CLAIMED':
+          chip.style.borderColor = 'var(--chip-full)';
+          chip.style.color = 'var(--chip-full)';
+          break;
+        case 'EXPIRED':
+          chip.style.borderColor = 'var(--chip-expired)';
+          chip.style.color = 'var(--chip-expired)';
+          break;
+        case 'CANCELLED':
+        case 'MISSED':
+          chip.style.borderColor = 'var(--danger)';
+          chip.style.color = 'var(--danger)';
+          break;
+        case 'ACTIVE':
+          chip.style.borderColor = 'var(--accent)';
+          chip.style.color = 'var(--accent)';
+          break;
+        case 'COLLECTED':
+          chip.style.borderColor = 'var(--chip-collected)';
+          chip.style.color = 'var(--chip-collected)';
+          break;
+      }
+      return chip;
+    }
+
+    // Role-Specific Work View Rendering
+    function renderRoleWork() {
+      const panel = document.getElementById('rolePanel');
+      clearChildren(panel);
+
+      if (!activeActor) {
+        const empty = el('div', 'surface p-8 text-center text-[var(--text-muted)]', 'Select a person from the left rail to view and manage work.');
+        panel.appendChild(empty);
+        return;
+      }
+
+      if (activeActor.role === 'donor') {
+        renderDonorWork(panel);
+      } else {
+        renderVolunteerWork(panel);
+      }
+    }
+
+    // -------------------------------------------------------------
+    // DONOR VIEW
+    // -------------------------------------------------------------
+    async function renderDonorWork(container) {
+      // 1. Post Donation Form
+      const formCard = el('section', 'surface p-5 space-y-4');
+      const formHeader = el('div', 'flex justify-between items-center');
+      formHeader.appendChild(el('h2', 'text-base font-semibold', 'Post Surplus Food'));
+      formHeader.appendChild(el('span', 'text-xs text-[var(--text-muted)]', `Posting for ${activeActor.name} (${activeActor.zone})`));
+      formCard.appendChild(formHeader);
+
+      const form = el('form', 'space-y-4');
+      form.id = 'postDonationForm';
+
+      // Description & Quantity Row
+      const row1 = el('div', 'grid grid-cols-1 sm:grid-cols-3 gap-4');
+      const descGroup = el('div', 'sm:col-span-2 space-y-1');
+      descGroup.appendChild(el('label', 'block text-xs font-medium text-[var(--text-muted)]', 'Food Description'));
+      const descInput = el('input', 'w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-md px-3 py-1.5 text-sm');
+      descInput.id = 'postDesc';
+      descInput.required = true;
+      descInput.placeholder = 'e.g. Fresh vegetable biryani and bread';
+      descGroup.appendChild(descInput);
+      row1.appendChild(descGroup);
+
+      const qtyGroup = el('div', 'space-y-1');
+      qtyGroup.appendChild(el('label', 'block text-xs font-medium text-[var(--text-muted)]', 'Quantity (kg)'));
+      const qtyInput = el('input', 'w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-md px-3 py-1.5 text-sm tabular');
+      qtyInput.id = 'postQty';
+      qtyInput.type = 'number';
+      qtyInput.min = '1';
+      qtyInput.step = '1';
+      qtyInput.required = true;
+      qtyInput.placeholder = '15';
+      qtyGroup.appendChild(qtyInput);
+      row1.appendChild(qtyGroup);
+      form.appendChild(row1);
+
+      // Pickup Window Row
+      const row2 = el('div', 'grid grid-cols-1 sm:grid-cols-2 gap-4');
+      const fromGroup = el('div', 'space-y-1');
+      fromGroup.appendChild(el('label', 'block text-xs font-medium text-[var(--text-muted)]', 'Pickup From'));
+      const fromInput = el('input', 'w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-md px-3 py-1.5 text-sm tabular');
+      fromInput.id = 'postFrom';
+      fromInput.type = 'datetime-local';
+      fromInput.required = true;
+      fromInput.value = clockNow;
+      fromGroup.appendChild(fromInput);
+      row2.appendChild(fromGroup);
+
+      const untilGroup = el('div', 'space-y-1');
+      untilGroup.appendChild(el('label', 'block text-xs font-medium text-[var(--text-muted)]', 'Pickup Until'));
+      const untilInput = el('input', 'w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-md px-3 py-1.5 text-sm tabular');
+      untilInput.id = 'postUntil';
+      untilInput.type = 'datetime-local';
+      untilInput.required = true;
+      untilGroup.appendChild(untilInput);
+      row2.appendChild(untilGroup);
+      form.appendChild(row2);
+
+      const formError = el('div', 'text-xs text-[var(--danger)] min-h-[1rem]');
+      formError.id = 'postError';
+      form.appendChild(formError);
+
+      const submitBtn = el('button', 'btn btn-accent text-sm py-2 px-5', 'Post Donation');
+      submitBtn.type = 'submit';
+      form.appendChild(submitBtn);
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        formError.textContent = '';
+        submitBtn.disabled = true;
+
+        const description = descInput.value.trim();
+        const quantity_kg = parseInt(qtyInput.value, 10);
+        const pickup_from = fromInput.value;
+        const pickup_until = untilInput.value;
+
+        try {
+          await apiRequest('/api/donations', {
+            method: 'POST',
+            body: JSON.stringify({ description, quantity_kg, pickup_from, pickup_until }),
+          });
+          form.reset();
+          fromInput.value = clockNow;
+          showToast('Donation posted successfully');
+          await refreshAll();
+        } catch (err) {
+          if (err.errors && err.errors.length) {
+            formError.textContent = err.errors.map((e) => e.message).join(' | ');
+          } else {
+            formError.textContent = err.message;
+          }
+        } finally {
+          submitBtn.disabled = false;
+        }
+      });
+
+      formCard.appendChild(form);
+      container.appendChild(formCard);
+
+      // 2. My Donations List
+      const listCard = el('section', 'surface p-5 space-y-4');
+      listCard.appendChild(el('h2', 'text-base font-semibold', 'My Posted Donations'));
+
+      const listContainer = el('div', 'space-y-4');
+      listCard.appendChild(listContainer);
+      container.appendChild(listCard);
+
+      try {
+        const donations = await apiRequest('/api/donations');
+        if (donations.length === 0) {
+          listContainer.appendChild(el('p', 'text-sm text-[var(--text-muted)] py-4 text-center', 'No donations posted yet.'));
+          return;
+        }
+
+        donations.forEach((d) => {
+          const itemCard = el('div', 'surface p-4 border border-[var(--border)] rounded-md space-y-3');
+
+          // Header
+          const itemHeader = el('div', 'flex flex-wrap items-center justify-between gap-2');
+          const titleBox = el('div', 'flex items-center space-x-2');
+          titleBox.appendChild(el('span', 'font-bold font-mono text-sm', `#${d.id}`));
+          titleBox.appendChild(createStatusChip(d.status));
+          itemHeader.appendChild(titleBox);
+
+          // Cancel button (enabled only when OPEN and no ACTIVE/COLLECTED claims)
+          const hasHeldClaims = d.claims && d.claims.some((c) => c.status === 'ACTIVE' || c.status === 'COLLECTED');
+          const canCancel = d.status === 'OPEN' && !hasHeldClaims;
+
+          const cancelBtn = el('button', 'btn btn-outline text-xs px-2.5 py-1 text-[var(--danger)] border-[var(--danger)]', 'Cancel Donation');
+          cancelBtn.type = 'button';
+          cancelBtn.disabled = !canCancel;
+          cancelBtn.addEventListener('click', async () => {
+            if (!confirm(`Cancel donation #${d.id}?`)) return;
+            try {
+              await apiRequest(`/api/donations/${d.id}/cancel`, { method: 'POST' });
+              showToast(`Donation #${d.id} cancelled`);
+              await refreshAll();
+            } catch (err) {
+              showToast(err.message, true);
+            }
+          });
+          itemHeader.appendChild(cancelBtn);
+          itemCard.appendChild(itemHeader);
+
+          // Details grid
+          const grid = el('div', 'grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs');
+          const d1 = el('div');
+          d1.appendChild(el('div', 'text-[var(--text-muted)]', 'Description:'));
+          d1.appendChild(el('div', 'font-medium', d.description));
+          grid.appendChild(d1);
+
+          const d2 = el('div');
+          d2.appendChild(el('div', 'text-[var(--text-muted)]', 'Quantity:'));
+          d2.appendChild(el('div', 'font-mono tabular font-medium', `${d.quantity_kg} kg (Remaining: ${d.remaining_kg} kg)`));
+          grid.appendChild(d2);
+
+          const d3 = el('div');
+          d3.appendChild(el('div', 'text-[var(--text-muted)]', 'Zone:'));
+          d3.appendChild(el('div', 'font-medium', d.zone));
+          grid.appendChild(d3);
+
+          const d4 = el('div');
+          d4.appendChild(el('div', 'text-[var(--text-muted)]', 'Pickup Window:'));
+          d4.appendChild(el('div', 'font-mono tabular', `${d.pickup_from} to ${d.pickup_until}`));
+          grid.appendChild(d4);
+          itemCard.appendChild(grid);
+
+          // Nested Claims on this donation
+          const claimsBox = el('div', 'pt-2 border-t border-[var(--border)] text-xs space-y-1');
+          claimsBox.appendChild(el('div', 'font-semibold text-[var(--text-muted)]', 'Volunteer Claims on this Donation:'));
+
+          if (!d.claims || d.claims.length === 0) {
+            claimsBox.appendChild(el('div', 'text-[var(--text-muted)] italic', 'No claims reserved yet.'));
+          } else {
+            const table = el('table', 'w-full text-xs');
+            const thead = el('thead');
+            const trH = el('tr');
+            trH.appendChild(el('th', '', 'Claim'));
+            trH.appendChild(el('th', '', 'Volunteer'));
+            trH.appendChild(el('th', 'text-right', 'Amount'));
+            trH.appendChild(el('th', '', 'Planned Time'));
+            trH.appendChild(el('th', '', 'Status'));
+            thead.appendChild(trH);
+            table.appendChild(thead);
+
+            const tbody = el('tbody');
+            d.claims.forEach((c) => {
+              const tr = el('tr');
+              tr.appendChild(el('td', 'font-mono tabular', `#${c.id}`));
+              tr.appendChild(el('td', '', c.volunteer_id));
+              tr.appendChild(el('td', 'text-right font-mono tabular', `${c.kg} kg`));
+              tr.appendChild(el('td', 'font-mono tabular', c.planned_at));
+              const tdStatus = el('td');
+              tdStatus.appendChild(createStatusChip(c.status));
+              tr.appendChild(tdStatus);
+              tbody.appendChild(tr);
+            });
+            table.appendChild(tbody);
+            claimsBox.appendChild(table);
+          }
+          itemCard.appendChild(claimsBox);
+
+          listContainer.appendChild(itemCard);
+        });
+      } catch (err) {
+        listContainer.appendChild(el('div', 'text-sm text-[var(--danger)]', err.message));
+      }
+    }
+
+    // -------------------------------------------------------------
+    // VOLUNTEER VIEW
+    // -------------------------------------------------------------
+    async function renderVolunteerWork(container) {
+      // 1. Available Open Donations in Zones
+      const openCard = el('section', 'surface p-5 space-y-4');
+      const openHeader = el('div', 'flex justify-between items-center');
+      openHeader.appendChild(el('h2', 'text-base font-semibold', 'Open Donations in Your Zones'));
+      openHeader.appendChild(el('span', 'text-xs text-[var(--text-muted)]', `Zones: ${activeActor.zones.join(', ')} | Max Cap: ${activeActor.capacity_kg}kg`));
+      openCard.appendChild(openHeader);
+
+      const openContainer = el('div', 'space-y-4');
+      openCard.appendChild(openContainer);
+      container.appendChild(openCard);
+
+      // 2. My Claims
+      const claimsCard = el('section', 'surface p-5 space-y-4');
+      claimsCard.appendChild(el('h2', 'text-base font-semibold', 'My Claimed Pickups'));
+
+      const claimsContainer = el('div', 'space-y-4');
+      claimsCard.appendChild(claimsContainer);
+      container.appendChild(claimsCard);
+
+      // Fetch open donations
+      try {
+        const openDonations = await apiRequest('/api/donations/open');
+        if (openDonations.length === 0) {
+          openContainer.appendChild(el('p', 'text-sm text-[var(--text-muted)] py-4 text-center', 'No open donations in your zones right now.'));
+        } else {
+          openDonations.forEach((d) => {
+            const card = el('div', 'surface p-4 border border-[var(--border)] rounded-md space-y-3');
+
+            const hRow = el('div', 'flex justify-between items-center');
+            const leftH = el('div', 'space-x-2');
+            leftH.appendChild(el('span', 'font-bold font-mono', `#${d.id}`));
+            leftH.appendChild(el('span', 'font-semibold', d.donor_name));
+            leftH.appendChild(el('span', 'text-xs text-[var(--text-muted)]', `(Zone: ${d.zone})`));
+            hRow.appendChild(leftH);
+
+            hRow.appendChild(createStatusChip('OPEN'));
+            card.appendChild(hRow);
+
+            const descRow = el('div', 'text-sm', d.description);
+            card.appendChild(descRow);
+
+            const metaRow = el('div', 'grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-[var(--text-muted)]');
+            metaRow.appendChild(el('div', '', `Remaining: ${d.remaining_kg} kg available (Posted: ${d.quantity_kg} kg)`));
+            metaRow.appendChild(el('div', 'font-mono tabular', `Pickup: ${d.pickup_from} to ${d.pickup_until}`));
+            card.appendChild(metaRow);
+
+            // Inline Claim Form
+            const claimForm = el('form', 'pt-3 border-t border-[var(--border)] space-y-2');
+            const fRow = el('div', 'flex flex-wrap items-center gap-3');
+
+            const kgInput = el('input', 'bg-[var(--surface-alt)] border border-[var(--border)] rounded-md px-2.5 py-1 text-sm tabular w-28');
+            kgInput.type = 'number';
+            kgInput.min = '1';
+            kgInput.max = String(Math.min(activeActor.capacity_kg, d.remaining_kg));
+            kgInput.placeholder = 'kg to take';
+            kgInput.required = true;
+            fRow.appendChild(kgInput);
+
+            const timeInput = el('input', 'bg-[var(--surface-alt)] border border-[var(--border)] rounded-md px-2.5 py-1 text-sm tabular flex-1 min-w-[200px]');
+            timeInput.type = 'datetime-local';
+            timeInput.required = true;
+            timeInput.value = d.pickup_from;
+            timeInput.min = d.pickup_from;
+            timeInput.max = d.pickup_until;
+            fRow.appendChild(timeInput);
+
+            const claimSubmit = el('button', 'btn btn-accent text-xs px-4 py-1.5', 'Claim Food');
+            claimSubmit.type = 'submit';
+            fRow.appendChild(claimSubmit);
+            claimForm.appendChild(fRow);
+
+            // Error container for rule violation reporting
+            const claimErrorBox = el('div', 'text-xs text-[var(--danger)] min-h-[0px] space-y-1');
+            claimForm.appendChild(claimErrorBox);
+
+            claimForm.addEventListener('submit', async (e) => {
+              e.preventDefault();
+              clearChildren(claimErrorBox);
+              claimSubmit.disabled = true;
+
+              const kg = parseInt(kgInput.value, 10);
+              const planned_at = timeInput.value;
+
+              try {
+                await apiRequest(`/api/donations/${d.id}/claims`, {
+                  method: 'POST',
+                  body: JSON.stringify({ kg, planned_at }),
+                });
+                showToast(`Claimed ${kg} kg on #${d.id}`);
+                await refreshAll();
+              } catch (err) {
+                if (err.errors && err.errors.length) {
+                  err.errors.forEach((ruleErr) => {
+                    const row = el('div', 'flex items-center space-x-1');
+                    row.appendChild(el('span', 'font-semibold', `[Rule ${ruleErr.rule}]:`));
+                    row.appendChild(el('span', '', ruleErr.message));
+                    claimErrorBox.appendChild(row);
+                  });
+                } else {
+                  claimErrorBox.appendChild(el('div', '', err.message));
+                }
+              } finally {
+                claimSubmit.disabled = false;
+              }
+            });
+
+            card.appendChild(claimForm);
+            openContainer.appendChild(card);
+          });
+        }
+      } catch (err) {
+        openContainer.appendChild(el('div', 'text-sm text-[var(--danger)]', err.message));
+      }
+
+      // Fetch volunteer claims
+      try {
+        const myClaims = await apiRequest('/api/claims');
+        if (myClaims.length === 0) {
+          claimsContainer.appendChild(el('p', 'text-sm text-[var(--text-muted)] py-4 text-center', 'You have no claims yet.'));
+        } else {
+          const table = el('table', 'w-full text-xs');
+          const thead = el('thead');
+          const trH = el('tr');
+          trH.appendChild(el('th', '', 'Claim'));
+          trH.appendChild(el('th', '', 'Food'));
+          trH.appendChild(el('th', '', 'Donor'));
+          trH.appendChild(el('th', 'text-right', 'kg'));
+          trH.appendChild(el('th', '', 'Planned Time'));
+          trH.appendChild(el('th', '', 'Status'));
+          trH.appendChild(el('th', 'text-right', 'Actions'));
+          thead.appendChild(trH);
+          table.appendChild(thead);
+
+          const tbody = el('tbody');
+          myClaims.forEach((c) => {
+            const tr = el('tr');
+            tr.appendChild(el('td', 'font-mono tabular', `#${c.id}`));
+            tr.appendChild(el('td', 'font-medium', c.donation_description));
+            tr.appendChild(el('td', '', `${c.donor_name} (${c.zone})`));
+            tr.appendChild(el('td', 'text-right font-mono tabular', `${c.kg} kg`));
+            tr.appendChild(el('td', 'font-mono tabular', c.planned_at));
+
+            const tdStatus = el('td');
+            tdStatus.appendChild(createStatusChip(c.status));
+            tr.appendChild(tdStatus);
+
+            // Action buttons: Collect & Cancel
+            const tdActions = el('td', 'text-right space-x-2');
+
+            // Collect button
+            const collectBtn = el('button', 'btn btn-accent text-[11px] px-2 py-1', 'Collect');
+            collectBtn.type = 'button';
+            collectBtn.disabled = !c.can_collect;
+            collectBtn.title = c.can_collect ? 'Mark as collected' : 'Allowed only when clock is within pickup window';
+            collectBtn.addEventListener('click', async () => {
+              try {
+                await apiRequest(`/api/claims/${c.id}/collect`, { method: 'POST' });
+                showToast(`Claim #${c.id} marked as COLLECTED`);
+                await refreshAll();
+              } catch (err) {
+                showToast(err.message, true);
+              }
+            });
+            tdActions.appendChild(collectBtn);
+
+            // Cancel button
+            const cancelBtn = el('button', 'btn btn-outline text-[11px] px-2 py-1 text-[var(--danger)] border-[var(--danger)]', 'Cancel');
+            cancelBtn.type = 'button';
+            cancelBtn.disabled = !c.can_cancel;
+            cancelBtn.title = c.can_cancel ? 'Cancel claim' : 'Allowed only strictly before planned pickup time';
+            cancelBtn.addEventListener('click', async () => {
+              if (!confirm(`Cancel claim #${c.id}?`)) return;
+              try {
+                await apiRequest(`/api/claims/${c.id}/cancel`, { method: 'POST' });
+                showToast(`Claim #${c.id} CANCELLED`);
+                await refreshAll();
+              } catch (err) {
+                showToast(err.message, true);
+              }
+            });
+            tdActions.appendChild(cancelBtn);
+
+            tr.appendChild(tdActions);
+            tbody.appendChild(tr);
+          });
+          table.appendChild(tbody);
+          claimsContainer.appendChild(table);
+        }
+      } catch (err) {
+        claimsContainer.appendChild(el('div', 'text-sm text-[var(--danger)]', err.message));
+      }
+    }
+
+    // Event Listeners Setup
+    document.addEventListener('DOMContentLoaded', () => {
+      initTheme();
+
+      document.getElementById('refreshBtn').addEventListener('click', () => {
+        refreshAll();
+      });
+
+      // Advance Clock Handler
+      document.getElementById('clockForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const msg = document.getElementById('clockMessage');
+        msg.textContent = '';
+        msg.style.color = 'var(--text-muted)';
+
+        const newNow = document.getElementById('clockInput').value;
+        try {
+          const res = await apiRequest('/api/clock', {
+            method: 'POST',
+            body: JSON.stringify({ now: newNow }),
+          });
+          msg.textContent = res.missed > 0
+            ? `Clock moved to ${res.now} (${res.missed} active claims marked MISSED)`
+            : `Clock moved to ${res.now}`;
+          msg.style.color = 'var(--accent)';
+          await refreshAll();
+        } catch (err) {
+          msg.textContent = err.message;
+          msg.style.color = 'var(--danger)';
+        }
+      });
+
+      // Initial Bootstrap
+      loadPeople().then(() => {
+        refreshAll();
+      });
+    });
+  </script>
+</body>
+</html>
