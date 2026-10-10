@@ -274,158 +274,236 @@
 <body class="bg-[var(--bg)] text-[var(--text)] min-h-screen flex flex-col">
 
   <!-- ============================================================== -->
-  <!-- LAUNCH & ONBOARDING OVERLAY / MODAL (Kombai iOS Style)         -->
+  <!-- SPLIT-SCREEN AUTHENTICATION VIEW (Kombai Left, Details Right)  -->
   <!-- ============================================================== -->
-  <div id="launchModal" class="fixed inset-0 z-50 overflow-y-auto bg-black/75 backdrop-blur-md flex items-center justify-center p-3 sm:p-6">
-    <!-- iOS Device Frame Container -->
-    <div class="bg-white text-[#0F2942] max-w-[390px] w-full rounded-[44px] p-6 pt-4 pb-8 space-y-4 text-center shadow-2xl relative border-[7px] border-[#1C1F24] ring-1 ring-white/20 select-none">
+  <div id="authScreen" class="min-h-screen flex flex-col lg:flex-row w-full bg-[var(--bg)] transition-colors duration-200">
+    
+    <!-- LEFT HALF (50%): Kombai iOS Screen Mockup -->
+    <section class="w-full lg:w-1/2 min-h-[520px] lg:min-h-screen bg-gradient-to-br from-[#EEF4F8] via-[#E2ECF3] to-[#D5E3EE] dark:from-[#14181C] dark:via-[#191F26] dark:to-[#111417] flex items-center justify-center p-6 sm:p-10 lg:p-12 border-b lg:border-b-0 lg:border-r border-[var(--border)] select-none relative overflow-hidden" aria-label="Mobile Application Preview">
       
-      <!-- iOS Status Bar (9:41, Notch / Dynamic Island, Signal / Wifi / Battery) -->
-      <div class="flex items-center justify-between px-2 pt-1 pb-2 text-[13px] font-semibold text-[#0F2942] opacity-90">
-        <span class="tracking-tight pl-1">9:41</span>
-        <!-- Speaker / Dynamic island notch hint -->
-        <div class="w-20 h-4 bg-black rounded-full mx-auto"></div>
-        <div class="flex items-center space-x-1.5 pr-1">
-          <!-- Cellular signal -->
-          <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L12 22l7.03-4.39C20.26 16.07 21 14.12 21 12c0-4.97-4.03-9-9-9z" style="display:none"/><path d="M2 17h3v4H2v-4zm5-4h3v8H7v-8zm5-4h3v12h-3V9zm5-5h3v17h-3V4z"/></svg>
-          <!-- Wifi -->
-          <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 4C7.31 4 3.07 5.9 0 8.98L12 21 24 8.98C20.93 5.9 16.69 4 12 4zm0 3.5c3.67 0 7.02 1.37 9.58 3.66L12 18.2 2.42 11.16C4.98 8.87 8.33 7.5 12 7.5z"/></svg>
-          <!-- Battery -->
-          <div class="w-5 h-2.5 border border-current rounded-sm p-[1px] flex items-center">
-            <div class="w-full h-full bg-current rounded-[1px]"></div>
+      <!-- Subtle Decorative Background Glows -->
+      <div class="absolute -top-24 -left-24 w-72 h-72 bg-sky-200/40 dark:bg-sky-900/20 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -bottom-24 -right-24 w-72 h-72 bg-teal-200/40 dark:bg-teal-900/20 rounded-full blur-3xl pointer-events-none"></div>
+
+      <!-- iOS Handset Frame (Kombai Reference) -->
+      <div class="bg-white text-[#0F2942] max-w-[370px] w-full rounded-[44px] p-6 pt-3.5 pb-8 space-y-4 text-center shadow-2xl relative border-[7px] border-[#181B1E] ring-1 ring-black/10 transition-transform duration-300 hover:scale-[1.01]">
+        
+        <!-- iOS Status Bar (9:41, Dynamic Island / Notch, Signal, Wifi, Battery) -->
+        <div class="flex items-center justify-between px-2 pt-1 pb-1 text-[13px] font-semibold text-[#0F2942] opacity-90">
+          <span class="tracking-tight pl-1 font-bold">9:41</span>
+          <!-- Dynamic Island / Speaker notch -->
+          <div class="w-20 h-4 bg-black rounded-full mx-auto"></div>
+          <div class="flex items-center space-x-1.5 pr-1">
+            <!-- Cellular -->
+            <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M2 17h3v4H2v-4zm5-4h3v8H7v-8zm5-4h3v12h-3V9zm5-5h3v17h-3V4z"/></svg>
+            <!-- Wifi -->
+            <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 4C7.31 4 3.07 5.9 0 8.98L12 21 24 8.98C20.93 5.9 16.69 4 12 4zm0 3.5c3.67 0 7.02 1.37 9.58 3.66L12 18.2 2.42 11.16C4.98 8.87 8.33 7.5 12 7.5z"/></svg>
+            <!-- Battery -->
+            <div class="w-5 h-2.5 border border-current rounded-sm p-[1px] flex items-center">
+              <div class="w-full h-full bg-current rounded-[1px]"></div>
+            </div>
           </div>
         </div>
+
+        <!-- Kombai Header & Tagline -->
+        <div class="pt-1">
+          <h1 class="text-[32px] leading-tight font-extrabold tracking-tight text-[#0F2942]">Nice rescue!</h1>
+          <p class="text-[15px] font-medium text-[#1E3A5F] mt-1.5 max-w-[250px] mx-auto leading-snug">
+            That’s one more meal saved from the bin tonight
+          </p>
+        </div>
+
+        <!-- Kombai CSS Art Grocery Bag Hero with peeking vegetables -->
+        <figure class="hero-art my-1" aria-label="Paper grocery bag filled with fresh produce">
+          <div class="cast"></div>
+          <div class="veg-art stalk"></div>
+          <div class="veg-art aubergine"></div>
+          <div class="veg-art leaf-c"></div>
+          <div class="veg-art pepper-stem"></div>
+          <div class="veg-art pepper"></div>
+          <div class="veg-art leaf-a"></div>
+          <div class="veg-art leaf-b"></div>
+          <div class="veg-art tomato"></div>
+
+          <div class="bag-art">
+            <div class="gusset"></div>
+            <div class="fold"></div>
+            <div class="mark">
+              <svg width="42" height="32" viewBox="0 0 52 42" fill="none" aria-hidden="true">
+                <path d="M24 4.5c7 0 12 6 12 13.5S31 34 24 34s-13-6-13-16S17 4.5 24 4.5Z" stroke="rgba(255,255,255,.95)" stroke-width="2.6"/>
+                <path d="M33 12c6.5 0 12 5.5 12 12.5S39.5 38 33 38s-11-5.5-11-13.5S26.5 12 33 12Z" stroke="rgba(255,255,255,.95)" stroke-width="2.6"/>
+              </svg>
+              <span class="tracking-widest font-bold">LASTBITE</span>
+            </div>
+          </div>
+        </figure>
+
+        <!-- Bottom iOS Pill Button -->
+        <div class="pt-2">
+          <button id="kombaiQuickContinueBtn" type="button" class="w-full bg-[#0F2942] hover:bg-[#1A3D5E] text-white py-3.5 rounded-full text-base font-semibold shadow-lg transition active:scale-[0.98]">
+            Continue
+          </button>
+        </div>
+
       </div>
+    </section>
 
-      <!-- Close button if actor is already active -->
-      <button id="closeLaunchModalBtn" type="button" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 p-1.5 rounded-full hover:bg-slate-100 hidden z-10" aria-label="Close launch screen">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-      </button>
+    <!-- RIGHT HALF (50%): Reserved for Filling Details (Role-Based Signup & Login) -->
+    <section class="w-full lg:w-1/2 min-h-screen bg-white dark:bg-[#1D2024] flex items-center justify-center p-6 sm:p-10 lg:p-16 text-[var(--text)]" aria-label="Account Access Form">
+      <div class="max-w-md w-full space-y-6">
+        
+        <!-- Brand Badge & Heading -->
+        <div>
+          <div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[var(--surface-alt)] text-[var(--accent)] border border-[var(--border)] mb-3">
+            <span>🌿 SurplusLink Network</span>
+          </div>
+          <h2 id="authHeading" class="text-3xl font-extrabold tracking-tight text-[var(--text)]">Create an Account</h2>
+          <p id="authSubheading" class="text-sm text-[var(--text-muted)] mt-1">Register to post cooked surplus or drive recovery pickups</p>
+        </div>
 
-      <!-- Headline & Subtitle from Kombai inspiration -->
-      <div class="pt-1">
-        <h1 class="text-[32px] leading-tight font-extrabold tracking-tight text-[#0F2942]">Nice rescue!</h1>
-        <p class="text-[15px] font-medium text-[#1E3A5F] mt-1.5 max-w-[260px] mx-auto leading-snug">
-          That’s one more meal saved from the bin tonight
-        </p>
-      </div>
+        <!-- Mode Segmented Control: [Sign Up] vs [Log In] -->
+        <div class="bg-slate-100 dark:bg-slate-800 p-1 rounded-2xl flex text-xs font-semibold gap-1">
+          <button id="tabModeSignup" type="button" class="flex-1 py-2 px-3 rounded-xl bg-white dark:bg-slate-700 text-[#0F2942] dark:text-white shadow-sm font-bold transition">
+            Sign Up
+          </button>
+          <button id="tabModeLogin" type="button" class="flex-1 py-2 px-3 rounded-xl text-slate-500 hover:text-slate-900 dark:hover:text-white transition">
+            Log In
+          </button>
+        </div>
 
-      <!-- CSS Art Food Bag Hero -->
-      <figure class="hero-art my-1" aria-label="Paper grocery bag filled with vegetables">
-        <div class="cast"></div>
-        <div class="veg-art stalk"></div>
-        <div class="veg-art aubergine"></div>
-        <div class="veg-art leaf-c"></div>
-        <div class="veg-art pepper-stem"></div>
-        <div class="veg-art pepper"></div>
-        <div class="veg-art leaf-a"></div>
-        <div class="veg-art leaf-b"></div>
-        <div class="veg-art tomato"></div>
-
-        <div class="bag-art">
-          <div class="gusset"></div>
-          <div class="fold"></div>
-          <div class="mark">
-            <svg width="42" height="32" viewBox="0 0 52 42" fill="none" aria-hidden="true">
-              <path d="M24 4.5c7 0 12 6 12 13.5S31 34 24 34s-13-6-13-16S17 4.5 24 4.5Z" stroke="rgba(255,255,255,.95)" stroke-width="2.6"/>
-              <path d="M33 12c6.5 0 12 5.5 12 12.5S39.5 38 33 38s-11-5.5-11-13.5S26.5 12 33 12Z" stroke="rgba(255,255,255,.95)" stroke-width="2.6"/>
-            </svg>
-            <span class="tracking-widest font-bold">LASTBITE</span>
+        <!-- Role Selector Pills: [Restaurant / Donor] vs [Volunteer Driver] -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] mb-2">Select Your Role</label>
+          <div class="grid grid-cols-2 gap-3">
+            <button id="tabRoleRestaurant" type="button" class="p-3.5 rounded-2xl border-2 border-[var(--accent)] bg-[var(--accent)]/5 text-left transition flex items-center space-x-3 cursor-pointer">
+              <div class="w-10 h-10 rounded-xl bg-[var(--accent)] text-white flex items-center justify-center text-lg flex-shrink-0">
+                🏪
+              </div>
+              <div>
+                <div class="text-xs font-bold text-[var(--text)]">Restaurant</div>
+                <div class="text-[11px] text-[var(--text-muted)]">Surplus Donor</div>
+              </div>
+            </button>
+            <button id="tabRoleVolunteer" type="button" class="p-3.5 rounded-2xl border border-[var(--border)] bg-[var(--surface-alt)] text-left transition flex items-center space-x-3 cursor-pointer">
+              <div class="w-10 h-10 rounded-xl bg-[var(--surface)] text-[var(--text)] flex items-center justify-center text-lg flex-shrink-0 border border-[var(--border)]">
+                🚗
+              </div>
+              <div>
+                <div class="text-xs font-bold text-[var(--text)]">Volunteer</div>
+                <div class="text-[11px] text-[var(--text-muted)]">Rescue Driver</div>
+              </div>
+            </button>
           </div>
         </div>
-      </figure>
 
-      <!-- iOS Segmented Control Tabs (Select, Restaurant, Volunteer) -->
-      <div class="bg-slate-100 p-1 rounded-2xl flex text-xs font-semibold text-slate-600 gap-1">
-        <button id="tabSelect" type="button" class="flex-1 py-1.5 px-2 rounded-xl bg-white text-[#0F2942] shadow-sm transition">
-          Select Persona
-        </button>
-        <button id="tabDonorSignup" type="button" class="flex-1 py-1.5 px-2 rounded-xl text-slate-500 hover:text-slate-900 transition">
-          Restaurant
-        </button>
-        <button id="tabVolSignup" type="button" class="flex-1 py-1.5 px-2 rounded-xl text-slate-500 hover:text-slate-900 transition">
-          Volunteer
-        </button>
-      </div>
+        <!-- DYNAMIC FORM CONTAINERS -->
 
-      <!-- Tab Content 1: Quick Select Existing Persona -->
-      <div id="paneSelect" class="space-y-4 text-left pt-1">
-        <div>
-          <label for="launchActorSelect" class="block text-xs font-semibold text-slate-500 mb-1">Choose Persona to Act As</label>
-          <select id="launchActorSelect" class="w-full bg-slate-50 border border-slate-200 text-slate-800 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0F2942]">
-            <option value="">Loading personas...</option>
-          </select>
-        </div>
-        <button id="launchContinueBtn" type="button" class="w-full bg-[#0F2942] hover:bg-[#1A3D5E] text-white py-3 rounded-full text-base font-semibold shadow-md transition active:scale-[0.98]">
-          Continue
-        </button>
-      </div>
-
-      <!-- Tab Content 2: Sign up Restaurant / Donor -->
-      <form id="paneDonorSignup" class="space-y-3 text-left pt-1 hidden">
-        <div>
-          <label for="newDonorName" class="block text-xs font-semibold text-slate-500 mb-1">Restaurant Name</label>
-          <input type="text" id="newDonorName" required placeholder="e.g. Green Olive Bistro" class="w-full bg-slate-50 border border-slate-200 text-slate-800 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0F2942]">
-        </div>
-        <div>
-          <label for="newDonorZone" class="block text-xs font-semibold text-slate-500 mb-1">City Zone</label>
-          <select id="newDonorZone" class="w-full bg-slate-50 border border-slate-200 text-slate-800 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0F2942]">
-            <option value="NORTH">NORTH</option>
-            <option value="SOUTH">SOUTH</option>
-            <option value="EAST">EAST</option>
-            <option value="WEST">WEST</option>
-            <option value="CENTRAL">CENTRAL</option>
-          </select>
-        </div>
-        <div id="donorSignupError" class="text-xs text-rose-600 min-h-[1rem]"></div>
-        <button type="submit" class="w-full bg-[#0F2942] hover:bg-[#1A3D5E] text-white py-3 rounded-full text-base font-semibold shadow-md transition active:scale-[0.98]">
-          Sign Up as Restaurant
-        </button>
-      </form>
-
-      <!-- Tab Content 3: Sign up Volunteer Driver -->
-      <form id="paneVolSignup" class="space-y-3 text-left pt-1 hidden">
-        <div>
-          <label for="newVolName" class="block text-xs font-semibold text-slate-500 mb-1">Volunteer Driver Name</label>
-          <input type="text" id="newVolName" required placeholder="e.g. Maya Lin" class="w-full bg-slate-50 border border-slate-200 text-slate-800 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0F2942]">
-        </div>
-        <div>
-          <label for="newVolCapacity" class="block text-xs font-semibold text-slate-500 mb-1">Vehicle Capacity (kg)</label>
-          <input type="number" id="newVolCapacity" min="1" step="1" required placeholder="25" class="w-full bg-slate-50 border border-slate-200 text-slate-800 rounded-xl px-3 py-2 text-sm tabular focus:outline-none focus:ring-2 focus:ring-[#0F2942]">
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-500 mb-1">Authorized Zones</label>
-          <div class="grid grid-cols-2 gap-2 text-xs text-slate-700 bg-slate-50 p-2.5 rounded-xl border border-slate-200">
-            <label class="flex items-center space-x-1.5 cursor-pointer">
-              <input type="checkbox" name="volZone" value="NORTH" checked class="rounded border-slate-300 text-[#0F2942] focus:ring-0">
-              <span>NORTH</span>
-            </label>
-            <label class="flex items-center space-x-1.5 cursor-pointer">
-              <input type="checkbox" name="volZone" value="SOUTH" class="rounded border-slate-300 text-[#0F2942] focus:ring-0">
-              <span>SOUTH</span>
-            </label>
-            <label class="flex items-center space-x-1.5 cursor-pointer">
-              <input type="checkbox" name="volZone" value="EAST" class="rounded border-slate-300 text-[#0F2942] focus:ring-0">
-              <span>EAST</span>
-            </label>
-            <label class="flex items-center space-x-1.5 cursor-pointer">
-              <input type="checkbox" name="volZone" value="WEST" class="rounded border-slate-300 text-[#0F2942] focus:ring-0">
-              <span>WEST</span>
-            </label>
+        <!-- 1. Form: Sign Up - Restaurant -->
+        <form id="formSignupRestaurant" class="space-y-4 text-left">
+          <div>
+            <label for="signupRestaurantName" class="block text-xs font-semibold text-[var(--text-muted)] mb-1">Restaurant / Business Name</label>
+            <input type="text" id="signupRestaurantName" required placeholder="e.g. Green Olive Bistro" class="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-3.5 py-2.5 text-sm text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
           </div>
-        </div>
-        <div id="volSignupError" class="text-xs text-rose-600 min-h-[1rem]"></div>
-        <button type="submit" class="w-full bg-[#0F2942] hover:bg-[#1A3D5E] text-white py-3 rounded-full text-base font-semibold shadow-md transition active:scale-[0.98]">
-          Sign Up as Volunteer
-        </button>
-      </form>
+          <div>
+            <label for="signupRestaurantZone" class="block text-xs font-semibold text-[var(--text-muted)] mb-1">City Operating Zone</label>
+            <select id="signupRestaurantZone" class="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-3.5 py-2.5 text-sm text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
+              <option value="NORTH">NORTH</option>
+              <option value="SOUTH">SOUTH</option>
+              <option value="EAST">EAST</option>
+              <option value="WEST">WEST</option>
+              <option value="CENTRAL">CENTRAL</option>
+            </select>
+          </div>
+          <div id="signupRestaurantError" class="text-xs text-[var(--danger)] min-h-[1rem]"></div>
+          <button type="submit" class="w-full bg-[#0F2942] hover:bg-[#1A3D5E] text-white py-3 rounded-full text-base font-semibold shadow-md transition active:scale-[0.98]">
+            Sign Up as Restaurant &amp; Enter Dashboard →
+          </button>
+        </form>
 
-    </div>
+        <!-- 2. Form: Sign Up - Volunteer -->
+        <form id="formSignupVolunteer" class="space-y-4 text-left hidden">
+          <div>
+            <label for="signupVolunteerName" class="block text-xs font-semibold text-[var(--text-muted)] mb-1">Volunteer Driver Full Name</label>
+            <input type="text" id="signupVolunteerName" required placeholder="e.g. Maya Lin" class="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-3.5 py-2.5 text-sm text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
+          </div>
+          <div>
+            <label for="signupVolunteerCapacity" class="block text-xs font-semibold text-[var(--text-muted)] mb-1">Vehicle Capacity (kg)</label>
+            <input type="number" id="signupVolunteerCapacity" min="1" step="1" required placeholder="25" class="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-3.5 py-2.5 text-sm tabular text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-[var(--text-muted)] mb-1">Authorized Dispatch Zones</label>
+            <div class="grid grid-cols-2 gap-2 text-xs bg-[var(--surface-alt)] p-3 rounded-xl border border-[var(--border)]">
+              <label class="flex items-center space-x-2 cursor-pointer">
+                <input type="checkbox" name="signupVolZone" value="NORTH" checked class="rounded border-[var(--border)] text-[var(--accent)] focus:ring-0">
+                <span>NORTH</span>
+              </label>
+              <label class="flex items-center space-x-2 cursor-pointer">
+                <input type="checkbox" name="signupVolZone" value="SOUTH" class="rounded border-[var(--border)] text-[var(--accent)] focus:ring-0">
+                <span>SOUTH</span>
+              </label>
+              <label class="flex items-center space-x-2 cursor-pointer">
+                <input type="checkbox" name="signupVolZone" value="EAST" class="rounded border-[var(--border)] text-[var(--accent)] focus:ring-0">
+                <span>EAST</span>
+              </label>
+              <label class="flex items-center space-x-2 cursor-pointer">
+                <input type="checkbox" name="signupVolZone" value="WEST" class="rounded border-[var(--border)] text-[var(--accent)] focus:ring-0">
+                <span>WEST</span>
+              </label>
+            </div>
+          </div>
+          <div id="signupVolunteerError" class="text-xs text-[var(--danger)] min-h-[1rem]"></div>
+          <button type="submit" class="w-full bg-[#0F2942] hover:bg-[#1A3D5E] text-white py-3 rounded-full text-base font-semibold shadow-md transition active:scale-[0.98]">
+            Sign Up as Volunteer &amp; Enter Dashboard →
+          </button>
+        </form>
+
+        <!-- 3. Form: Log In - Restaurant -->
+        <form id="formLoginRestaurant" class="space-y-4 text-left hidden">
+          <div>
+            <label for="loginRestaurantSelect" class="block text-xs font-semibold text-[var(--text-muted)] mb-1">Select Registered Restaurant</label>
+            <select id="loginRestaurantSelect" class="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-3.5 py-2.5 text-sm text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
+              <option value="">Loading restaurants...</option>
+            </select>
+            <p class="text-[11px] text-[var(--text-muted)] mt-1.5">Includes seeded restaurants (Olive Bistro, Sunrise Cafe, City Baker, etc.)</p>
+          </div>
+          <div id="loginRestaurantError" class="text-xs text-[var(--danger)] min-h-[1rem]"></div>
+          <button type="submit" class="w-full bg-[#0F2942] hover:bg-[#1A3D5E] text-white py-3 rounded-full text-base font-semibold shadow-md transition active:scale-[0.98]">
+            Log In as Restaurant →
+          </button>
+        </form>
+
+        <!-- 4. Form: Log In - Volunteer -->
+        <form id="formLoginVolunteer" class="space-y-4 text-left hidden">
+          <div>
+            <label for="loginVolunteerSelect" class="block text-xs font-semibold text-[var(--text-muted)] mb-1">Select Registered Volunteer Driver</label>
+            <select id="loginVolunteerSelect" class="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-3.5 py-2.5 text-sm text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
+              <option value="">Loading volunteers...</option>
+            </select>
+            <p class="text-[11px] text-[var(--text-muted)] mt-1.5">Includes seeded drivers (Alex Rivera, Jordan Chen, Taylor Smith, etc.)</p>
+          </div>
+          <div id="loginVolunteerError" class="text-xs text-[var(--danger)] min-h-[1rem]"></div>
+          <button type="submit" class="w-full bg-[#0F2942] hover:bg-[#1A3D5E] text-white py-3 rounded-full text-base font-semibold shadow-md transition active:scale-[0.98]">
+            Log In as Volunteer →
+          </button>
+        </form>
+
+        <!-- Bottom Mode Toggle Prompt -->
+        <div class="text-center text-xs text-[var(--text-muted)] pt-2 border-t border-[var(--border)]">
+          <span id="authTogglePrompt">Already have an account?</span>
+          <button id="authToggleAction" type="button" class="text-[var(--accent)] font-semibold hover:underline ml-1">
+            Log In here
+          </button>
+        </div>
+
+      </div>
+    </section>
+
   </div>
 
   <!-- ============================================================== -->
-  <!-- MAIN APPLICATION CONSOLE                                       -->
+  <!-- MAIN APPLICATION CONSOLE (Visible After Login/Signup)          -->
   <!-- ============================================================== -->
+  <div id="mainAppScreen" class="min-h-screen flex flex-col hidden">
   <header class="border-b border-[var(--border)] bg-[var(--surface)] px-4 sm:px-6 py-3 flex items-center justify-between">
     <div class="flex items-center space-x-3">
       <div class="w-8 h-8 rounded-md bg-[var(--accent)] text-white font-bold flex items-center justify-center text-lg">
@@ -437,11 +515,11 @@
       </div>
     </div>
 
-    <!-- Active Persona, Switch Persona, Theme Toggle & Refresh -->
+    <!-- Active Persona Badge & Switch, Theme Toggle & Refresh -->
     <div class="flex items-center space-x-2">
-      <button id="openLaunchModalBtn" type="button" class="btn btn-outline text-xs px-2.5 py-1.5 flex items-center space-x-1.5">
-        <span id="headerPersonaBadge">👤 Choose Persona</span>
-        <span class="text-[var(--accent)] font-semibold">Switch / Join</span>
+      <button id="authSwitchBtn" type="button" class="btn btn-outline text-xs px-2.5 py-1.5 flex items-center space-x-1.5">
+        <span id="headerPersonaBadge">👤 Active Persona</span>
+        <span class="text-[var(--accent)] font-semibold">↩ Switch / Log Out</span>
       </button>
 
       <button id="themeToggleBtn" type="button" class="btn btn-outline text-xs px-2.5 py-1.5" aria-label="Toggle color theme">
@@ -556,6 +634,7 @@
     </main>
 
   </div>
+  </div> <!-- Close #mainAppScreen -->
 
   <!-- Global Toast / Status Banner for Feedback -->
   <div id="toast" class="fixed bottom-4 right-4 z-50 max-w-sm px-4 py-3 rounded-lg surface shadow-lg text-sm border border-[var(--border)] transition-opacity duration-200 opacity-0 pointer-events-none" role="status">
@@ -652,7 +731,7 @@
       const data = await apiRequest('/api/people');
       people = data;
       renderActorSelect();
-      renderLaunchActorSelect();
+      renderLoginSelects();
     }
 
     async function loadClock() {
@@ -716,33 +795,38 @@
       };
     }
 
-    // Render Actor Selector (Launch Modal)
-    function renderLaunchActorSelect() {
-      const select = document.getElementById('launchActorSelect');
-      clearChildren(select);
-
-      const donorGroup = document.createElement('optgroup');
-      donorGroup.label = 'Restaurants & Donors';
-      for (const d of people.donors) {
-        const opt = el('option', '', `${d.name} (${d.zone}) [${d.id}]`);
-        opt.value = `donor:${d.id}`;
-        donorGroup.appendChild(opt);
+    // Render Registered Persona Dropdowns for Log In
+    function renderLoginSelects() {
+      const resSelect = document.getElementById('loginRestaurantSelect');
+      if (resSelect) {
+        clearChildren(resSelect);
+        if (people.donors.length === 0) {
+          const opt = el('option', '', 'No restaurants registered yet');
+          opt.value = '';
+          resSelect.appendChild(opt);
+        } else {
+          for (const d of people.donors) {
+            const opt = el('option', '', `${d.name} (${d.zone}) [ID: ${d.id}]`);
+            opt.value = `donor:${d.id}`;
+            resSelect.appendChild(opt);
+          }
+        }
       }
-      select.appendChild(donorGroup);
 
-      const volGroup = document.createElement('optgroup');
-      volGroup.label = 'Volunteer Drivers';
-      for (const v of people.volunteers) {
-        const opt = el('option', '', `${v.name} (Cap: ${v.capacity_kg}kg, Zones: ${v.zones.join(', ')}) [${v.id}]`);
-        opt.value = `volunteer:${v.id}`;
-        volGroup.appendChild(opt);
-      }
-      select.appendChild(volGroup);
-
-      if (activeActor) {
-        select.value = `${activeActor.role}:${activeActor.id}`;
-      } else if (people.donors.length > 0) {
-        select.value = `donor:${people.donors[0].id}`;
+      const volSelect = document.getElementById('loginVolunteerSelect');
+      if (volSelect) {
+        clearChildren(volSelect);
+        if (people.volunteers.length === 0) {
+          const opt = el('option', '', 'No volunteers registered yet');
+          opt.value = '';
+          volSelect.appendChild(opt);
+        } else {
+          for (const v of people.volunteers) {
+            const opt = el('option', '', `${v.name} (Cap: ${v.capacity_kg}kg, Zones: ${v.zones.join(', ')}) [ID: ${v.id}]`);
+            opt.value = `volunteer:${v.id}`;
+            volSelect.appendChild(opt);
+          }
+        }
       }
     }
 
@@ -754,6 +838,8 @@
       if (!val) {
         activeActor = null;
         badge.textContent = '👤 Choose Persona';
+        document.getElementById('authScreen').classList.remove('hidden');
+        document.getElementById('mainAppScreen').classList.add('hidden');
         renderRoleWork();
         return;
       }
@@ -761,38 +847,31 @@
       const [role, id] = val.split(':');
       if (role === 'donor') {
         const donor = people.donors.find((d) => d.id === id);
+        if (!donor) return;
         activeActor = { ...donor, role: 'donor' };
         details.textContent = `Restaurant ${donor.id} | Zone ${donor.zone}`;
         badge.textContent = `🍽️ ${donor.name} (${donor.zone})`;
       } else {
         const volunteer = people.volunteers.find((v) => v.id === id);
+        if (!volunteer) return;
         activeActor = { ...volunteer, role: 'volunteer' };
         details.textContent = `Volunteer ${volunteer.id} | Max ${volunteer.capacity_kg}kg | Zones: ${volunteer.zones.join(', ')}`;
         badge.textContent = `🚗 ${volunteer.name} (${volunteer.capacity_kg}kg)`;
       }
 
+      try {
+        localStorage.setItem('surpluslink_active_actor', val);
+      } catch (e) {}
+
       // Sync rail select
       const railSelect = document.getElementById('actorSelect');
       if (railSelect) railSelect.value = val;
 
+      // Transition from Auth Screen to Main Application
+      document.getElementById('authScreen').classList.add('hidden');
+      document.getElementById('mainAppScreen').classList.remove('hidden');
+
       renderRoleWork();
-    }
-
-    // Modal Control
-    function showLaunchModal(canClose = true) {
-      const modal = document.getElementById('launchModal');
-      const closeBtn = document.getElementById('closeLaunchModalBtn');
-      modal.classList.remove('hidden');
-      if (canClose && activeActor) {
-        closeBtn.classList.remove('hidden');
-      } else {
-        closeBtn.classList.add('hidden');
-      }
-    }
-
-    function hideLaunchModal() {
-      const modal = document.getElementById('launchModal');
-      modal.classList.add('hidden');
     }
 
     // Render Dashboard
@@ -1337,66 +1416,114 @@
     document.addEventListener('DOMContentLoaded', () => {
       initTheme();
 
-      // Launch Modal Tabs
-      const tabSelect = document.getElementById('tabSelect');
-      const tabDonorSignup = document.getElementById('tabDonorSignup');
-      const tabVolSignup = document.getElementById('tabVolSignup');
+      // Split Auth State
+      let authMode = 'signup'; // 'signup' | 'login'
+      let authRole = 'restaurant'; // 'restaurant' | 'volunteer'
 
-      const paneSelect = document.getElementById('paneSelect');
-      const paneDonorSignup = document.getElementById('paneDonorSignup');
-      const paneVolSignup = document.getElementById('paneVolSignup');
+      const tabModeSignup = document.getElementById('tabModeSignup');
+      const tabModeLogin = document.getElementById('tabModeLogin');
+      const tabRoleRestaurant = document.getElementById('tabRoleRestaurant');
+      const tabRoleVolunteer = document.getElementById('tabRoleVolunteer');
 
-      function setLaunchTab(tab) {
-        const inactiveClass = 'flex-1 py-1.5 px-2 rounded-xl text-slate-500 hover:text-slate-900 transition font-semibold';
-        const activeClass = 'flex-1 py-1.5 px-2 rounded-xl bg-white text-[#0F2942] shadow-sm font-semibold transition';
+      const formSignupRestaurant = document.getElementById('formSignupRestaurant');
+      const formSignupVolunteer = document.getElementById('formSignupVolunteer');
+      const formLoginRestaurant = document.getElementById('formLoginRestaurant');
+      const formLoginVolunteer = document.getElementById('formLoginVolunteer');
 
-        [tabSelect, tabDonorSignup, tabVolSignup].forEach((t) => {
-          t.className = inactiveClass;
-        });
-        [paneSelect, paneDonorSignup, paneVolSignup].forEach((p) => p.classList.add('hidden'));
+      const authHeading = document.getElementById('authHeading');
+      const authSubheading = document.getElementById('authSubheading');
+      const authTogglePrompt = document.getElementById('authTogglePrompt');
+      const authToggleAction = document.getElementById('authToggleAction');
 
-        if (tab === 'select') {
-          tabSelect.className = activeClass;
-          paneSelect.classList.remove('hidden');
-        } else if (tab === 'donor') {
-          tabDonorSignup.className = activeClass;
-          paneDonorSignup.classList.remove('hidden');
-        } else if (tab === 'vol') {
-          tabVolSignup.className = activeClass;
-          paneVolSignup.classList.remove('hidden');
+      function updateAuthUI() {
+        // Mode Switcher styling
+        if (authMode === 'signup') {
+          tabModeSignup.className = 'flex-1 py-2 px-3 rounded-xl bg-white dark:bg-slate-700 text-[#0F2942] dark:text-white shadow-sm font-bold transition';
+          tabModeLogin.className = 'flex-1 py-2 px-3 rounded-xl text-slate-500 hover:text-slate-900 dark:hover:text-white transition';
+          authHeading.textContent = authRole === 'restaurant' ? 'Restaurant Sign Up' : 'Volunteer Driver Sign Up';
+          authSubheading.textContent = authRole === 'restaurant'
+            ? 'Register your restaurant to list cooked surplus food for pickup'
+            : 'Register your vehicle to rescue and deliver surplus meals';
+          authTogglePrompt.textContent = 'Already have an account?';
+          authToggleAction.textContent = 'Log In here';
+        } else {
+          tabModeLogin.className = 'flex-1 py-2 px-3 rounded-xl bg-white dark:bg-slate-700 text-[#0F2942] dark:text-white shadow-sm font-bold transition';
+          tabModeSignup.className = 'flex-1 py-2 px-3 rounded-xl text-slate-500 hover:text-slate-900 dark:hover:text-white transition';
+          authHeading.textContent = authRole === 'restaurant' ? 'Restaurant Log In' : 'Volunteer Driver Log In';
+          authSubheading.textContent = authRole === 'restaurant'
+            ? 'Choose your registered restaurant to post food donations'
+            : 'Choose your registered volunteer profile to claim pickups';
+          authTogglePrompt.textContent = 'Need to register a new account?';
+          authToggleAction.textContent = 'Sign Up here';
+        }
+
+        // Role Cards styling
+        if (authRole === 'restaurant') {
+          tabRoleRestaurant.className = 'p-3.5 rounded-2xl border-2 border-[var(--accent)] bg-[var(--accent)]/10 text-left transition flex items-center space-x-3 cursor-pointer shadow-sm';
+          tabRoleVolunteer.className = 'p-3.5 rounded-2xl border border-[var(--border)] bg-[var(--surface-alt)] opacity-60 hover:opacity-100 text-left transition flex items-center space-x-3 cursor-pointer';
+        } else {
+          tabRoleVolunteer.className = 'p-3.5 rounded-2xl border-2 border-[var(--accent)] bg-[var(--accent)]/10 text-left transition flex items-center space-x-3 cursor-pointer shadow-sm';
+          tabRoleRestaurant.className = 'p-3.5 rounded-2xl border border-[var(--border)] bg-[var(--surface-alt)] opacity-60 hover:opacity-100 text-left transition flex items-center space-x-3 cursor-pointer';
+        }
+
+        // Toggle Form Visibility
+        formSignupRestaurant.classList.add('hidden');
+        formSignupVolunteer.classList.add('hidden');
+        formLoginRestaurant.classList.add('hidden');
+        formLoginVolunteer.classList.add('hidden');
+
+        if (authMode === 'signup') {
+          if (authRole === 'restaurant') formSignupRestaurant.classList.remove('hidden');
+          else formSignupVolunteer.classList.remove('hidden');
+        } else {
+          if (authRole === 'restaurant') formLoginRestaurant.classList.remove('hidden');
+          else formLoginVolunteer.classList.remove('hidden');
         }
       }
 
-      tabSelect.onclick = () => setLaunchTab('select');
-      tabDonorSignup.onclick = () => setLaunchTab('donor');
-      tabVolSignup.onclick = () => setLaunchTab('vol');
+      tabModeSignup.onclick = () => { authMode = 'signup'; updateAuthUI(); };
+      tabModeLogin.onclick = () => { authMode = 'login'; updateAuthUI(); };
+      tabRoleRestaurant.onclick = () => { authRole = 'restaurant'; updateAuthUI(); };
+      tabRoleVolunteer.onclick = () => { authRole = 'volunteer'; updateAuthUI(); };
 
-      // Launch Modal Continue
-      document.getElementById('launchContinueBtn').onclick = () => {
-        const val = document.getElementById('launchActorSelect').value;
-        if (!val) {
-          showToast('Please select a persona', true);
-          return;
+      authToggleAction.onclick = () => {
+        authMode = authMode === 'signup' ? 'login' : 'signup';
+        updateAuthUI();
+      };
+
+      // Left Phone Mockup "Continue" Button (Quick Demo Persona Login)
+      document.getElementById('kombaiQuickContinueBtn').onclick = () => {
+        if (authRole === 'restaurant' && people.donors.length > 0) {
+          selectActor(`donor:${people.donors[0].id}`);
+          showToast(`Welcome! Logged in as ${people.donors[0].name}`);
+        } else if (people.volunteers.length > 0) {
+          selectActor(`volunteer:${people.volunteers[0].id}`);
+          showToast(`Welcome! Logged in as ${people.volunteers[0].name}`);
+        } else {
+          showToast('Please sign up or select a persona on the right', true);
         }
-        selectActor(val);
-        hideLaunchModal();
       };
 
-      // Header and Rail Modal Open/Close Buttons
-      document.getElementById('openLaunchModalBtn').onclick = () => showLaunchModal(true);
+      // Switch Persona / Log Out Buttons (In Main App Header & Left Rail)
+      const switchToAuth = () => {
+        document.getElementById('authScreen').classList.remove('hidden');
+        document.getElementById('mainAppScreen').classList.add('hidden');
+        updateAuthUI();
+      };
+
+      document.getElementById('authSwitchBtn').onclick = switchToAuth;
       document.getElementById('railSwitchBtn').onclick = () => {
-        setLaunchTab('donor');
-        showLaunchModal(true);
+        authMode = 'signup';
+        switchToAuth();
       };
-      document.getElementById('closeLaunchModalBtn').onclick = () => hideLaunchModal();
 
-      // Restaurant Signup Form
-      paneDonorSignup.onsubmit = async (e) => {
+      // Form 1: Restaurant Sign Up
+      formSignupRestaurant.onsubmit = async (e) => {
         e.preventDefault();
-        const errBox = document.getElementById('donorSignupError');
+        const errBox = document.getElementById('signupRestaurantError');
         errBox.textContent = '';
-        const name = document.getElementById('newDonorName').value.trim();
-        const zone = document.getElementById('newDonorZone').value;
+        const name = document.getElementById('signupRestaurantName').value.trim();
+        const zone = document.getElementById('signupRestaurantZone').value;
 
         try {
           const created = await apiRequest('/api/donors', {
@@ -1406,26 +1533,25 @@
           await loadPeople();
           selectActor(`donor:${created.id}`);
           showToast(`Restaurant ${created.name} registered successfully!`);
-          paneDonorSignup.reset();
-          hideLaunchModal();
+          formSignupRestaurant.reset();
           await refreshAll();
         } catch (err) {
           errBox.textContent = err.message;
         }
       };
 
-      // Volunteer Signup Form
-      paneVolSignup.onsubmit = async (e) => {
+      // Form 2: Volunteer Sign Up
+      formSignupVolunteer.onsubmit = async (e) => {
         e.preventDefault();
-        const errBox = document.getElementById('volSignupError');
+        const errBox = document.getElementById('signupVolunteerError');
         errBox.textContent = '';
-        const name = document.getElementById('newVolName').value.trim();
-        const capacity_kg = parseInt(document.getElementById('newVolCapacity').value, 10);
-        const zoneCheckboxes = document.querySelectorAll('input[name="volZone"]:checked');
+        const name = document.getElementById('signupVolunteerName').value.trim();
+        const capacity_kg = parseInt(document.getElementById('signupVolunteerCapacity').value, 10);
+        const zoneCheckboxes = document.querySelectorAll('input[name="signupVolZone"]:checked');
         const zones = Array.from(zoneCheckboxes).map((cb) => cb.value);
 
         if (zones.length === 0) {
-          errBox.textContent = 'Please select at least one operating zone.';
+          errBox.textContent = 'Please select at least one dispatch zone.';
           return;
         }
 
@@ -1437,12 +1563,37 @@
           await loadPeople();
           selectActor(`volunteer:${created.id}`);
           showToast(`Volunteer ${created.name} registered successfully!`);
-          paneVolSignup.reset();
-          hideLaunchModal();
+          formSignupVolunteer.reset();
           await refreshAll();
         } catch (err) {
           errBox.textContent = err.message;
         }
+      };
+
+      // Form 3: Restaurant Log In
+      formLoginRestaurant.onsubmit = (e) => {
+        e.preventDefault();
+        const val = document.getElementById('loginRestaurantSelect').value;
+        if (!val) {
+          document.getElementById('loginRestaurantError').textContent = 'Please choose a restaurant.';
+          return;
+        }
+        selectActor(val);
+        showToast('Logged in as Restaurant successfully!');
+        refreshAll();
+      };
+
+      // Form 4: Volunteer Log In
+      formLoginVolunteer.onsubmit = (e) => {
+        e.preventDefault();
+        const val = document.getElementById('loginVolunteerSelect').value;
+        if (!val) {
+          document.getElementById('loginVolunteerError').textContent = 'Please choose a volunteer driver.';
+          return;
+        }
+        selectActor(val);
+        showToast('Logged in as Volunteer successfully!');
+        refreshAll();
       };
 
       // Top Refresh button
@@ -1477,9 +1628,17 @@
       // Initial Bootstrap
       loadPeople().then(() => {
         refreshAll().then(() => {
-          // If no active actor chosen yet, present launch screen
-          if (!activeActor) {
-            showLaunchModal(false);
+          let saved = null;
+          try {
+            saved = localStorage.getItem('surpluslink_active_actor');
+          } catch (e) {}
+
+          if (saved) {
+            selectActor(saved);
+          } else {
+            updateAuthUI();
+            document.getElementById('authScreen').classList.remove('hidden');
+            document.getElementById('mainAppScreen').classList.add('hidden');
           }
         });
       });
