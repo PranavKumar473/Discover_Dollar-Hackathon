@@ -615,20 +615,20 @@
         </div>
       </div>
 
-      <!-- Active Persona Badge & Actions with Glassmorphism -->
-      <div class="flex items-center space-x-2.5">
-        <!-- Frosted Glass Identity Pill -->
-        <button id="authSwitchBtn" type="button" class="group relative bg-gradient-to-r from-teal-500/10 via-cyan-500/10 to-indigo-500/10 hover:from-teal-500/20 hover:to-indigo-500/20 backdrop-blur-md border border-teal-500/25 dark:border-teal-400/20 rounded-full px-3.5 py-1.5 flex items-center space-x-2 text-xs transition-all duration-200 hover:shadow-md hover:border-teal-500/40 cursor-pointer">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span id="headerPersonaBadge" class="font-bold text-slate-800 dark:text-slate-100 flex items-center space-x-1.5">
-            <span>👤 Active Persona</span>
-          </span>
-          <span class="text-[11px] font-semibold text-teal-600 dark:text-teal-400 pl-1.5 border-l border-teal-500/20 group-hover:text-teal-700 dark:group-hover:text-teal-300 flex items-center space-x-1">
-            <span>↩</span>
-            <span class="hidden sm:inline">Switch / Log Out</span>
-            <span class="sm:hidden">Exit</span>
-          </span>
-        </button>
+      <!-- Active Persona Profile Section (Displaying details) -->
+      <div id="headerProfileSection" class="relative bg-gradient-to-r from-teal-500/10 via-cyan-500/10 to-indigo-500/10 backdrop-blur-md border border-teal-500/25 dark:border-teal-400/20 rounded-2xl px-3.5 py-1.5 flex items-center space-x-2.5 text-xs shadow-sm">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" title="Active Account"></span>
+        <span id="headerPersonaAvatar" class="text-sm">👤</span>
+        <div class="flex flex-col">
+          <div class="flex items-center space-x-1.5">
+            <span id="headerPersonaName" class="font-bold text-slate-900 dark:text-slate-100">Active Persona</span>
+            <span id="headerPersonaIdBadge" class="text-[10px] font-mono font-bold px-1.5 py-0.2 rounded bg-teal-500/20 text-teal-700 dark:text-teal-300 border border-teal-500/30">--</span>
+          </div>
+          <span id="headerPersonaRoleDetails" class="text-[10px] text-slate-500 dark:text-slate-400 font-medium hidden sm:inline">Role Details</span>
+        </div>
+        <!-- Hidden legacy span for compatibility -->
+        <span id="headerPersonaBadge" class="hidden">👤 Active Persona</span>
+      </div>
 
         <!-- Glass Theme Toggle Button -->
         <button id="themeToggleBtn" type="button" class="bg-white/70 dark:bg-slate-800/70 hover:bg-white dark:hover:bg-slate-700 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/80 rounded-full px-3 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 transition-all duration-200 shadow-sm hover:shadow flex items-center space-x-1.5 cursor-pointer hover:scale-105 active:scale-95" aria-label="Toggle color theme">
@@ -1103,6 +1103,27 @@
     </main>
 
   </div>
+  
+    <!-- Dashboard Footer with Extreme Bottom Left Log Out Button -->
+    <footer class="mt-auto border-t border-slate-200/80 dark:border-slate-800/80 bg-white/75 dark:bg-slate-900/75 backdrop-blur-md px-4 sm:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4">
+      <!-- Extreme Bottom Left: Log Out / Switch Account Button -->
+      <div class="flex items-center">
+        <button id="authSwitchBtn" type="button" class="group flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-bold text-rose-600 dark:text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/25 hover:border-rose-500/40 transition-all duration-200 shadow-sm hover:shadow hover:-translate-y-0.5 cursor-pointer" title="Sign out of current account and switch persona">
+          <span class="text-sm transition-transform group-hover:-translate-x-0.5">↩</span>
+          <span>Log Out / Switch Account</span>
+        </button>
+      </div>
+
+      <!-- Center / Right Telemetry: Dispatch System Info -->
+      <div class="flex items-center space-x-3 text-xs text-slate-500 dark:text-slate-400">
+        <span class="inline-flex items-center space-x-1.5 font-medium">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>SurplusLink Dispatch System</span>
+        </span>
+        <span class="hidden sm:inline text-slate-300 dark:text-slate-700">•</span>
+        <span class="hidden sm:inline font-mono text-[11px] text-slate-400">Deterministic Recovery Engine</span>
+      </div>
+    </footer>
   </div> <!-- Close #mainAppScreen -->
 
   <!-- Global Toast / Status Banner for Feedback -->
@@ -1291,6 +1312,13 @@
       }
     }
 
+    function renderDashboard() {
+      // Safe no-op / updater for dashboard data
+      if (typeof renderDonorBalanceTab === 'function' && activeActor && activeActor.role === 'donor' && activeDonorTab === 'tabNavBalance') {
+        renderDonorBalanceTab();
+      }
+    }
+
     async function loadDashboard() {
       const data = await apiRequest('/api/dashboard');
       dashboardData = data;
@@ -1311,11 +1339,19 @@
       const badge = document.getElementById('headerPersonaBadge');
       const railName = document.getElementById('railActorName');
       const railBadge = document.getElementById('railActorIdBadge');
+      const avatarEl = document.getElementById('headerPersonaAvatar');
+      const nameEl = document.getElementById('headerPersonaName');
+      const idBadgeEl = document.getElementById('headerPersonaIdBadge');
+      const roleDetailsEl = document.getElementById('headerPersonaRoleDetails');
       clearChildren(details);
 
       if (!val) {
         activeActor = null;
-        badge.textContent = '👤 Choose Persona';
+        if (badge) badge.textContent = '👤 Choose Persona';
+        if (avatarEl) avatarEl.textContent = '👤';
+        if (nameEl) nameEl.textContent = 'Not Logged In';
+        if (idBadgeEl) idBadgeEl.textContent = '--';
+        if (roleDetailsEl) roleDetailsEl.textContent = 'Please choose or create an account';
         if (railName) railName.textContent = 'None';
         if (railBadge) railBadge.textContent = '--';
         document.getElementById('authScreen').classList.remove('hidden');
@@ -1341,13 +1377,21 @@
         if (railName) railName.textContent = activeActor.name;
         if (railBadge) railBadge.textContent = activeActor.id;
         details.textContent = `Restaurant ${activeActor.id} | Zone: ${activeActor.zone}`;
-        badge.textContent = `🍽️ ${activeActor.name} [ID: ${activeActor.id}]`;
+        if (badge) badge.textContent = `🍽️ ${activeActor.name} [ID: ${activeActor.id}]`;
+        if (avatarEl) avatarEl.textContent = '🍽️';
+        if (nameEl) nameEl.textContent = activeActor.name;
+        if (idBadgeEl) idBadgeEl.textContent = activeActor.id;
+        if (roleDetailsEl) roleDetailsEl.textContent = `Restaurant Donor • Zone: ${activeActor.zone}`;
       } else {
         if (railName) railName.textContent = activeActor.name;
         if (railBadge) railBadge.textContent = activeActor.id;
         const zonesStr = activeActor.zones ? activeActor.zones.join(', ') : '';
         details.textContent = `Volunteer ${activeActor.id} | Max: ${activeActor.capacity_kg}kg | Zones: ${zonesStr}`;
-        badge.textContent = `🚗 ${activeActor.name} [ID: ${activeActor.id}]`;
+        if (badge) badge.textContent = `🚗 ${activeActor.name} [ID: ${activeActor.id}]`;
+        if (avatarEl) avatarEl.textContent = '🚗';
+        if (nameEl) nameEl.textContent = activeActor.name;
+        if (idBadgeEl) idBadgeEl.textContent = activeActor.id;
+        if (roleDetailsEl) roleDetailsEl.textContent = `Capacity: ${activeActor.capacity_kg}kg • Zones: ${zonesStr}`;
       }
 
       try {
@@ -2683,20 +2727,19 @@
 
       // Initial Bootstrap
       loadPeople().then(() => {
-        refreshAll().then(() => {
-          let saved = null;
-          try {
-            saved = localStorage.getItem('surpluslink_active_actor');
-          } catch (e) {}
+        let saved = null;
+        try {
+          saved = localStorage.getItem('surpluslink_active_actor');
+        } catch (e) {}
 
-          if (saved) {
-            selectActor(saved);
-          } else {
-            updateAuthUI();
-            document.getElementById('authScreen').classList.remove('hidden');
-            document.getElementById('mainAppScreen').classList.add('hidden');
-          }
-        });
+        if (saved) {
+          selectActor(saved);
+        } else {
+          updateAuthUI();
+          document.getElementById('authScreen').classList.remove('hidden');
+          document.getElementById('mainAppScreen').classList.add('hidden');
+        }
+        refreshAll();
       });
     });
   </script>
